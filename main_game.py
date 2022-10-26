@@ -1,7 +1,8 @@
 import arcade
 
 from card import Card
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, CARD_SUITS, CARD_VALUES, CARD_SCALE, START_X, BOTTOM_Y
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE,\
+    CARD_SUITS, CARD_VALUES, CARD_SCALE, START_X, BOTTOM_Y
 from main_card_sprites_playing_area import MainCardSpritesPlayingArea
 from players_card_sprites_area import PlayersCardSpritesArea
 
@@ -15,7 +16,7 @@ class MyGame(arcade.Window):
         # Sprite list with all the cards, no matter what pile they are in.
         self.card_list = None
 
-        arcade.set_background_color(arcade.color.CADET)
+        arcade.set_background_color(arcade.color.ASH_GREY)
 
         # List of cards we are dragging with the mouse
         self.held_cards = None
@@ -35,6 +36,7 @@ class MyGame(arcade.Window):
 
         # List of cards we are dragging with the mouse
         self.held_cards = []
+
 
         # Original location of cards we are dragging with the mouse in case
         # they have to go back.

@@ -1,9 +1,21 @@
 # Screen title and size
 import arcade
+from screeninfo import get_monitors
 
-SCREEN_WIDTH = 1600
-SCREEN_HEIGHT = 800
+screen_width = screen_height = 0
+
+for monitor in get_monitors():
+    if monitor.is_primary:
+        screen_width = monitor.width
+        screen_height = monitor.height
+        print(screen_height, screen_width)
+
+# Constants for sizing of Screen
+SCREEN_SCALE = 0.85
+SCREEN_WIDTH = round(screen_width * SCREEN_SCALE)
+SCREEN_HEIGHT = round(screen_height * SCREEN_SCALE)
 SCREEN_TITLE = "Durak"
+
 
 # Constants for sizing
 CARD_SCALE = 0.25
@@ -13,7 +25,7 @@ CARD_WIDTH = 500 * CARD_SCALE
 CARD_HEIGHT = 726 * CARD_SCALE
 
 # How big is the mat we'll place the card on?
-MAT_PERCENT_OVERSIZE = 1.25
+MAT_PERCENT_OVERSIZE = 1.0
 MAT_HEIGHT = int(CARD_HEIGHT * MAT_PERCENT_OVERSIZE)
 MAT_WIDTH = int(CARD_WIDTH * MAT_PERCENT_OVERSIZE)
 
@@ -42,5 +54,3 @@ SPRITE_COLOR = arcade.csscolor.DARK_OLIVE_GREEN
 # Card constants
 CARD_VALUES = ["6", "7", "8", "9", "10", "jack", "queen", "king", "ace"]
 CARD_SUITS = ["clubs", "hearts", "spades", "diamonds"]
-
-
