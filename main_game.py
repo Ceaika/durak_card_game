@@ -10,7 +10,7 @@ class MyGame(arcade.Window):
     """ Main application class. """
 
     def __init__(self):
-        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, fullscreen=True)
 
         # Sprite list with all the cards, no matter what pile they are in.
         self.card_list = None
@@ -129,6 +129,10 @@ class MyGame(arcade.Window):
         for card in self.held_cards:
             card.center_x += dx
             card.center_y += dy
+
+    def on_key_press(self, symbol: int, modifiers: int):
+        if symbol == arcade.key.ESCAPE:
+            arcade.close_window()
 
 
 def main():
