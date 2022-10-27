@@ -5,16 +5,15 @@ import arcade
 
 class ScreenConfiguration:
     def __init__(self):
-        self.height = 1080
-        self.width = 1920
+        self.width = 1080
+        self.height = 480
         self.screen_title = "Durak"
-
-        pass
+        self.__standard_screen_diagonal = math.sqrt(1920**2 + 1080**2)
 
     def init_current_screen(self):
         self.current_x, self.current_y = arcade.get_window().get_size()
-        self.current_ratio = self,
-        self.screen_ratio = self.calculate_aspect(self.width, self.height)
+        self.current_diagonal = math.sqrt(self.current_x ** 2 + self.current_y ** 2)
+        self.screen_ratio = self.current_diagonal / self.__standard_screen_diagonal
         self.__init_card_sizes()
 
     def __init_card_sizes(self):
@@ -47,25 +46,3 @@ class ScreenConfiguration:
         self.sprite_color = arcade.csscolor.DARK_OLIVE_GREEN
         self.card_values = ["6", "7", "8", "9", "10", "jack", "queen", "king", "ace"]
         self.card_suites = ["clubs", "hearts", "spades", "diamonds"]
-
-    def calculate_aspect(self, width: int, height: int) -> tuple[int, int]:
-        temp = 0
-
-        def gcd(a, b):
-            """The GCD (greatest common divisor) is the highest number that evenly divides both width and height."""
-            return a if b == 0 else gcd(b, a % b)
-
-        if width == height:
-            return width, height
-
-        if width < height:
-            temp = width
-            width = height
-            height = temp
-
-        divisor = gcd(width, height)
-
-        x = int(width / divisor) if not temp else int(height / divisor)
-        y = int(height / divisor) if not temp else int(width / divisor)
-
-        return x, y
