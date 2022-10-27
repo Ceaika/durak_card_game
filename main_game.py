@@ -1,16 +1,20 @@
 import arcade
 
 from card import Card
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, CARD_SUITS, CARD_VALUES, CARD_SCALE, START_X, BOTTOM_Y
+
 from main_card_sprites_playing_area import MainCardSpritesPlayingArea
 from players_card_sprites_area import PlayersCardSpritesArea
+from screen_configuration import ScreenConfiguration
 
 
 class MyGame(arcade.Window):
     """ Main application class. """
 
-    def __init__(self):
-        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, fullscreen=True)
+    def __init__(self, screen_config: ScreenConfiguration):
+        self.__config = screen_config
+        super().__init__(self.__config.width, self.__config.height, self.__config.screen_title)
+
+        self.__config.init_current_screen()
 
         # Sprite list with all the cards, no matter what pile they are in.
         self.card_list = None
@@ -27,8 +31,8 @@ class MyGame(arcade.Window):
         # Sprite list with all the mats tha cards lay on.
         self.pile_mat_list: arcade.SpriteList = arcade.SpriteList()
 
-        self.main_cars_sprites_playing_area = MainCardSpritesPlayingArea(self.pile_mat_list)
-        self.players_card_sprites_area = PlayersCardSpritesArea(self.pile_mat_list)
+        self.main_cars_sprites_playing_area = MainCardSpritesPlayingArea(self.pile_mat_list, self.__config)
+        self.players_card_sprites_area = PlayersCardSpritesArea(self.pile_mat_list, self.__config)
 
     def setup(self):
         """ Set up the game here. Call this function to restart the game. """
@@ -47,10 +51,10 @@ class MyGame(arcade.Window):
         self.card_list = arcade.SpriteList()
 
         # Create every card
-        for card_suit in CARD_SUITS:
-            for card_value in CARD_VALUES:
-                card = Card(card_suit, card_value, CARD_SCALE)
-                card.position = START_X, BOTTOM_Y
+        for card_suit in self.__config.card_suites:
+            for card_value in self.__config.card_values:
+                card = Card(card_suit, card_value, self.__config.card_scale)
+                card.position = self.__config.start_x, self.__config.bottom_y
                 self.card_list.append(card)
 
     def on_draw(self):
@@ -137,7 +141,8 @@ class MyGame(arcade.Window):
 
 def main():
     """ Main function """
-    window = MyGame()
+    config = ScreenConfiguration()
+    window = MyGame(config)
     window.setup()
     arcade.run()
 

@@ -1,15 +1,16 @@
 import arcade
 
-from constants import START_X, X_SPACING, MAT_WIDTH, MAT_HEIGHT, SPRITE_COLOR, MIDDLE_Y
+from screen_configuration import ScreenConfiguration
 
 
 class MainCardSpritesPlayingArea:
-    def __init__(self, pile_mat_list):
+    def __init__(self, pile_mat_list, screen_configuration: ScreenConfiguration):
+        self.config = screen_configuration
         self.pile_mat_list = pile_mat_list
-        self.start_x_position = START_X + X_SPACING
+        self.start_x_position = self.config.start_x + self.config.x_spacing
 
     def add_new_sprite(self):
-        pile = arcade.SpriteSolidColor(MAT_WIDTH, MAT_HEIGHT, SPRITE_COLOR)
-        pile.position = self.start_x_position, MIDDLE_Y
-        self.start_x_position += X_SPACING
+        pile = arcade.SpriteSolidColor(self.config.mat_width, self.config.mat_height, self.config.sprite_color)
+        pile.position = self.start_x_position, self.config.middle_y
+        self.start_x_position += self.config.x_spacing
         self.pile_mat_list.append(pile)
