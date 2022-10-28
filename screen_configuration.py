@@ -31,6 +31,7 @@ class ScreenConfiguration:
     def __init_spacing(self):
         self.vertical_margin_percent = 0.10
         self.horizontal_margin_percent = 0.10
+
         self.bottom_y = self.mat_height / 2 + self.mat_height * self.vertical_margin_percent
         # The X of where to start putting things on the left side
         self.start_x = self.mat_width / 2 + self.mat_width * self.horizontal_margin_percent

@@ -1,3 +1,5 @@
+import random
+
 import arcade
 
 from card import Card
@@ -54,8 +56,31 @@ class MyGame(arcade.Window):
         for card_suit in self.__config.card_suites:
             for card_value in self.__config.card_values:
                 card = Card(card_suit, card_value, self.__config.card_scale)
-                card.position = self.__config.start_x, self.__config.bottom_y
+                card.position = self.__config.start_x, self.__config.middle_y
                 self.card_list.append(card)
+
+
+
+
+    #define Shuffle function beause the native arcade funion throws an exeption i cannot deal with
+    # Shuffle the cards
+    def schuffle_Cards(self):
+        #temporary list fo the cards
+        temp_list = arcade.SpriteList()
+
+        #randomize number between 1 - 52 (no duplicates)
+        self.list_rand = random.sample(range(len(self.card_list)), len(self.card_list))
+
+        #use rangom,shuffle to shuffle the list of random numbers
+        random.shuffle(self.list_rand)
+
+        print(self.list_rand)
+        for n in self.list_rand :
+            temp_list.append(self.card_list[n])
+
+
+        self.card_list = temp_list
+
 
     def on_draw(self):
         """ Render the screen. """
@@ -138,12 +163,17 @@ class MyGame(arcade.Window):
         if symbol == arcade.key.ESCAPE:
             arcade.close_window()
 
+    #init the players with 6 cards each
+    #def init_Cars(self):
+
+
 
 def main():
     """ Main function """
     config = ScreenConfiguration()
     window = MyGame(config)
     window.setup()
+    window.schuffle_Cards()
     arcade.run()
 
 

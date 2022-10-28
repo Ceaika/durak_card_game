@@ -1,10 +1,9 @@
 import arcade
 
-from constants import CARD_WIDTH , CARD_HEIGHT
 class Card(arcade.Sprite):
     """ Card sprite """
 
-    def __init__(self, suit, value, scale=2):
+    def __init__(self, suit, value, scale=1):
         """ Card constructor """
 
         # Attributes for suit and value
