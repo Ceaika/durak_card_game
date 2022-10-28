@@ -3,33 +3,24 @@ import arcade.gui
 
 from screen_configuration import ScreenConfiguration
 
-"""
-Example code showing how to create a button,
-and the three ways to process button events.
-"""
-import arcade
-import arcade.gui
-
-
-# # --- Method 1 for handling click events,
+# --- Method 1 for handling click events,
 # Create a child class.
 class QuitButton(arcade.gui.UIFlatButton):
     def on_click(self, event: arcade.gui.UIOnClickEvent):
         arcade.exit()
 
 
-class MenuView(arcade.View):
+class MenuWindow(arcade.Window):
     def __init__(self, screen_config: ScreenConfiguration):
-        super().__init__()
-        # self.main_window = window
-        self.configuration = screen_config
+        self.__config = screen_config
+        super().__init__(self.__config.width, self.__config.height, self.__config.screen_title, fullscreen=True)
         # --- Required for all code that uses UI element,
         # a UIManager to handle the UI.
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
 
         # Set background color
-        arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
+        arcade.set_background_color(arcade.color.CADET)
 
         # Create a vertical BoxGroup to align buttons
         self.v_box = arcade.gui.UIBoxLayout()
@@ -42,9 +33,8 @@ class MenuView(arcade.View):
         quit_button = QuitButton(text="Quit", width=200)
         self.v_box.add(quit_button)
 
-        # --- Method 2 for handling click events,
-        # assign self.on_click_start as callback
-        start_button.on_click = self.on_click_start
+        # # assign self.on_click_start as callback
+        # start_button.on_click = self.on_click_start
 
         # Create a widget to hold the v_box widget, that will center the buttons
         self.manager.add(
@@ -54,11 +44,5 @@ class MenuView(arcade.View):
                 child=self.v_box)
         )
 
-    def on_click_start(self, event):
-        print("Start:", event)
-        self.main_window.setup()
-
-
-    def on_draw(self):
-        self.clear()
-        self.manager.draw()
+    # def on_click_start(self, event):
+    #     print("Start:", event)
