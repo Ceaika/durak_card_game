@@ -1,10 +1,9 @@
-from screen_configuration import ScreenConfiguration
-
 import arcade
 import arcade.gui
 
+from screen_configuration import ScreenConfiguration
 
-# # --- Method 1 for handling click events,
+# --- Method 1 for handling click events,
 # Create a child class.
 class QuitButton(arcade.gui.UIFlatButton):
     def on_click(self, event: arcade.gui.UIOnClickEvent):
