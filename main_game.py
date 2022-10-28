@@ -12,7 +12,7 @@ class MyGame(arcade.Window):
 
     def __init__(self, screen_config: ScreenConfiguration):
         self.__config = screen_config
-        super().__init__(self.__config.width, self.__config.height, self.__config.screen_title)
+        super().__init__(self.__config.width, self.__config.height, self.__config.screen_title, fullscreen=True)
 
         self.__config.init_current_screen()
 

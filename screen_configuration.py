@@ -5,8 +5,8 @@ import arcade
 
 class ScreenConfiguration:
     def __init__(self):
-        self.width = 1080
-        self.height = 480
+        self.width = 1920
+        self.height = 1080
         self.screen_title = "Durak"
         self.__standard_screen_diagonal = math.sqrt(1920**2 + 1080**2)
 
@@ -23,7 +23,7 @@ class ScreenConfiguration:
         self.__init_mat_sizes()
 
     def __init_mat_sizes(self):
-        self.mat_percent_oversize = 1.25 * self.screen_ratio
+        self.mat_percent_oversize = 1.35 * self.screen_ratio
         self.mat_height = int(self.card_height * self.mat_percent_oversize)
         self.mat_width = int(self.card_width * self.mat_percent_oversize)
         self.__init_spacing()
@@ -37,7 +37,7 @@ class ScreenConfiguration:
         # The Y of the top row
         self.top_y = self.current_y - self.mat_height / 2 - self.mat_height * self.vertical_margin_percent
         # The Y of the middle row
-        self.middle_y = self.top_y - self.mat_height - self.mat_height * self.vertical_margin_percent
+        self.middle_y = self.current_y / 2
         # How far apart each pile goes
         self.x_spacing = self.mat_width + self.mat_width * self.horizontal_margin_percent
         self.__init_values()
