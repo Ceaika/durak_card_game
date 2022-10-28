@@ -62,16 +62,16 @@ class MyGame(arcade.Window):
 
 
 
-    #define Shuffle function beause the native arcade funion throws an exeption i cannot deal with
+    #define Shuffle function because the native arcade function throws an exeption I cannot deal with
     # Shuffle the cards
-    def schuffle_Cards(self):
+    def shuffle_Cards(self):
         #temporary list fo the cards
         temp_list = arcade.SpriteList()
 
         #randomize number between 1 - 52 (no duplicates)
         self.list_rand = random.sample(range(len(self.card_list)), len(self.card_list))
 
-        #use rangom,shuffle to shuffle the list of random numbers
+        #use random,shuffle to shuffle the list of random numbers
         random.shuffle(self.list_rand)
 
         print(self.list_rand)
@@ -173,7 +173,7 @@ def main():
     config = ScreenConfiguration()
     window = MyGame(config)
     window.setup()
-    window.schuffle_Cards()
+    window.shuffle_Cards()
     arcade.run()
 
 
