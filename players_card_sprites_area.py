@@ -24,3 +24,6 @@ class PlayersCardSpritesArea:
         pile.position = self.start_x_position, y_pos
         self.start_x_position += self.config.x_spacing
         self.pile_mat_list.append(pile)
+
+    def main_Count_of_sprites(self):
+        return len(self.pile_mat_list)
