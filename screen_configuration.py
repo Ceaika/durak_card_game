@@ -23,9 +23,9 @@ class ScreenConfiguration:
         self.__init_mat_sizes()
 
     def __init_mat_sizes(self):
-        self.mat_percent_oversize = 1.35 * self.screen_ratio
-        self.mat_height = int(self.card_height * self.mat_percent_oversize)
-        self.mat_width = int(self.card_width * self.mat_percent_oversize)
+        self.mat_px_oversize = 10 * self.screen_ratio
+        self.mat_height = int(self.card_height + self.mat_px_oversize)
+        self.mat_width = int(self.card_width + self.mat_px_oversize)
         self.__init_spacing()
 
     def __init_spacing(self):
