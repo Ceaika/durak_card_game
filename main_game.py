@@ -7,20 +7,20 @@ import time
 from card import Card
 
 from main_card_sprites_playing_area import MainCardSpritesPlayingArea
-from menu_window import MenuWindow
 from players_card_sprites_area import PlayersCardSpritesArea
 from screen_configuration import ScreenConfiguration
 from Constants import PILE_COUNT, BOTTOM_FACE_DOWN_PILE, PLAY_PILE_1, PLAY_PILE_2, PLAY_PILE_3, PLAY_PILE_4, \
     PLAY_PILE_5, PLAY_PILE_6, PLAY_PILE_7
 
 
-class MyGame(arcade.Window):
+class GameView(arcade.View):
     """ Main application class. """
 
     def __init__(self, screen_config: ScreenConfiguration):
         self.__config = screen_config
-        super().__init__(self.__config.width, self.__config.height, self.__config.screen_title, fullscreen=True)
+        super().__init__()
 
+        # This scales the cards and the rest of the play area according to screen size
         self.__config.init_current_screen()
 
         # Sprite list with all the cards, no matter what pile they are in.
@@ -275,6 +275,10 @@ def main():
     # window_main.setup()
     window = MyGame(config)
     window.setup()
+    window = arcade.Window(config.width, config.height, config.screen_title, fullscreen=True)
+    start_view = GameView(config)
+    window.show_view(start_view)
+    start_view.setup()
     arcade.run()
 
 
