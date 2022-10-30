@@ -1,12 +1,5 @@
-import arcade
-import arcade.gui
-
 from screen_configuration import ScreenConfiguration
 
-"""
-Example code showing how to create a button,
-and the three ways to process button events.
-"""
 import arcade
 import arcade.gui
 
@@ -21,7 +14,6 @@ class QuitButton(arcade.gui.UIFlatButton):
 class MenuView(arcade.View):
     def __init__(self, screen_config: ScreenConfiguration):
         super().__init__()
-        # self.main_window = window
         self.configuration = screen_config
         # --- Required for all code that uses UI element,
         # a UIManager to handle the UI.
@@ -54,11 +46,9 @@ class MenuView(arcade.View):
                 child=self.v_box)
         )
 
-    def on_click_start(self, event):
-        print("Start:", event)
-        self.main_window.setup()
-
-
     def on_draw(self):
         self.clear()
         self.manager.draw()
+
+    def on_click_start(self, event):
+        pass
