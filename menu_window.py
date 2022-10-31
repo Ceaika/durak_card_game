@@ -11,6 +11,11 @@ class QuitButton(arcade.gui.UIFlatButton):
         arcade.exit()
 
 
+class StartButton(arcade.gui.UIFlatButton):
+    def on_click(self, event: arcade.gui.UIOnClickEvent):
+        pass
+
+
 class MenuView(arcade.View):
     def __init__(self, screen_config: ScreenConfiguration):
         super().__init__()
@@ -27,16 +32,12 @@ class MenuView(arcade.View):
         self.v_box = arcade.gui.UIBoxLayout()
 
         # Create the buttons
-        start_button = arcade.gui.UIFlatButton(text="Start Game", width=200)
+        start_button = StartButton(text="Start Game", width=200)
         self.v_box.add(start_button.with_space_around(bottom=20))
 
         # Again, method 1. Use a child class to handle events.
         quit_button = QuitButton(text="Quit", width=200)
         self.v_box.add(quit_button)
-
-        # --- Method 2 for handling click events,
-        # assign self.on_click_start as callback
-        start_button.on_click = self.on_click_start
 
         # Create a widget to hold the v_box widget, that will center the buttons
         self.manager.add(
@@ -49,6 +50,3 @@ class MenuView(arcade.View):
     def on_draw(self):
         self.clear()
         self.manager.draw()
-
-    def on_click_start(self, event):
-        pass
