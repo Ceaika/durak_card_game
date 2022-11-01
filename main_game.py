@@ -1,13 +1,13 @@
 import random
 
 import arcade
+import arcade.gui
 
 import time
 
 from card import Card
 
 from main_card_sprites_playing_area import MainCardSpritesPlayingArea
-from menu_window import MenuWindow
 from players_card_sprites_area import PlayersCardSpritesArea
 from screen_configuration import ScreenConfiguration
 from Constants import PILE_COUNT, BOTTOM_FACE_DOWN_PILE, PLAY_PILE_1, PLAY_PILE_2, PLAY_PILE_3, PLAY_PILE_4, \
@@ -45,6 +45,8 @@ class GameView(arcade.View):
         self.main_cars_sprites_playing_area = MainCardSpritesPlayingArea(self.pile_mat_list, self.__config)
         self.players_card_sprites_area = PlayersCardSpritesArea(self.pile_mat_list, self.__config)
 
+        self.setup()
+
     def setup(self):
         """ Set up the game here. Call this function to restart the game. """
 
@@ -59,7 +61,7 @@ class GameView(arcade.View):
         self.held_cards_original_position = []
 
         # init main playing area with one sprite
-        #self.main_cars_sprites_playing_area.add_new_sprite()
+        # self.main_cars_sprites_playing_area.add_new_sprite()
 
         # Sprite list with all the cards, no matter what pile they are in.
         self.card_list = arcade.SpriteList()
@@ -89,7 +91,7 @@ class GameView(arcade.View):
             card.position = self.pile_mat_list[pile_no].position
 
             # Put on top in draw order
-            #self.pull_to_top(card)
+            # self.pull_to_top(card)
 
     def init_Animation(self):
         # - Pull from that pile into the middle piles, all face-down
@@ -262,27 +264,62 @@ class GameView(arcade.View):
             arcade.close_window()
         if symbol == arcade.key.ENTER:
             pass
-            #self.init_Animation()
+            # self.init_Animation()
 
-    # init the players with 6 cards each
-    # def init_Cars(self):
+class QuitButton(arcade.gui.UIFlatButton):
+    def on_click(self, event: arcade.gui.UIOnClickEvent):
+        arcade.exit()
 
+class StartButton(arcade.gui.UIFlatButton):
+    def __init__(self, screen_config: ScreenConfiguration):
+        super(StartButton, self).__init__(text="Start Game", width=200)
+        self.config = screen_config
+    def on_click(self, event: arcade.gui.UIOnClickEvent):
+        arcade.get_window().show_view(GameView(self.config))
+
+class MenuView(arcade.View):
+    def __init__(self, screen_config: ScreenConfiguration):
+        super().__init__()
+        self.configuration = screen_config
+        # --- Required for all code that uses UI element,
+        # a UIManager to handle the UI.
+        self.manager = arcade.gui.UIManager()
+        self.manager.enable()
+
+        # Set background color
+        arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
+
+        # Create a vertical BoxGroup to align buttons
+        self.v_box = arcade.gui.UIBoxLayout()
+
+        # Create the buttons
+        start_button = StartButton(self.configuration)
+        self.v_box.add(start_button.with_space_around(bottom=20))
+
+        # Again, method 1. Use a child class to handle events.
+        quit_button = QuitButton(text="Quit", width=200)
+        self.v_box.add(quit_button)
+
+        # Create a widget to hold the v_box widget, that will center the buttons
+        self.manager.add(
+            arcade.gui.UIAnchorWidget(
+                anchor_x="center_x",
+                anchor_y="center_y",
+                child=self.v_box)
+        )
+
+    def on_draw(self):
+        self.clear()
+        self.manager.draw()
 
 def main():
     """ Main function """
     config = ScreenConfiguration()
-    #window_menu = MenuWindow(config)
-    # window_main = MyGame(config)
-    # window_main.setup()
-    #window = MyGame(config)
-    #window.setup()
-    #window = arcade.Window(config.width, config.height, config.screen_title, fullscreen=True)
-    start_view = GameView(config)
-    #window.show_view(start_view)
-    start_view.setup()
+    window = arcade.Window(config.width, config.height, config.screen_title, fullscreen=True)
+    menu_view = MenuView(config)
+    window.show_view(menu_view)
     arcade.run()
 
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
