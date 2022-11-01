@@ -21,7 +21,7 @@ def main():
     window = arcade.Window(config.width, config.height, config.screen_title, fullscreen=True)
     views = Views(config)
     view_handler = ViewHandler(config, views)
-    view_handler.show_menu()
+    view_handler.show_main_game()
     arcade.run()
 
 

@@ -270,14 +270,14 @@ class GameView(arcade.View):
 def main():
     """ Main function """
     config = ScreenConfiguration()
-    window_menu = MenuWindow(config)
+    #window_menu = MenuWindow(config)
     # window_main = MyGame(config)
     # window_main.setup()
-    window = MyGame(config)
-    window.setup()
-    window = arcade.Window(config.width, config.height, config.screen_title, fullscreen=True)
+    #window = MyGame(config)
+    #window.setup()
+    #window = arcade.Window(config.width, config.height, config.screen_title, fullscreen=True)
     start_view = GameView(config)
-    window.show_view(start_view)
+    #window.show_view(start_view)
     start_view.setup()
     arcade.run()
 
