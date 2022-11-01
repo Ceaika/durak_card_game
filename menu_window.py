@@ -1,19 +1,19 @@
-# import arcade
 # import arcade.gui
 #
+# import view_handler
 # from screen_configuration import ScreenConfiguration
 #
-# # --- Method 1 for handling click events,
-# # Create a child class.
+#
 # class QuitButton(arcade.gui.UIFlatButton):
 #     def on_click(self, event: arcade.gui.UIOnClickEvent):
 #         arcade.exit()
 #
-#
 # class StartButton(arcade.gui.UIFlatButton):
+#     def __init__(self, screen_config: ScreenConfiguration):
+#         super(StartButton, self).__init__(text="Start Game", width=200)
+#         self.config = screen_config
 #     def on_click(self, event: arcade.gui.UIOnClickEvent):
-#         pass
-#
+#         view_handler.show_game()
 #
 # class MenuView(arcade.View):
 #     def __init__(self, screen_config: ScreenConfiguration):
@@ -31,7 +31,7 @@
 #         self.v_box = arcade.gui.UIBoxLayout()
 #
 #         # Create the buttons
-#         start_button = StartButton(text="Start Game", width=200)
+#         start_button = StartButton(self.configuration)
 #         self.v_box.add(start_button.with_space_around(bottom=20))
 #
 #         # Again, method 1. Use a child class to handle events.
@@ -49,3 +49,15 @@
 #     def on_draw(self):
 #         self.clear()
 #         self.manager.draw()
+#
+# def main():
+#     """ Main function """
+#     config = ScreenConfiguration()
+#     window = arcade.Window(config.width, config.height, config.screen_title, fullscreen=True)
+#     menu_view = MenuView(config)
+#     window.show_view(menu_view)
+#     arcade.run()
+#
+#
+# if __name__ == '__main__':
+#     main()

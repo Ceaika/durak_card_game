@@ -6,23 +6,23 @@ import arcade.gui
 import time
 
 from card import Card
+from computer_card_sprites_area import ComputerCardSpritesArea
 
 from main_card_sprites_playing_area import MainCardSpritesPlayingArea
 from players_card_sprites_area import PlayersCardSpritesArea
 from screen_configuration import ScreenConfiguration
-from Constants import PILE_COUNT, BOTTOM_FACE_DOWN_PILE, PLAY_PILE_1, PLAY_PILE_2, PLAY_PILE_3, PLAY_PILE_4, \
-    PLAY_PILE_5, PLAY_PILE_6, PLAY_PILE_7
+from Constants import PILE_COUNT, BOTTOM_FACE_DOWN_PILE
 
 
 class GameView(arcade.View):
     """ Main application class. """
 
     def __init__(self, screen_config: ScreenConfiguration):
-        self.__config = screen_config
+        self.config = screen_config
         super().__init__()
 
         # This scales the cards and the rest of the play area according to screen size
-        self.__config.init_current_screen()
+        self.config.init_current_screen()
 
         # Sprite list with all the cards, no matter what pile they are in.
         self.card_list = None
@@ -42,8 +42,9 @@ class GameView(arcade.View):
         # Sprite list with all the mats tha cards lay on.
         self.pile_mat_list: arcade.SpriteList = arcade.SpriteList()
 
-        self.main_cars_sprites_playing_area = MainCardSpritesPlayingArea(self.pile_mat_list, self.__config)
-        self.players_card_sprites_area = PlayersCardSpritesArea(self.pile_mat_list, self.__config)
+        self.main_cars_sprites_playing_area = MainCardSpritesPlayingArea(self.pile_mat_list, self.config)
+        self.players_card_sprites_area = PlayersCardSpritesArea(self.pile_mat_list, self.config)
+        self.computer_card_sprites_area = ComputerCardSpritesArea(self.pile_mat_list, self.config)
 
         self.setup()
 
@@ -61,16 +62,16 @@ class GameView(arcade.View):
         self.held_cards_original_position = []
 
         # init main playing area with one sprite
-        # self.main_cars_sprites_playing_area.add_new_sprite()
+        self.main_cars_sprites_playing_area.add_new_sprite()
 
         # Sprite list with all the cards, no matter what pile they are in.
         self.card_list = arcade.SpriteList()
 
         # Create every card
-        for card_suit in self.__config.card_suites:
-            for card_value in self.__config.card_values:
-                card = Card(card_suit, card_value, self.__config.card_scale)
-                card.position = self.__config.start_x, self.__config.middle_y
+        for card_suit in self.config.card_suites:
+            for card_value in self.config.card_values:
+                card = Card(card_suit, card_value, self.config.card_scale)
+                card.position = self.config.start_x, self.config.middle_y
                 self.card_list.append(card)
 
         # Put all the cards in the bottom face-down pile
@@ -82,7 +83,7 @@ class GameView(arcade.View):
 
         # - Pull from that pile into the middle piles, all face-down
         # Loop for each pile
-        for pile_no in range(0, self.players_card_sprites_area.main_Count_of_sprites()):
+        for pile_no in range(0, self.players_card_sprites_area.main_count_of_sprites()):
             # Pop the card off the deck we are dealing from
             card = self.piles[BOTTOM_FACE_DOWN_PILE].pop()
             # Put in the proper pile
@@ -93,10 +94,10 @@ class GameView(arcade.View):
             # Put on top in draw order
             # self.pull_to_top(card)
 
-    def init_Animation(self):
+    def init_animation(self):
         # - Pull from that pile into the middle piles, all face-down
         # Loop for each pile
-        for pile_no in range(0, self.players_card_sprites_area.main_Count_of_sprites()):
+        for pile_no in range(0, self.players_card_sprites_area.main_count_of_sprites()):
             # Pop the card off the deck we are dealing from
             card = self.piles[BOTTOM_FACE_DOWN_PILE].pop()
             # Put in the proper pile
@@ -119,7 +120,7 @@ class GameView(arcade.View):
 
     # define Shuffle function because the native arcade function throws an exeption I cannot deal with
     # Shuffle the cards
-    def shuffle_Cards(self):
+    def shuffle_cards(self):
         # temporary list fo the cards
         temp_list = arcade.SpriteList()
 
@@ -192,9 +193,10 @@ class GameView(arcade.View):
             # Put on top in drawing order
             self.pull_to_top(self.held_cards[0])
 
-            if primary_card.is_face_down:
+            if primary_card.is_face_down and primary_card not in self.computer_card_sprites_area.pile_mat_list:
                 # Is the card face down? In one of those middle 7 piles? Then flip up
                 primary_card.face_up()
+
             else:
                 # All other cases, grab the face-up card we are clicking on
                 self.held_cards = [primary_card]
@@ -266,16 +268,20 @@ class GameView(arcade.View):
             pass
             # self.init_Animation()
 
+
 class QuitButton(arcade.gui.UIFlatButton):
     def on_click(self, event: arcade.gui.UIOnClickEvent):
         arcade.exit()
+
 
 class StartButton(arcade.gui.UIFlatButton):
     def __init__(self, screen_config: ScreenConfiguration):
         super(StartButton, self).__init__(text="Start Game", width=200)
         self.config = screen_config
+
     def on_click(self, event: arcade.gui.UIOnClickEvent):
         arcade.get_window().show_view(GameView(self.config))
+
 
 class MenuView(arcade.View):
     def __init__(self, screen_config: ScreenConfiguration):
@@ -311,6 +317,7 @@ class MenuView(arcade.View):
     def on_draw(self):
         self.clear()
         self.manager.draw()
+
 
 def main():
     """ Main function """

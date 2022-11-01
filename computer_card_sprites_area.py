@@ -3,7 +3,7 @@ import arcade
 from screen_configuration import ScreenConfiguration
 
 
-class PlayersCardSpritesArea:
+class ComputerCardSpritesArea:
     def __init__(self, pile_mat_list, config: ScreenConfiguration):
         self.config = config
         self.pile_mat_list = pile_mat_list
@@ -14,7 +14,7 @@ class PlayersCardSpritesArea:
         self.start_x_position = self.config.start_x
         #define
         for i in range(6):
-            self.add_new_sprite(self.config.bottom_y)
+            self.add_new_sprite(self.config.top_y)
 
     def add_new_sprite(self,y_pos):
         pile = arcade.SpriteSolidColor(self.config.mat_width, self.config.mat_height, self.config.sprite_color)
