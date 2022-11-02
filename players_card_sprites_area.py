@@ -24,6 +24,7 @@ class PlayersCardSpritesArea:
         self.pile_mat_list.append(pile)
         # add empty list to piles
         self.piles.append([])
+        print(self.piles)
 
     def main_count_of_sprites(self):
         return len(self.pile_mat_list)

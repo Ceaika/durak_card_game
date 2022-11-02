@@ -29,6 +29,8 @@ class GameView(arcade.View):
         self.card_list = None
 
         # Create a list of lists, each holds a pile of cards.
+        self.stack_pile = None
+
         self.piles = None
 
         arcade.set_background_color(arcade.color.CADET)
@@ -54,10 +56,10 @@ class GameView(arcade.View):
     def setup(self):
         """ Set up the game here. Call this function to restart the game. """
 
-
-
         # List of cards we are dragging with the mouse
         self.held_cards = []
+
+        self.piles = [[] for _ in range(PILE_COUNT)]
 
         # Original location of cards we are dragging with the mouse in case
         # they have to go back.
