@@ -12,6 +12,7 @@ from main_card_sprites_playing_area import MainCardSpritesPlayingArea
 from players_card_sprites_area import PlayersCardSpritesArea
 from screen_configuration import ScreenConfiguration
 from Constants import PILE_COUNT, BOTTOM_FACE_DOWN_PILE
+from utils import Utils
 
 
 class GameView(arcade.View):
@@ -45,14 +46,15 @@ class GameView(arcade.View):
         self.main_card_sprites_playing_area = MainCardSpritesPlayingArea(self.config)
         self.players_card_sprites_area = PlayersCardSpritesArea(self.config)
         self.computer_card_sprites_area = ComputerCardSpritesArea(self.config)
+        self.utils = Utils(self.players_card_sprites_area, self.computer_card_sprites_area,
+                           self.main_card_sprites_playing_area)
 
         self.setup()
 
     def setup(self):
         """ Set up the game here. Call this function to restart the game. """
 
-        # Create a list of lists, each holds a pile of cards.
-        self.piles = [[] for _ in range(PILE_COUNT)]
+
 
         # List of cards we are dragging with the mouse
         self.held_cards = []
@@ -74,12 +76,12 @@ class GameView(arcade.View):
                 card.position = self.config.start_x, self.config.middle_y
                 self.card_list.append(card)
 
+        # Shuffle the cards
+        self.card_list.shuffle()
+
         # Put all the cards in the bottom face-down pile
         for card in self.card_list:
             self.piles[BOTTOM_FACE_DOWN_PILE].append(card)
-
-        # Shuffle the cards
-        self.card_list.shuffle()
 
         # - Pull from that pile into the middle piles, all face-down
         # Loop for each pile
@@ -91,8 +93,8 @@ class GameView(arcade.View):
         #     # Move card to same position as pile we just put it in
         #     card.position = self.pile_mat_list[pile_no].position
         #
-        #     # Put on top in draw order
-        #     # self.pull_to_top(card)
+        #     Put on top in draw order
+        #     self.pull_to_top(card)
 
     def init_animation(self):
         # - Pull from that pile into the middle piles, all face-down
@@ -198,7 +200,7 @@ class GameView(arcade.View):
             # Put on top in drawing order
             self.pull_to_top(self.held_cards[0])
 
-            if primary_card.is_face_down and primary_card not in self.computer_card_sprites_area.pile_mat_list:
+            if primary_card.is_face_down:
                 # Is the card face down? In one of those middle 7 piles? Then flip up
                 primary_card.face_up()
 
@@ -226,19 +228,19 @@ class GameView(arcade.View):
             return
 
         # Find the closest pile, in case we are in contact with more than one
-        pile, distance = arcade.get_closest_sprite(self.held_cards[0], self.pile_mat_list)
+        pile, distance = arcade.get_closest_sprite(self.held_cards[0], self.utils.list_all_usable_mats())
         reset_position = True
 
         # See if we are in contact with the closest pile
         if arcade.check_for_collision(self.held_cards[0], pile):
 
-            # What pile is it?
-            pile_index = self.pile_mat_list.index(pile)
-
-            #  Is it the same pile we came from?
-            if pile_index == self.get_pile_for_card(self.held_cards[0]):
-                # If so, who cares. We'll just reset our position.
-                pass
+            # # What pile is it?
+            # pile_index = self.pile_mat_list.index(pile)
+            #
+            # #  Is it the same pile we came from?
+            # if pile_index == self.get_pile_for_card(self.held_cards[0]):
+            #     # If so, who cares. We'll just reset our position.
+            #     pass
 
             # For each held card, move it to the pile we dropped on
             for i, dropped_card in enumerate(self.held_cards):
@@ -272,13 +274,6 @@ class GameView(arcade.View):
         if symbol == arcade.key.ENTER:
             pass
             # self.init_Animation()
-
-    def list_all_mats(self):
-        mat_list = arcade.SpriteList()
-        mat_list.append(self.players_card_sprites_area.pile_mat_list)\
-            .append(self.computer_card_sprites_area.pile_mat_list)\
-            .append(self.main_card_sprites_playing_area.pile_mat_list)
-        return mat_list
 
 
 class QuitButton(arcade.gui.UIFlatButton):

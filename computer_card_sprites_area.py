@@ -9,6 +9,7 @@ class ComputerCardSpritesArea:
         self.pile_mat_list: arcade.SpriteList = arcade.SpriteList()
         self.start_x_position = self.config.start_x + self.config.x_spacing
         self.__init_with_six_sprites()
+        self.piles = []
 
     def __init_with_six_sprites(self):
         self.start_x_position = self.config.start_x
@@ -21,6 +22,8 @@ class ComputerCardSpritesArea:
         pile.position = self.start_x_position, y_pos
         self.start_x_position += self.config.x_spacing
         self.pile_mat_list.append(pile)
+        # add empty list to piles
+        self.piles.append([])
 
     def main_count_of_sprites(self):
         return len(self.pile_mat_list)
