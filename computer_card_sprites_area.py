@@ -4,13 +4,13 @@ from screen_configuration import ScreenConfiguration
 
 
 class ComputerCardSpritesArea:
-    def __init__(self, pile_mat_list, config: ScreenConfiguration):
+    def __init__(self, config: ScreenConfiguration):
         self.config = config
-        self.pile_mat_list = pile_mat_list
+        self.pile_mat_list: arcade.SpriteList = arcade.SpriteList()
         self.start_x_position = self.config.start_x + self.config.x_spacing
-        self.__init_with_twelve_sprites()
+        self.__init_with_six_sprites()
 
-    def __init_with_twelve_sprites(self):
+    def __init_with_six_sprites(self):
         self.start_x_position = self.config.start_x
         #define
         for i in range(6):

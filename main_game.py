@@ -42,9 +42,9 @@ class GameView(arcade.View):
         # Sprite list with all the mats tha cards lay on.
         self.pile_mat_list: arcade.SpriteList = arcade.SpriteList()
 
-        self.main_cars_sprites_playing_area = MainCardSpritesPlayingArea(self.pile_mat_list, self.config)
-        self.players_card_sprites_area = PlayersCardSpritesArea(self.pile_mat_list, self.config)
-        self.computer_card_sprites_area = ComputerCardSpritesArea(self.pile_mat_list, self.config)
+        self.main_card_sprites_playing_area = MainCardSpritesPlayingArea(self.config)
+        self.players_card_sprites_area = PlayersCardSpritesArea(self.config)
+        self.computer_card_sprites_area = ComputerCardSpritesArea(self.config)
 
         self.setup()
 
@@ -62,7 +62,7 @@ class GameView(arcade.View):
         self.held_cards_original_position = []
 
         # init main playing area with one sprite
-        self.main_cars_sprites_playing_area.add_new_sprite()
+        self.main_card_sprites_playing_area.add_new_sprite()
 
         # Sprite list with all the cards, no matter what pile they are in.
         self.card_list = arcade.SpriteList()
@@ -83,16 +83,16 @@ class GameView(arcade.View):
 
         # - Pull from that pile into the middle piles, all face-down
         # Loop for each pile
-        for pile_no in range(0, self.players_card_sprites_area.main_count_of_sprites()):
-            # Pop the card off the deck we are dealing from
-            card = self.piles[BOTTOM_FACE_DOWN_PILE].pop()
-            # Put in the proper pile
-            self.piles[pile_no].append(card)
-            # Move card to same position as pile we just put it in
-            card.position = self.pile_mat_list[pile_no].position
-
-            # Put on top in draw order
-            # self.pull_to_top(card)
+        # for pile_no in range(0, self.players_card_sprites_area.main_count_of_sprites()):
+        #     # Pop the card off the deck we are dealing from
+        #     card = self.piles[BOTTOM_FACE_DOWN_PILE].pop()
+        #     # Put in the proper pile
+        #     self.piles[pile_no].append(card)
+        #     # Move card to same position as pile we just put it in
+        #     card.position = self.pile_mat_list[pile_no].position
+        #
+        #     # Put on top in draw order
+        #     # self.pull_to_top(card)
 
     def init_animation(self):
         # - Pull from that pile into the middle piles, all face-down
@@ -142,7 +142,12 @@ class GameView(arcade.View):
         self.clear()
 
         # Draw the mats the cards go on to
-        self.pile_mat_list.draw()
+        # Draw the mats for the players cards
+        self.players_card_sprites_area.pile_mat_list.draw()
+        # Draw the mats for the computer cards
+        self.computer_card_sprites_area.pile_mat_list.draw()
+        # Draw the mats for the main card area
+        self.main_card_sprites_playing_area.pile_mat_list.draw()
 
         # Draw the cards
         self.card_list.draw()
@@ -267,6 +272,13 @@ class GameView(arcade.View):
         if symbol == arcade.key.ENTER:
             pass
             # self.init_Animation()
+
+    def list_all_mats(self):
+        mat_list = arcade.SpriteList()
+        mat_list.append(self.players_card_sprites_area.pile_mat_list)\
+            .append(self.computer_card_sprites_area.pile_mat_list)\
+            .append(self.main_card_sprites_playing_area.pile_mat_list)
+        return mat_list
 
 
 class QuitButton(arcade.gui.UIFlatButton):

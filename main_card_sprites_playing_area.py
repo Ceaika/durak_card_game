@@ -4,9 +4,9 @@ from screen_configuration import ScreenConfiguration
 
 
 class MainCardSpritesPlayingArea:
-    def __init__(self, pile_mat_list, screen_configuration: ScreenConfiguration):
+    def __init__(self, screen_configuration: ScreenConfiguration):
         self.config = screen_configuration
-        self.pile_mat_list = pile_mat_list
+        self.pile_mat_list: arcade.SpriteList = arcade.SpriteList()
         self.start_x_position = self.config.start_x + self.config.x_spacing
 
     def add_new_sprite(self):
