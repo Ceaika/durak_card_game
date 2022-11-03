@@ -12,7 +12,7 @@ from main_card_sprites_playing_area import MainCardSpritesPlayingArea
 from not_active_cards import NotActiveCards
 from players_card_sprites_area import PlayersCardSpritesArea
 from screen_configuration import ScreenConfiguration
-from Constants import  PLAYER_PILE
+from Constants import  PLAYER_AREA
 from utils import Utils
 
 
@@ -26,11 +26,8 @@ class GameView(arcade.View):
         # This scales the cards and the rest of the play area according to screen size
         self.config.init_current_screen()
 
-        # Sprite list with all the cards, no matter what pile they are in.
+        # Sprite list with all the cards, no matter what area they are in.
         self.card_list = None
-
-        # Create a list of lists, each holds a pile of cards.
-        self.stack_pile = None
 
         arcade.set_background_color(arcade.color.AMAZON)
 
@@ -41,8 +38,8 @@ class GameView(arcade.View):
         # they have to go back.
         self.held_cards_original_position = None
 
-        # Sprite list with all the mats tha cards lay on.
-        self.pile_mat_list: arcade.SpriteList = arcade.SpriteList()
+        # Sprite list with all the mats that cards lay on.
+        self.mat_list: arcade.SpriteList = arcade.SpriteList()
 
         # Initialize the sprite lists
         self.main_card_sprites_playing_area = MainCardSpritesPlayingArea(self.config)
@@ -72,9 +69,6 @@ class GameView(arcade.View):
         # Sprite list with all the cards, no matter what pile they are in.
         self.card_list = arcade.SpriteList()
 
-        # This is the pile with all the card facing down
-        self.stack_pile = []
-
         # Create every card
         for card_suit in self.config.card_suites:
             for card_value in self.config.card_values:
@@ -87,30 +81,17 @@ class GameView(arcade.View):
 
         # Put all the cards in the bottom face-down pile
         for card in self.card_list:
-            self.stack_pile.append(card)
-
-        # - Pull from that pile into the middle piles, all face-down
-        # Loop for each pile
-        # for pile_no in range(0, self.players_card_sprites_area.main_count_of_sprites()):
-        #     # Pop the card off the deck we are dealing from
-        #     card = self.piles[BOTTOM_FACE_DOWN_PILE].pop()
-        #     # Put in the proper pile
-        #     self.piles[pile_no].append(card)
-        #     # Move card to same position as pile we just put it in
-        #     card.position = self.pile_mat_list[pile_no].position
-        #
-        #     Put on top in draw order
-        #     self.pull_to_top(card)
+            self.not_active_cards.add_new_card(card)
 
         for index in range(0, 12):
-            card = self.stack_pile.pop()
+            card = self.not_active_cards.remove_last_card()
             if index < 6:
                 self.players_card_sprites_area.add_new_card(card)
-                card.position = self.players_card_sprites_area.pile_mat_list[index].position
+                card.position = self.players_card_sprites_area.mat_list[index].position
                 self.pull_to_top(card)
             else:
                 self.computer_card_sprites_area.add_new_card(card)
-                card.position = self.computer_card_sprites_area.pile_mat_list[index - 6].position
+                card.position = self.computer_card_sprites_area.mat_list[index - 6].position
                 self.pull_to_top(card)
 
 
@@ -123,7 +104,7 @@ class GameView(arcade.View):
     #         card = self.piles[BOTTOM_FACE_DOWN_PILE].pop()
     #         # Put in the proper pile
     #         self.piles[pile_no].append(card)
-    #         x_mat, y_mat = self.pile_mat_list[pile_no].position
+    #         x_mat, y_mat = self.mat_list[pile_no].position
     #         round(x_mat, 0)
     #         round(y_mat, 0)
     #         while (True):
@@ -137,7 +118,7 @@ class GameView(arcade.View):
     #             card.position = x, y
     #             time.sleep(1)
     #         # Move card to same position as pile we just put it in
-    #         card.position = self.pile_mat_list[pile_no].position
+    #         card.position = self.mat_list[pile_no].position
 
     def on_draw(self):
         """ Render the screen. """
@@ -146,11 +127,11 @@ class GameView(arcade.View):
 
         # Draw the mats the cards go on to
         # Draw the mats for the players cards
-        self.players_card_sprites_area.pile_mat_list.draw()
+        self.players_card_sprites_area.mat_list.draw()
         # Draw the mats for the computer cards
-        self.computer_card_sprites_area.pile_mat_list.draw()
+        self.computer_card_sprites_area.mat_list.draw()
         # Draw the mats for the main card area
-        self.main_card_sprites_playing_area.pile_mat_list.draw()
+        self.main_card_sprites_playing_area.mat_list.draw()
 
         # Draw the cards
         self.card_list.draw()
@@ -195,7 +176,7 @@ class GameView(arcade.View):
             pile_index = self.get_pile_for_card(primary_card)
 
             # If pile_index is not 0, then it is not the players card area
-            if pile_index != PLAYER_PILE:
+            if pile_index != PLAYER_AREA:
                 return
 
             # All other cases, grab the face-up card we are clicking on
@@ -239,7 +220,7 @@ class GameView(arcade.View):
         # See if we are in contact with the closest pile
         if arcade.check_for_collision(self.held_cards[0], pile):
             # # What pile is it?
-            # pile_index = self.pile_mat_list.index(pile)
+            # pile_index = self.mat_list.index(pile)
             #
             # #  Is it the same pile we came from?
             # if pile_index == self.get_pile_for_card(self.held_cards[0]):
@@ -249,8 +230,8 @@ class GameView(arcade.View):
             # Which play area is it?
             pile_index = self.utils.list_all_usable_mats().index(pile)
             mat_index = 0
-            if pile_index == PLAYER_PILE:
-                mat_index = self.players_card_sprites_area.pile_mat_list.index(pile)
+            if pile_index == PLAYER_AREA:
+                mat_index = self.players_card_sprites_area.mat_list.index(pile)
 
             # For each held card, move it to the pile we dropped on
             for i, dropped_card in enumerate(self.held_cards):

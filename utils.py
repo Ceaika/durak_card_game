@@ -16,16 +16,16 @@ class Utils:
     def list_all_mats(self):
         # add all the mats to a list
         all_mats = arcade.SpriteList()
-        all_mats.extend(self.player.pile_mat_list)
-        all_mats.extend(self.computer.pile_mat_list)
-        all_mats.extend(self.main.pile_mat_list)
+        all_mats.extend(self.player.mat_list)
+        all_mats.extend(self.computer.mat_list)
+        all_mats.extend(self.main.mat_list)
         return all_mats
 
     def list_all_usable_mats(self):
         # add all the mats to a list
         all_mats = arcade.SpriteList()
-        all_mats.extend(self.player.pile_mat_list)
-        all_mats.extend(self.main.pile_mat_list)
+        all_mats.extend(self.player.mat_list)
+        all_mats.extend(self.main.mat_list)
         return all_mats
 
     def list_all_active_cards(self):
