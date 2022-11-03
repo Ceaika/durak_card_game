@@ -28,3 +28,14 @@ class ComputerCardSpritesArea:
 
     def add_new_card(self, card):
         self.cards.append(card)
+
+    def remove_card_and_mat(self, card_index):
+        self.cards.remove(self.cards[card_index])
+        self.mat_list.remove(self.mat_list[card_index])
+        print("card removed")
+
+    def add_card_and_mat(self, mat_index):
+        self.cards.append(self.cards[mat_index])
+        # check if there is a card in the mat
+        if len(self.mat_list) == len(self.cards):
+            self.add_new_sprite(self.config.top_y)

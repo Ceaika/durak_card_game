@@ -163,6 +163,23 @@ class GameView(arcade.View):
         self.remove_card_from_area(card)                                    # TODO: ADD MOVE CARD TO CORRECT MAT IN AREA
         self.utils.list_all_active_cards()[area_index].append(card)
 
+    def remove_card_and_mat_from_area(self, area_index, card_index):
+        """ Remove card and mat from whatever area it was in. """
+        if area_index == PLAYER_AREA:
+            self.players_card_sprites_area.remove_card_and_mat(card_index)
+        elif area_index == COMPUTER_AREA:
+            self.computer_card_sprites_area.remove_card_and_mat(card_index)
+        elif area_index == MAIN_AREA:
+            self.main_card_sprites_playing_area.remove_card_and_mat(card_index)
+
+    def add_card_and_mat_to_area(self, area_index, mat_index, card):
+        """ Add card and mat to whatever area it was in. """
+        if area_index == PLAYER_AREA:
+            self.players_card_sprites_area.add_card_and_mat(mat_index, card)
+        elif area_index == COMPUTER_AREA:
+            self.computer_card_sprites_area.add_card_and_mat(mat_index, card)
+        elif area_index == MAIN_AREA:
+            self.main_card_sprites_playing_area.add_card_and_mat(mat_index, card)
     def on_mouse_press(self, x, y, button, key_modifiers):
         """ Called when the user presses a mouse button. """
 
@@ -180,6 +197,14 @@ class GameView(arcade.View):
             # If area_index is not 0, then it is not the players card area, so we shouldn't be able to move it
             if area_index != PLAYER_AREA:
                 return
+
+            # Get the index of the card in the list
+            if area_index == PLAYER_AREA:
+                card_index = self.players_card_sprites_area.cards.index(primary_card)
+            elif area_index == COMPUTER_AREA:
+                card_index = self.computer_card_sprites_area.cards.index(primary_card)
+            elif area_index == MAIN_AREA:
+                card_index = self.main_card_sprites_playing_area.cards.index(primary_card)
 
             # All other cases, grab the face-up card we are clicking on
             self.held_cards = [primary_card]
@@ -206,6 +231,9 @@ class GameView(arcade.View):
             self.held_cards_original_position = [self.held_cards[0].position]
             # Put on top in drawing order
             self.pull_to_top(self.held_cards[0])
+
+            # Remove the card and mat from the list
+            self.remove_card_and_mat_from_area(area_index, card_index)
 
     def on_mouse_release(self, x: float, y: float, button: int,
                          modifiers: int):
@@ -239,6 +267,11 @@ class GameView(arcade.View):
                 mat_index = self.computer_card_sprites_area.mat_list.index(mat)
             elif area_index == MAIN_AREA:
                 mat_index = self.main_card_sprites_playing_area.mat_list.index(mat)
+
+            #self.move_card_to_new_area(are)
+
+            # Add the card and mat to the list
+            self.add_card_and_mat_to_area(area_index, mat_index, self.held_cards[0])
 
             # For each held card, move it to the area we dropped on
             for i, dropped_card in enumerate(self.held_cards):
