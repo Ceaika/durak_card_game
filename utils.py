@@ -27,3 +27,7 @@ class Utils:
         all_mats.extend(self.player.pile_mat_list)
         all_mats.extend(self.main.pile_mat_list)
         return all_mats
+
+    def list_all_active_cards(self):
+        all_cards = [self.player.cards, self.computer.cards, self.main.cards]
+        return all_cards
