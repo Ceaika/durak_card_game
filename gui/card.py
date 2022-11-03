@@ -12,13 +12,13 @@ class Card(arcade.Sprite):
         self.value = value
 
         # Face down image
-        self.face_down_image = "playing_cards/cardBack_black2.png"
+        self.face_down_image = "../playing_cards/cardBack_black2.png"
 
         # Image to use for the sprite when face up
         if self.value == "jack" or self.value == "queen" or self.value == "king":
-            self.image_file_name = f"playing_cards/{self.value}_of_{self.suit}2.png"
+            self.image_file_name = f"../playing_cards/{self.value}_of_{self.suit}2.png"
         else:
-            self.image_file_name = f"playing_cards/{self.value}_of_{self.suit}.png"
+            self.image_file_name = f"../playing_cards/{self.value}_of_{self.suit}.png"
 
         self.is_face_up = False
         super().__init__(self.face_down_image, scale, hit_box_algorithm="None")

@@ -90,8 +90,6 @@ class GameView(arcade.View):
                 card.position = self.computer_card_sprites_area.mat_list[index - 6].position
                 self.pull_to_top(card)
 
-
-
     # def init_animation(self):
     #     # - Pull from that pile into the middle piles, all face-down
     #     # Loop for each pile
@@ -139,47 +137,7 @@ class GameView(arcade.View):
         self.card_list.remove(card)
         self.card_list.append(card)
 
-    def get_area_for_card(self, card):
-        """ What area is this card in? """
-        for index, area in enumerate(self.utils.list_all_active_cards()):
-            if card in area:
-                return index
 
-    def get_area_for_mat(self, mat):
-        """ What area is this mat in? """
-        for index, area in enumerate(self.utils.list_all_mat_areas()):
-            if mat in area:
-                return index
-
-    def remove_card_from_area(self, card):
-        """ Remove card from whatever area it was in. """
-        for area in self.utils.list_all_active_cards():
-            if card in area:
-                area.remove(card)
-                break
-
-    def move_card_to_new_area(self, card, area_index):
-        """ Move the card to a new area """
-        self.remove_card_from_area(card)                                    # TODO: ADD MOVE CARD TO CORRECT MAT IN AREA
-        self.utils.list_all_active_cards()[area_index].append(card)
-
-    def remove_card_and_mat_from_area(self, area_index, card_index):
-        """ Remove card and mat from whatever area it was in. """
-        if area_index == PLAYER_AREA:
-            self.players_card_sprites_area.remove_card_and_mat(card_index)
-        elif area_index == COMPUTER_AREA:
-            self.computer_card_sprites_area.remove_card_and_mat(card_index)
-        elif area_index == MAIN_AREA:
-            self.main_card_sprites_playing_area.remove_card_and_mat(card_index)
-
-    def add_card_and_mat_to_area(self, area_index, mat_index, card):
-        """ Add card and mat to whatever area it was in. """
-        if area_index == PLAYER_AREA:
-            self.players_card_sprites_area.add_card_and_mat(mat_index, card)
-        elif area_index == COMPUTER_AREA:
-            self.computer_card_sprites_area.add_card_and_mat(mat_index, card)
-        elif area_index == MAIN_AREA:
-            self.main_card_sprites_playing_area.add_card_and_mat(mat_index, card)
     def on_mouse_press(self, x, y, button, key_modifiers):
         """ Called when the user presses a mouse button. """
 
@@ -192,7 +150,7 @@ class GameView(arcade.View):
             primary_card = cards[-1]
 
             # Figure out in which play area the card is
-            area_index = self.get_area_for_card(primary_card)
+            area_index = self.utils.get_area_for_card(primary_card)
 
             # If area_index is not 0, then it is not the players card area, so we shouldn't be able to move it
             if area_index != PLAYER_AREA:
@@ -217,14 +175,6 @@ class GameView(arcade.View):
                 # Is the card face down? In one of those middle 7 piles? Then flip up
                 primary_card.face_up()
 
-            # else:
-            #     # All other cases, grab the face-up card we are clicking on
-            #     self.held_cards = [primary_card]
-            #     # Save the position
-            #     self.held_cards_original_position = [self.held_cards[0].position]
-            #     # Put on top in drawing order
-            #     self.pull_to_top(self.held_cards[0])
-
             # All other cases, grab the face-up card we are clicking on
             self.held_cards = [primary_card]
             # Save the position
@@ -233,7 +183,7 @@ class GameView(arcade.View):
             self.pull_to_top(self.held_cards[0])
 
             # Remove the card and mat from the list
-            self.remove_card_and_mat_from_area(area_index, card_index)
+            self.utils.remove_card_and_mat_from_area(area_index, card_index)
 
     def on_mouse_release(self, x: float, y: float, button: int,
                          modifiers: int):
@@ -249,17 +199,9 @@ class GameView(arcade.View):
 
         # See if we are in contact with the closest mat
         if arcade.check_for_collision(self.held_cards[0], mat):
-            # # What pile is it?
-            # pile_index = self.mat_list.index(pile)
-            #
-            # #  Is it the same pile we came from?
-            # if pile_index == self.get_pile_for_card(self.held_cards[0]):
-            #     # If so, who cares. We'll just reset our position.
-            #     pass
 
             # Which play area is it?
-            area_index = self.get_area_for_mat(mat)
-            print("area_index: ", area_index)
+            area_index = self.utils.get_area_for_mat(mat)
             mat_index = 0
             if area_index == PLAYER_AREA:
                 mat_index = self.players_card_sprites_area.mat_list.index(mat)
@@ -268,10 +210,8 @@ class GameView(arcade.View):
             elif area_index == MAIN_AREA:
                 mat_index = self.main_card_sprites_playing_area.mat_list.index(mat)
 
-            #self.move_card_to_new_area(are)
-
             # Add the card and mat to the list
-            self.add_card_and_mat_to_area(area_index, mat_index, self.held_cards[0])
+            self.utils.add_card_and_mat_to_area(area_index, mat_index, self.held_cards[0])
 
             # For each held card, move it to the area we dropped on
             for i, dropped_card in enumerate(self.held_cards):
