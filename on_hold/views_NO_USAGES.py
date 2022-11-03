@@ -1,9 +1,7 @@
 import arcade
 import arcade.gui
 
-import main_game
-import menu_window
-from screen_configuration import ScreenConfiguration
+from gui.screen_configuration import ScreenConfiguration
 
 
 class Views:

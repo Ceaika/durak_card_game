@@ -1,6 +1,6 @@
 import arcade
 
-from screen_configuration import ScreenConfiguration
+from gui.screen_configuration import ScreenConfiguration
 
 
 class MainCardSpritesPlayingArea:

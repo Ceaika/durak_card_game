@@ -1,8 +1,8 @@
 import arcade
 
-from computer_card_sprites_area import ComputerCardSpritesArea
-from main_card_sprites_playing_area import MainCardSpritesPlayingArea
-from players_card_sprites_area import PlayersCardSpritesArea
+from play_areas.computer_card_sprites_area import ComputerCardSpritesArea
+from play_areas.main_card_sprites_playing_area import MainCardSpritesPlayingArea
+from play_areas.players_card_sprites_area import PlayersCardSpritesArea
 
 
 class Utils:

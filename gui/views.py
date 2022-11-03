@@ -1,16 +1,12 @@
-import random
-
 import arcade
 import arcade.gui
 
-import time
+from gui.card import Card
+from play_areas.computer_card_sprites_area import ComputerCardSpritesArea
 
-from card import Card
-from computer_card_sprites_area import ComputerCardSpritesArea
-
-from main_card_sprites_playing_area import MainCardSpritesPlayingArea
-from not_active_cards import NotActiveCards
-from players_card_sprites_area import PlayersCardSpritesArea
+from play_areas.main_card_sprites_playing_area import MainCardSpritesPlayingArea
+from play_areas.not_active_cards import NotActiveCards
+from play_areas.players_card_sprites_area import PlayersCardSpritesArea
 from screen_configuration import ScreenConfiguration
 from Constants import  PLAYER_AREA
 from utils import Utils
