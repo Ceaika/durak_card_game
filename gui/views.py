@@ -62,7 +62,7 @@ class GameView(arcade.View):
         # init main playing area with one sprite
         self.main_card_sprites_playing_area.add_new_sprite()
 
-        # Sprite list with all the cards, no matter what pile they are in.
+        # Sprite list with all the cards, no matter what play area they are in.
         self.card_list = arcade.SpriteList()
 
         # Create every card
@@ -75,7 +75,7 @@ class GameView(arcade.View):
         # Shuffle the cards
         self.card_list.shuffle()
 
-        # Put all the cards in the bottom face-down pile
+        # Put all the cards face down in the not active area
         for card in self.card_list:
             self.not_active_cards.add_new_card(card)
 
@@ -139,23 +139,23 @@ class GameView(arcade.View):
         self.card_list.remove(card)
         self.card_list.append(card)
 
-    def get_pile_for_card(self, card):
-        """ What pile is this card in? """
-        for index, pile in enumerate(self.utils.list_all_active_cards()):
-            if card in pile:
+    def get_area_for_card(self, card):
+        """ What area is this card in? """
+        for index, area in enumerate(self.utils.list_all_active_cards()):
+            if card in area:
                 return index
 
-    def remove_card_from_pile(self, card):
-        """ Remove card from whatever pile it was in. """
-        for pile in self.utils.list_all_active_cards():
-            if card in pile:
-                pile.remove(card)
+    def remove_card_from_area(self, card):
+        """ Remove card from whatever area it was in. """
+        for area in self.utils.list_all_active_cards():
+            if card in area:
+                area.remove(card)
                 break
 
-    def move_card_to_new_pile(self, card, pile_index):
-        """ Move the card to a new pile """
-        self.remove_card_from_pile(card)
-        self.utils.list_all_active_cards()[pile_index].append(card)
+    def move_card_to_new_area(self, card, area_index):
+        """ Move the card to a new area """
+        self.remove_card_from_area(card)                                    # TODO: ADD MOVE CARD TO CORRECT MAT IN AREA
+        self.utils.list_all_active_cards()[area_index].append(card)
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         """ Called when the user presses a mouse button. """
@@ -169,10 +169,10 @@ class GameView(arcade.View):
             primary_card = cards[-1]
 
             # Figure out in which play area the card is
-            pile_index = self.get_pile_for_card(primary_card)
+            area_index = self.get_area_for_card(primary_card)
 
-            # If pile_index is not 0, then it is not the players card area
-            if pile_index != PLAYER_AREA:
+            # If area_index is not 0, then it is not the players card area
+            if area_index != PLAYER_AREA:
                 return
 
             # All other cases, grab the face-up card we are clicking on
@@ -209,12 +209,12 @@ class GameView(arcade.View):
         if len(self.held_cards) == 0:
             return
 
-        # Find the closest pile, in case we are in contact with more than one
-        pile, distance = arcade.get_closest_sprite(self.held_cards[0], self.utils.list_all_usable_mats())
+        # Find the closest mat, in case we are in contact with more than one
+        mat, distance = arcade.get_closest_sprite(self.held_cards[0], self.utils.list_all_usable_mats())
         reset_position = True
 
-        # See if we are in contact with the closest pile
-        if arcade.check_for_collision(self.held_cards[0], pile):
+        # See if we are in contact with the closest mat
+        if arcade.check_for_collision(self.held_cards[0], mat):
             # # What pile is it?
             # pile_index = self.mat_list.index(pile)
             #
@@ -224,25 +224,25 @@ class GameView(arcade.View):
             #     pass
 
             # Which play area is it?
-            pile_index = self.utils.list_all_usable_mats().index(pile)
+            area_index = self.utils.list_all_mats().index(mat)
             mat_index = 0
-            if pile_index == PLAYER_AREA:
-                mat_index = self.players_card_sprites_area.mat_list.index(pile)
+            if area_index == PLAYER_AREA:
+                mat_index = self.players_card_sprites_area.mat_list.index(area_index)
 
-            # For each held card, move it to the pile we dropped on
+            # For each held card, move it to the area we dropped on
             for i, dropped_card in enumerate(self.held_cards):
                 # Move cards to proper position
-                dropped_card.position = pile.center_x, pile.center_y
+                dropped_card.position = mat.center_x, mat.center_y
 
             # Success, don't reset position of cards
             reset_position = False
 
-            # Release on top play pile? And only one card held?
+            # Release on top play mat? And only one card held?
         if reset_position:
             # Where-ever we were dropped, it wasn't valid. Reset the card's position
             # to its original spot.
-            for pile_index, card in enumerate(self.held_cards):
-                card.position = self.held_cards_original_position[pile_index]
+            for mat_index, card in enumerate(self.held_cards):
+                card.position = self.held_cards_original_position[mat_index]
 
         # We are no longer holding cards
         self.held_cards = []

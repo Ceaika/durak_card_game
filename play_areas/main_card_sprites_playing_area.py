@@ -11,10 +11,10 @@ class MainCardSpritesPlayingArea:
         self.cards = []
 
     def add_new_sprite(self):
-        pile = arcade.SpriteSolidColor(self.config.mat_width, self.config.mat_height, self.config.sprite_color)
-        pile.position = self.start_x_position, self.config.middle_y
+        mat = arcade.SpriteSolidColor(self.config.mat_width, self.config.mat_height, self.config.sprite_color)
+        mat.position = self.start_x_position, self.config.middle_y
         self.start_x_position += self.config.x_spacing
-        self.mat_list.append(pile)
+        self.mat_list.append(mat)
 
     def add_new_card(self, card):
         self.cards.append(card)

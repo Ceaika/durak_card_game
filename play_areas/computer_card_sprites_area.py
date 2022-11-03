@@ -18,10 +18,10 @@ class ComputerCardSpritesArea:
             self.add_new_sprite(self.config.top_y)
 
     def add_new_sprite(self,y_pos):
-        pile = arcade.SpriteSolidColor(self.config.mat_width, self.config.mat_height, self.config.sprite_color)
-        pile.position = self.start_x_position, y_pos
+        mat = arcade.SpriteSolidColor(self.config.mat_width, self.config.mat_height, self.config.sprite_color)
+        mat.position = self.start_x_position, y_pos
         self.start_x_position += self.config.x_spacing
-        self.mat_list.append(pile)
+        self.mat_list.append(mat)
 
     def main_count_of_sprites(self):
         return len(self.mat_list)
