@@ -1,5 +1,6 @@
 import arcade
 
+
 class Card(arcade.Sprite):
     """ Card sprite """
 

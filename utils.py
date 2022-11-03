@@ -28,6 +28,10 @@ class Utils:
         all_mats.extend(self.main.mat_list)
         return all_mats
 
+    def list_all_mat_areas(self):
+        all_areas = [self.player.mat_list, self.computer.mat_list, self.main.mat_list]
+        return all_areas
+
     def list_all_active_cards(self):
         all_cards = [self.player.cards, self.computer.cards, self.main.cards]
         return all_cards

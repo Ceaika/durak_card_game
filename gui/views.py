@@ -7,8 +7,8 @@ from play_areas.computer_card_sprites_area import ComputerCardSpritesArea
 from play_areas.main_card_sprites_playing_area import MainCardSpritesPlayingArea
 from play_areas.not_active_cards import NotActiveCards
 from play_areas.players_card_sprites_area import PlayersCardSpritesArea
-from screen_configuration import ScreenConfiguration
-from Constants import  PLAYER_AREA
+from gui.screen_configuration import ScreenConfiguration
+from Constants import PLAYER_AREA, COMPUTER_AREA, MAIN_AREA
 from utils import Utils
 
 
@@ -145,6 +145,12 @@ class GameView(arcade.View):
             if card in area:
                 return index
 
+    def get_area_for_mat(self, mat):
+        """ What area is this mat in? """
+        for index, area in enumerate(self.utils.list_all_mat_areas()):
+            if mat in area:
+                return index
+
     def remove_card_from_area(self, card):
         """ Remove card from whatever area it was in. """
         for area in self.utils.list_all_active_cards():
@@ -171,7 +177,7 @@ class GameView(arcade.View):
             # Figure out in which play area the card is
             area_index = self.get_area_for_card(primary_card)
 
-            # If area_index is not 0, then it is not the players card area
+            # If area_index is not 0, then it is not the players card area, so we shouldn't be able to move it
             if area_index != PLAYER_AREA:
                 return
 
@@ -186,13 +192,13 @@ class GameView(arcade.View):
                 # Is the card face down? In one of those middle 7 piles? Then flip up
                 primary_card.face_up()
 
-            else:
-                # All other cases, grab the face-up card we are clicking on
-                self.held_cards = [primary_card]
-                # Save the position
-                self.held_cards_original_position = [self.held_cards[0].position]
-                # Put on top in drawing order
-                self.pull_to_top(self.held_cards[0])
+            # else:
+            #     # All other cases, grab the face-up card we are clicking on
+            #     self.held_cards = [primary_card]
+            #     # Save the position
+            #     self.held_cards_original_position = [self.held_cards[0].position]
+            #     # Put on top in drawing order
+            #     self.pull_to_top(self.held_cards[0])
 
             # All other cases, grab the face-up card we are clicking on
             self.held_cards = [primary_card]
@@ -224,10 +230,15 @@ class GameView(arcade.View):
             #     pass
 
             # Which play area is it?
-            area_index = self.utils.list_all_mats().index(mat)
+            area_index = self.get_area_for_mat(mat)
+            print("area_index: ", area_index)
             mat_index = 0
             if area_index == PLAYER_AREA:
-                mat_index = self.players_card_sprites_area.mat_list.index(area_index)
+                mat_index = self.players_card_sprites_area.mat_list.index(mat)
+            elif area_index == COMPUTER_AREA:
+                mat_index = self.computer_card_sprites_area.mat_list.index(mat)
+            elif area_index == MAIN_AREA:
+                mat_index = self.main_card_sprites_playing_area.mat_list.index(mat)
 
             # For each held card, move it to the area we dropped on
             for i, dropped_card in enumerate(self.held_cards):
