@@ -32,10 +32,22 @@ class PlayersCardSpritesArea:
     def remove_card_and_mat(self, card_index):
         self.cards.remove(self.cards[card_index])
         self.mat_list.remove(self.mat_list[card_index])
-        print("card removed")
+        self.move_card_and_mat(card_index)
 
-    def add_card_and_mat(self, mat_index):
-        self.cards.append(self.cards[mat_index])
-        # check if there is a card in the mat
+    def add_card_and_mat(self, mat_index, card):
+
+        # check if mat_index is in range of cards
+        if mat_index < len(self.cards):
+            self.cards.insert(mat_index, card)
+        else:
+            self.cards.append(card)
+
         if len(self.mat_list) == len(self.cards):
             self.add_new_sprite(self.config.bottom_y)
+
+    def move_card_and_mat(self, card_index):
+
+        for card in self.cards[card_index:]:
+            card.center_x -= self.config.x_spacing
+        for mat in self.mat_list[card_index:]:
+            mat.center_x -= self.config.x_spacing
