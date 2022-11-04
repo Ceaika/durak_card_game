@@ -1,6 +1,7 @@
 import arcade
 import arcade.gui
 
+
 from gui.card import Card
 from play_areas.computer_card_sprites_area import ComputerCardSpritesArea
 
@@ -69,7 +70,7 @@ class GameView(arcade.View):
         for card_suit in self.config.card_suites:
             for card_value in self.config.card_values:
                 card = Card(card_suit, card_value, self.config.card_scale)
-                card.position = self.config.start_x, self.config.middle_y
+                card.position = self.config.start_x_bottom, self.config.middle_y
                 self.card_list.append(card)
 
         # Shuffle the cards
@@ -89,6 +90,8 @@ class GameView(arcade.View):
                 self.computer_card_sprites_area.add_new_card(card)
                 card.position = self.computer_card_sprites_area.mat_list[index - 6].position
                 self.pull_to_top(card)
+        self.players_card_sprites_area.rempve_mats()
+
 
     # def init_animation(self):
     #     # - Pull from that pile into the middle piles, all face-down
@@ -183,7 +186,7 @@ class GameView(arcade.View):
             self.pull_to_top(self.held_cards[0])
 
             # Remove the card and mat from the list
-            self.utils.remove_card_and_mat_from_area(area_index, card_index)
+            #self.utils.remove_card_and_mat_from_area(area_index, card_index)
 
     def on_mouse_release(self, x: float, y: float, button: int,
                          modifiers: int):
@@ -210,18 +213,34 @@ class GameView(arcade.View):
             elif area_index == MAIN_AREA:
                 mat_index = self.main_card_sprites_playing_area.mat_list.index(mat)
 
-            # Add the card and mat to the list
-            self.utils.add_card_and_mat_to_area(area_index, mat_index, self.held_cards[0])
+
 
             # For each held card, move it to the area we dropped on
             for i, dropped_card in enumerate(self.held_cards):
                 # Move cards to proper position
                 dropped_card.position = mat.center_x, mat.center_y
 
+
             # Success, don't reset position of cards
             reset_position = False
 
-            # Release on top play mat? And only one card held?
+            # Add the card and mat to the list
+            self.utils.add_card_and_mat_to_area(area_index, mat_index, self.held_cards[0])
+            # Remove from previous list
+            # card_index = self.players_card_sprites_area.cards.index(self.held_cards[0])
+            # self.utils.remove_mat_from_area(area_index, card_index)
+
+            card = self.held_cards[0]
+            cards = self.players_card_sprites_area.get_cards()
+            self.held_cards = []
+
+            # if card in cards:
+            #     index = cards.index(card)
+            #     self.players_card_sprites_area.move_cards(cards[index:])
+
+
+
+        # Release on top play mat? And only one card held?
         if reset_position:
             # Where-ever we were dropped, it wasn't valid. Reset the card's position
             # to its original spot.
@@ -230,6 +249,11 @@ class GameView(arcade.View):
 
         # We are no longer holding cards
         self.held_cards = []
+
+
+
+
+
 
     def on_mouse_motion(self, x: float, y: float, dx: float, dy: float):
         """ User moves mouse """
@@ -243,7 +267,13 @@ class GameView(arcade.View):
         if symbol == arcade.key.ESCAPE:
             arcade.close_window()
         if symbol == arcade.key.ENTER:
-            pass
+            card = self.not_active_cards.remove_last_card()
+            self.players_card_sprites_area.add_new_sprite(self.config.bottom_y)
+            card.position = self.players_card_sprites_area.get_x_y()
+            self.utils.add_card_and_mat_to_area(PLAYER_AREA,0
+                                                ,card)
+            self.players_card_sprites_area.rempve_mats()
+
             # self.init_Animation()
 
 

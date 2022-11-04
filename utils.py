@@ -58,6 +58,13 @@ class Utils:
         elif area_index == MAIN_AREA:
             self.main.remove_card_and_mat(card_index)
 
+    def remove_mat_from_area(self, area_index, card_index):
+        if area_index == PLAYER_AREA:
+            self.player.remove_mat(card_index)
+        elif area_index == COMPUTER_AREA:
+            self.computer.remove_mat(card_index)
+        elif area_index == MAIN_AREA:
+            self.main.remove_mat(card_index)
     def add_card_and_mat_to_area(self, area_index, mat_index, card):
         """ Add card and mat to whatever area it was in. """
         if area_index == PLAYER_AREA:

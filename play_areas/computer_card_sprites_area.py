@@ -7,12 +7,13 @@ class ComputerCardSpritesArea:
     def __init__(self, config: ScreenConfiguration):
         self.config = config
         self.mat_list: arcade.SpriteList = arcade.SpriteList()
-        self.start_x_position = self.config.start_x + self.config.x_spacing
+        self.start_x_position = self.config.start_x_top# + self.config.x_spacing
         self.__init_with_six_sprites()
         self.cards = []
 
     def __init_with_six_sprites(self):
-        self.start_x_position = self.config.start_x
+        #self.start_x_position = self.config.start_x_top
+
         # define
         for i in range(6):
             self.add_new_sprite(self.config.top_y)
@@ -20,7 +21,8 @@ class ComputerCardSpritesArea:
     def add_new_sprite(self, y_pos):
         mat = arcade.SpriteSolidColor(self.config.mat_width, self.config.mat_height, self.config.sprite_color)
         mat.position = self.start_x_position, y_pos
-        self.start_x_position += self.config.x_spacing
+        print(self.start_x_position)
+        self.start_x_position -= self.config.x_spacing
         self.mat_list.append(mat)
 
     def main_count_of_sprites(self):

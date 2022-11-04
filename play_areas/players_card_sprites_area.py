@@ -7,12 +7,13 @@ class PlayersCardSpritesArea:
     def __init__(self, config: ScreenConfiguration):
         self.config = config
         self.mat_list: arcade.SpriteList = arcade.SpriteList()
-        self.start_x_position = self.config.start_x + self.config.x_spacing
+        self.start_x_position = self.config.start_x_bottom# + self.config.x_spacing
         self.cards = []
         self.__init_with_six_sprites()
+        self.move_const = self.config.x_spacing
 
     def __init_with_six_sprites(self):
-        self.start_x_position = self.config.start_x
+        #self.start_x_position = self.config.start_x_bottom
         # define
         for i in range(6):
             self.add_new_sprite(self.config.bottom_y)
@@ -22,6 +23,15 @@ class PlayersCardSpritesArea:
         mat.position = self.start_x_position, y_pos
         self.start_x_position += self.config.x_spacing
         self.mat_list.append(mat)
+
+    def get_x_y(self):
+        return self.start_x_position - self.config.x_spacing , self.config.bottom_y
+    def get_cards(self):
+        return self.cards
+    def move_cards(self, cards):
+        if len(cards) > 0:
+            for card in cards:
+                card.move(-self.move_const, 0)
 
     def main_count_of_sprites(self):
         return len(self.mat_list)
@@ -34,6 +44,10 @@ class PlayersCardSpritesArea:
         self.mat_list.remove(self.mat_list[card_index])
         self.move_card_and_mat(card_index)
 
+    def rempve_mats(self):
+        self.mat_list.clear(True)
+    def remove_mat(self, card_index):
+        self.mat_list.remove(self.mat_list[card_index])
     def add_card_and_mat(self, mat_index, card):
 
         # check if mat_index is in range of cards

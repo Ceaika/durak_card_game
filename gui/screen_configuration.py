@@ -26,6 +26,7 @@ class ScreenConfiguration:
         self.mat_px_oversize = 10 * self.screen_ratio
         self.mat_height = int(self.card_height + self.mat_px_oversize)
         self.mat_width = int(self.card_width + self.mat_px_oversize)
+        print("Mat_Width:", self.mat_width, "Mat_Height:", self.mat_height )
         self.__init_spacing()
 
     def __init_spacing(self):
@@ -33,14 +34,18 @@ class ScreenConfiguration:
         self.horizontal_margin_percent = 0.10
 
         self.bottom_y = self.mat_height / 2 + self.mat_height * self.vertical_margin_percent
+        # How far apart each pile goes
+        self.x_spacing = self.mat_width + self.mat_width * self.horizontal_margin_percent
         # The X of where to start putting things on the left side
-        self.start_x = self.mat_width / 2 + self.mat_width * self.horizontal_margin_percent
+        self.start_x_bottom = self.mat_width / 2 + self.mat_width * self.horizontal_margin_percent
+        #The X of bot playing area
+        self.start_x_top = self.current_x - self.x_spacing + self.mat_width/2
         # The Y of the top row
         self.top_y = self.current_y - self.mat_height / 2 - self.mat_height * self.vertical_margin_percent
         # The Y of the middle row
         self.middle_y = self.current_y / 2
-        # How far apart each pile goes
-        self.x_spacing = self.mat_width + self.mat_width * self.horizontal_margin_percent
+        self.middle_x = self.current_x / 2
+
         self.__init_values()
 
     def __init_values(self):

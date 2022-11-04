@@ -7,15 +7,27 @@ class MainCardSpritesPlayingArea:
     def __init__(self, screen_configuration: ScreenConfiguration):
         self.config = screen_configuration
         self.mat_list: arcade.SpriteList = arcade.SpriteList()
-        self.start_x_position = self.config.start_x + self.config.x_spacing
+        self.start_x_position = self.config.middle_x
         self.cards = arcade.SpriteList()
+        self.move_const = self.config.x_spacing/2
 
     def add_new_sprite(self):
+        self.move_mats()
         mat = arcade.SpriteSolidColor(self.config.mat_width, self.config.mat_height, self.config.sprite_color)
         mat.position = self.start_x_position, self.config.middle_y
         self.start_x_position += self.config.x_spacing
         self.mat_list.append(mat)
 
+    def move_mats(self):
+
+        len = self.mat_list.__len__()
+        if len > 1:
+            if len % 2:
+                self.mat_list.move(-self.move_const, 0)
+                self.start_x_position -= self.move_const
+            else:
+                self.mat_list.move(self.move_const, 0)
+                self.start_x_position += self.move_const
     def add_new_card(self, card):
         self.cards.append(card)
 
