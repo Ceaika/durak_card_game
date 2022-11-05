@@ -66,3 +66,6 @@ class Utils:
             self.computer.add_card_and_mat(mat_index, card)
         elif area_index == MAIN_AREA:
             self.main.add_card_and_mat(mat_index, card)
+
+    # reset the card positions on invalid move
+

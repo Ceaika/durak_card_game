@@ -37,6 +37,9 @@ class GameView(arcade.View):
         # Sprite list with all the mats that cards lay on.
         self.mat_list: arcade.SpriteList = arcade.SpriteList()
 
+        # Flag for checking if card was moved to new area
+        self.card_moved = False
+
         # Initialize the sprite lists
         self.main_card_sprites_playing_area = MainCardSpritesPlayingArea(self.config)
         self.players_card_sprites_area = PlayersCardSpritesArea(self.config)
@@ -53,7 +56,7 @@ class GameView(arcade.View):
         """ Set up the game here. Call this function to restart the game. """
 
         # List of cards we are dragging with the mouse
-        self.held_cards = []
+        self.held_cards = arcade.SpriteList()
 
         # Original location of cards we are dragging with the mouse in case
         # they have to go back.
@@ -142,7 +145,7 @@ class GameView(arcade.View):
         """ Called when the user presses a mouse button. """
 
         # Get list of cards we've clicked on
-        cards = arcade.get_sprites_at_point((x, y), self.card_list)
+        cards: list[Card] = arcade.get_sprites_at_point((x, y), self.card_list)
 
         # Have we clicked on a card?
         if len(cards) > 0:
@@ -171,19 +174,15 @@ class GameView(arcade.View):
             # Put on top in drawing order
             self.pull_to_top(self.held_cards[0])
 
+            self.held_cards[0].original_card_area = area_index
+            self.held_cards[0].original_card_index = card_index
+
+            # Print length of held cards
+            print(len(self.held_cards))
+
             if primary_card.is_face_down:
                 # Is the card face down? In one of those middle 7 piles? Then flip up
                 primary_card.face_up()
-
-            # All other cases, grab the face-up card we are clicking on
-            self.held_cards = [primary_card]
-            # Save the position
-            self.held_cards_original_position = [self.held_cards[0].position]
-            # Put on top in drawing order
-            self.pull_to_top(self.held_cards[0])
-
-            # Remove the card and mat from the list
-            self.utils.remove_card_and_mat_from_area(area_index, card_index)
 
     def on_mouse_release(self, x: float, y: float, button: int,
                          modifiers: int):
@@ -200,26 +199,37 @@ class GameView(arcade.View):
         # See if we are in contact with the closest mat
         if arcade.check_for_collision(self.held_cards[0], mat):
 
+            # If there won't be any problems, we don't need to reset the position
+            reset_position = False
+
             # Which play area is it?
             area_index = self.utils.get_area_for_mat(mat)
             mat_index = 0
             if area_index == PLAYER_AREA:
                 mat_index = self.players_card_sprites_area.mat_list.index(mat)
+                # Check if there is a card in the mat
+                if len(self.players_card_sprites_area.cards) > mat_index:
+                    # There is a card in the mat, so we can't put our card there
+                    reset_position = True
+
             elif area_index == COMPUTER_AREA:
                 mat_index = self.computer_card_sprites_area.mat_list.index(mat)
+                # Check if there is a card in the mat
+                if len(self.computer_card_sprites_area.cards) > mat_index:
+                    # There is a card in the mat, so we can't put our card there
+                    reset_position = True
+
             elif area_index == MAIN_AREA:
                 mat_index = self.main_card_sprites_playing_area.mat_list.index(mat)
-
-            # Add the card and mat to the list
-            self.utils.add_card_and_mat_to_area(area_index, mat_index, self.held_cards[0])
+                # Check if there is a card in the mat
+                if len(self.main_card_sprites_playing_area.cards) > mat_index:
+                    # There is a card in the mat, so we can't put our card there
+                    reset_position = True
 
             # For each held card, move it to the area we dropped on
             for i, dropped_card in enumerate(self.held_cards):
                 # Move cards to proper position
                 dropped_card.position = mat.center_x, mat.center_y
-
-            # Success, don't reset position of cards
-            reset_position = False
 
             # Release on top play mat? And only one card held?
         if reset_position:
@@ -227,6 +237,16 @@ class GameView(arcade.View):
             # to its original spot.
             for mat_index, card in enumerate(self.held_cards):
                 card.position = self.held_cards_original_position[mat_index]
+        else:
+            # We were dropped on a valid spot. If we were dropped on a main play  mat  TODO: This is just added, so I won't forget
+            # Add the card and mat to the list
+            self.utils.add_card_and_mat_to_area(area_index, mat_index, self.held_cards[0])
+            # # area, we need to check for a win.
+            # if area_index == MAIN_AREA:
+            #     self.check_for_win()
+            # Remove the card and mat from original area and index
+            hand_card: Card = self.held_cards[0]
+            self.utils.remove_card_and_mat_from_area(hand_card.original_card_area, hand_card.original_card_index)
 
         # We are no longer holding cards
         self.held_cards = []

@@ -10,6 +10,10 @@ class Card(arcade.Sprite):
         # Attributes for suit and value
         self.suit = suit
         self.value = value
+        self.original_card_area = None
+        self.original_card_index = None
+        self.current_card_area = None
+        self.current_card_index = None
 
         # Face down image
         self.face_down_image = "../playing_cards/cardBack_black2.png"
@@ -22,6 +26,7 @@ class Card(arcade.Sprite):
 
         self.is_face_up = False
         super().__init__(self.face_down_image, scale, hit_box_algorithm="None")
+
 
     def face_down(self):
         """ Turn card face-down """
