@@ -1,6 +1,7 @@
 import arcade
 import arcade.gui
 
+from game_logic.game_logic import GameLogic
 from gui.card import Card
 from play_areas.computer_card_sprites_area import ComputerCardSpritesArea
 
@@ -49,6 +50,7 @@ class GameView(arcade.View):
         # Initialize the utils so we can use helper functions
         self.utils = Utils(self.players_card_sprites_area, self.computer_card_sprites_area,
                            self.main_card_sprites_playing_area)
+        self.game_logic = GameLogic()
 
         self.setup()
 
@@ -227,6 +229,10 @@ class GameView(arcade.View):
                     if len(self.main_card_sprites_playing_area.cards[mat_index]) >= 2:
                         # There are two cards in the mat, so we can't put our card there
                         reset_position = True
+                    elif len(self.main_card_sprites_playing_area.cards[mat_index]) == 1:
+
+                        # We can put the card there
+                        reset_position = not self.game_logic.validate_defence(self.main_card_sprites_playing_area.cards[mat_index][-1], self.held_cards[0])
 
             # For each held card, move it to the area we dropped on
             for i, dropped_card in enumerate(self.held_cards):

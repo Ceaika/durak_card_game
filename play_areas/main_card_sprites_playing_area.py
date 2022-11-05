@@ -7,7 +7,8 @@ class MainCardSpritesPlayingArea:
     def __init__(self, screen_configuration: ScreenConfiguration):
         self.config = screen_configuration
         self.mat_list: arcade.SpriteList = arcade.SpriteList()
-        self.start_x_position = self.config.start_x + self.config.x_spacing
+        # self.start_x_position = self.config.start_x + self.config.x_spacing
+        self.start_x_position = self.config.current_x / 2
         self.cards = [[]]
 
     def add_new_sprite(self):
