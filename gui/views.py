@@ -221,10 +221,11 @@ class GameView(arcade.View):
 
             elif area_index == MAIN_AREA:
                 mat_index = self.main_card_sprites_playing_area.mat_list.index(mat)
-                # Check if there is a card in the mat
+                # Check if index is empty
                 if len(self.main_card_sprites_playing_area.cards) > mat_index:
-                    # There is a card in the mat, so we can't put our card there
-                    reset_position = True
+                    if len(self.main_card_sprites_playing_area.cards[-1]) >= 2:
+                        # There are two cards in the mat, so we can't put our card there
+                        reset_position = True
 
             # For each held card, move it to the area we dropped on
             for i, dropped_card in enumerate(self.held_cards):
