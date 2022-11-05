@@ -50,7 +50,7 @@ class GameView(arcade.View):
         # Initialize the utils so we can use helper functions
         self.utils = Utils(self.players_card_sprites_area, self.computer_card_sprites_area,
                            self.main_card_sprites_playing_area)
-        self.game_logic = GameLogic()
+        self.game_logic = GameLogic(self.players_card_sprites_area, self.computer_card_sprites_area, self.main_card_sprites_playing_area)
 
         self.setup()
 
