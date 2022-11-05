@@ -85,6 +85,7 @@ class GameView(arcade.View):
         for index in range(0, 12):
             card = self.not_active_cards.remove_last_card()
             if index < 6:
+                card.face_up()
                 self.players_card_sprites_area.add_new_card(card)
                 card.position = self.players_card_sprites_area.mat_list[index].position
                 self.pull_to_top(card)
@@ -223,7 +224,7 @@ class GameView(arcade.View):
                 mat_index = self.main_card_sprites_playing_area.mat_list.index(mat)
                 # Check if index is empty
                 if len(self.main_card_sprites_playing_area.cards) > mat_index:
-                    if len(self.main_card_sprites_playing_area.cards[-1]) >= 2:
+                    if len(self.main_card_sprites_playing_area.cards[mat_index]) >= 2:
                         # There are two cards in the mat, so we can't put our card there
                         reset_position = True
 
