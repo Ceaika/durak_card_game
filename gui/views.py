@@ -96,6 +96,14 @@ class GameView(arcade.View):
                 card.position = self.computer_card_sprites_area.mat_list[index - 6].position
                 self.pull_to_top(card)
 
+        # Pick the trump card
+        trump_card: Card = self.not_active_cards.cards[0]
+        self.game_logic.set_trump_card(trump_card)
+        trump_card.face_up()
+        trump_card.angle = 90
+        trump_card.center_x = self.config.card_width * 1.2
+
+
     # def init_animation(self):
     #     # - Pull from that pile into the middle piles, all face-down
     #     # Loop for each pile
@@ -179,9 +187,6 @@ class GameView(arcade.View):
 
             self.held_cards[0].original_card_area = area_index
             self.held_cards[0].original_card_index = card_index
-
-            # Print length of held cards
-            print(len(self.held_cards))
 
             if primary_card.is_face_down:
                 # Is the card face down? In one of those middle 7 piles? Then flip up

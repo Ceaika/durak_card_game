@@ -1,6 +1,9 @@
+import arcade
+
+
 class NotActiveCards:
     def __init__(self):
-        self.cards = []
+        self.cards = arcade.SpriteList()
 
     def add_new_card(self, card):
         self.cards.append(card)

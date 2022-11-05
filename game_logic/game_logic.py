@@ -8,9 +8,15 @@ class GameLogic:
         self.player = player
         self.computer = computer
         self.main = main
+        self.trump_card = None
+
+    def set_trump_card(self, card):
+        self.trump_card = card
 
     def validate_defence(self, bottom_card, top_card):
         if bottom_card.suit == top_card.suit:
             if top_card.value > bottom_card.value:
                 return True
+        elif top_card.suit == self.trump_card.suit and bottom_card.suit != self.trump_card.suit:
+            return True
         return False
