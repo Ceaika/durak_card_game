@@ -7,3 +7,12 @@
 PLAYER_AREA = 0
 COMPUTER_AREA = 1
 MAIN_AREA = 2
+
+#Amout of init Cards for every player
+INIT_CARDS = 6
+
+# How fast to move, and how fast to run the animation
+MOVEMENT_SPEED = 5
+UPDATES_PER_FRAME = 5
+
+ANIMATION_STEPS = 30

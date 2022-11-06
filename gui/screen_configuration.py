@@ -26,7 +26,6 @@ class ScreenConfiguration:
         self.mat_px_oversize = 10 * self.screen_ratio
         self.mat_height = int(self.card_height + self.mat_px_oversize)
         self.mat_width = int(self.card_width + self.mat_px_oversize)
-        print("Mat_Width:", self.mat_width, "Mat_Height:", self.mat_height )
         self.__init_spacing()
 
     def __init_spacing(self):
@@ -46,9 +45,11 @@ class ScreenConfiguration:
         self.middle_y = self.current_y / 2
         self.middle_x = self.current_x / 2
 
+        self.card_vertical_offset = self.card_height * self.card_scale
+
         self.__init_values()
 
     def __init_values(self):
-        self.sprite_color = arcade.csscolor.GOLD
+        self.sprite_color = arcade.csscolor.GREENYELLOW
         self.card_values = ["6", "7", "8", "9", "10", "jack", "queen", "king", "ace"]
         self.card_suites = ["clubs", "hearts", "spades", "diamonds"]
