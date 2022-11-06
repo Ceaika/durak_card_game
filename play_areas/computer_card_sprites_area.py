@@ -51,3 +51,13 @@ class ComputerCardSpritesArea:
             card.center_x -= self.config.x_spacing
         for mat in self.mat_list[card_index:]:
             mat.center_x -= self.config.x_spacing
+
+    def get_cards_with_same_suit(self, bottom_card):
+        # return list of cards with same suit as bottom card
+        return [card for card in self.cards if card.suit == bottom_card.suit]
+
+    def get_cards_with_same_value(self, available_card):
+        # return list of cards with same value as available_card
+        return [card for card in self.cards if card.value == available_card.value]
+
+

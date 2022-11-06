@@ -49,7 +49,7 @@ class GameView(arcade.View):
 
         # Initialize the utils so we can use helper functions
         self.utils = Utils(self.players_card_sprites_area, self.computer_card_sprites_area,
-                           self.main_card_sprites_playing_area)
+                           self.main_card_sprites_playing_area, self.not_active_cards)
         self.game_logic = GameLogic(self.players_card_sprites_area, self.computer_card_sprites_area, self.main_card_sprites_playing_area)
 
         self.setup()
@@ -157,11 +157,13 @@ class GameView(arcade.View):
 
         # Get list of cards we've clicked on
         cards: list[Card] = arcade.get_sprites_at_point((x, y), self.card_list)
+        print(len(self.not_active_cards.cards))
 
         # Have we clicked on a card?
         if len(cards) > 0:
             # Might be a stack of cards, get the top one
             self.held_card = cards[-1]
+
 
             # Figure out in which play area the card is
             area_index = self.utils.get_area_for_card(self.held_card)

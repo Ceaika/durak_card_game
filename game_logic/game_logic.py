@@ -1,3 +1,4 @@
+from game_logic.strategies.strategycontext import StrategyContext
 from play_areas.computer_card_sprites_area import ComputerCardSpritesArea
 from play_areas.main_card_sprites_playing_area import MainCardSpritesPlayingArea
 from play_areas.players_card_sprites_area import PlayersCardSpritesArea
@@ -9,6 +10,7 @@ class GameLogic:
         self.computer = computer
         self.main = main
         self.trump_card = None
+        self.strategy = StrategyContext()
 
     def set_trump_card(self, card):
         self.trump_card = card
