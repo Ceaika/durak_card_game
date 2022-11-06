@@ -37,3 +37,7 @@ class MainCardSpritesPlayingArea:
             card.center_x -= self.config.x_spacing
         for mat in self.mat_list[card_index:]:
             mat.center_x -= self.config.x_spacing
+
+    # Return all elements of cards list
+    def get_cards(self):
+        return self.cards

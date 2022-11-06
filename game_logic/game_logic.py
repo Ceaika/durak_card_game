@@ -20,3 +20,5 @@ class GameLogic:
         elif top_card.suit == self.trump_card.suit and bottom_card.suit != self.trump_card.suit:
             return True
         return False
+
+
