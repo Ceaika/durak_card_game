@@ -7,6 +7,7 @@ from play_areas.computer_card_sprites_area import ComputerCardSpritesArea
 
 from play_areas.main_card_sprites_playing_area import MainCardSpritesPlayingArea
 from play_areas.not_active_cards import NotActiveCards
+from play_areas.player_area import PlayerArea
 from play_areas.players_card_sprites_area import PlayersCardSpritesArea
 from gui.screen_configuration import ScreenConfiguration
 from Constants import PLAYER_AREA, COMPUTER_AREA, MAIN_AREA
@@ -43,14 +44,14 @@ class GameView(arcade.View):
 
         # Initialize the sprite lists
         self.main_card_sprites_playing_area = MainCardSpritesPlayingArea(self.config)
-        self.players_card_sprites_area = PlayersCardSpritesArea(self.config)
-        self.computer_card_sprites_area = ComputerCardSpritesArea(self.config)
+        self.human_player = PlayerArea(self.config, self.config.bottom_y)
+        self.computer_player = PlayerArea(self.config, self.config.top_y)
         self.not_active_cards = NotActiveCards()
 
         # Initialize the utils so we can use helper functions
-        self.utils = Utils(self.players_card_sprites_area, self.computer_card_sprites_area,
+        self.utils = Utils(self.human_player, self.computer_player,
                            self.main_card_sprites_playing_area, self.not_active_cards)
-        self.game_logic = GameLogic(self.players_card_sprites_area, self.computer_card_sprites_area, self.main_card_sprites_playing_area,
+        self.game_logic = GameLogic(self.human_player, self.computer_player, self.main_card_sprites_playing_area,
                                     self.not_active_cards)
 
         self.setup()
@@ -89,12 +90,10 @@ class GameView(arcade.View):
             card = self.not_active_cards.remove_last_card()
             if index < 6:
                 card.face_up()
-                self.players_card_sprites_area.add_new_card(card)
-                card.position = self.players_card_sprites_area.mat_list[index].position
+                self.human_player.add_new_card(card)
                 self.pull_to_top(card)
             else:
-                self.computer_card_sprites_area.add_new_card(card)
-                card.position = self.computer_card_sprites_area.mat_list[index - 6].position
+                self.computer_player.add_new_card(card)
                 self.pull_to_top(card)
 
         # Pick the trump card
@@ -104,41 +103,10 @@ class GameView(arcade.View):
         trump_card.angle = 90
         trump_card.center_x = self.config.card_width * 1.2
 
-
-    # def init_animation(self):
-    #     # - Pull from that pile into the middle piles, all face-down
-    #     # Loop for each pile
-    #     for pile_no in range(0, self.players_card_sprites_area.main_count_of_sprites()):
-    #         # Pop the card off the deck we are dealing from
-    #         card = self.piles[BOTTOM_FACE_DOWN_PILE].pop()
-    #         # Put in the proper pile
-    #         self.piles[pile_no].append(card)
-    #         x_mat, y_mat = self.mat_list[pile_no].position
-    #         round(x_mat, 0)
-    #         round(y_mat, 0)
-    #         while (True):
-    #             x, y = card.position
-    #             if (x_mat != x):
-    #                 x += 1
-    #             if (y_mat != y):
-    #                 y += 1
-    #             if (x_mat == x and y_mat == y):
-    #                 break
-    #             card.position = x, y
-    #             time.sleep(1)
-    #         # Move card to same position as pile we just put it in
-    #         card.position = self.mat_list[pile_no].position
-
     def on_draw(self):
         """ Render the screen. """
         # Clear the screen
         self.clear()
-
-        # Draw the mats the cards go on to
-        # Draw the mats for the players cards
-        self.players_card_sprites_area.mat_list.draw()
-        # Draw the mats for the computer cards
-        self.computer_card_sprites_area.mat_list.draw()
         # Draw the mats for the main card area
         self.main_card_sprites_playing_area.mat_list.draw()
 
@@ -158,31 +126,25 @@ class GameView(arcade.View):
 
         # Get list of cards we've clicked on
         cards: list[Card] = arcade.get_sprites_at_point((x, y), self.card_list)
-        print(len(self.not_active_cards.cards))
 
         # Have we clicked on a card?
         if len(cards) > 0:
             # Might be a stack of cards, get the top one
             self.held_card = cards[-1]
 
+            card_index = self.human_player.find_card(self.held_card)
 
-            # Figure out in which play area the card is
-            area_index = self.utils.get_area_for_card(self.held_card)
-
-            # If area_index is not 0, then it is not the players card area, so we shouldn't be able to move it
-            if area_index != PLAYER_AREA:
+            # Check if card is in human player area
+            if card_index is None:
+                self.held_card = None
                 return
 
             # Get the index of the card in the list
 
-            card_index = self.players_card_sprites_area.cards.index(self.held_card)
-            # All other cases, grab the face-up card we are clicking on
-            # Save the position
             self.held_card_original_position = self.held_card.position
             # Put on top in drawing order
             self.pull_to_top(self.held_card)
 
-            self.held_card.original_card_area = area_index
             self.held_card.original_card_index = card_index
 
     def on_mouse_release(self, x: float, y: float, button: int,
@@ -194,7 +156,7 @@ class GameView(arcade.View):
             return
 
         # Find the closest mat, in case we are in contact with more than one
-        mat, distance = arcade.get_closest_sprite(self.held_card, self.utils.list_all_usable_mats())
+        mat, distance = arcade.get_closest_sprite(self.held_card, self.main_card_sprites_playing_area.mat_list)
         reset_position = True
 
         # See if we are in contact with the closest mat
@@ -203,35 +165,16 @@ class GameView(arcade.View):
             # If there won't be any problems, we don't need to reset the position
             reset_position = False
 
-            # Which play area is it?
-            area_index = self.utils.get_area_for_mat(mat)
-            mat_index = 0
-            if area_index == PLAYER_AREA:
-                mat_index = self.players_card_sprites_area.mat_list.index(mat)
-                # Check if there is a card in the mat
-                if len(self.players_card_sprites_area.cards) > mat_index:
-                    # There is a card in the mat, so we can't put our card there
+            # Check if the card can be placed on the mat
+            mat_index = self.main_card_sprites_playing_area.mat_list.index(mat)
+            # Check if index is empty
+            if len(self.main_card_sprites_playing_area.cards) > mat_index:
+                if len(self.main_card_sprites_playing_area.cards[mat_index]) >= 2:
+                    # There are two cards in the mat, so we can't put our card there
                     reset_position = True
-
-            elif area_index == COMPUTER_AREA:
-                mat_index = self.computer_card_sprites_area.mat_list.index(mat)
-                # Check if there is a card in the mat
-                if len(self.computer_card_sprites_area.cards) > mat_index:
-                    # There is a card in the mat, so we can't put our card there
-                    reset_position = True
-
-            elif area_index == MAIN_AREA:
-                mat_index = self.main_card_sprites_playing_area.mat_list.index(mat)
-                # Check if index is empty
-                if len(self.main_card_sprites_playing_area.cards) > mat_index:
-                    if len(self.main_card_sprites_playing_area.cards[mat_index]) >= 2:
-                        # There are two cards in the mat, so we can't put our card there
-                        reset_position = True
-                    elif len(self.main_card_sprites_playing_area.cards[mat_index]) == 1:
-
-                        # We can put the card there
-                        reset_position = self.game_logic.validate_player_defence(self.main_card_sprites_playing_area.cards[mat_index][-1], self.held_card)
-
+                elif len(self.main_card_sprites_playing_area.cards[mat_index]) == 1:
+                    # There is one card in the mat, so we need to check if the new card can be put there
+                    reset_position = self.game_logic.validate_player_defence(self.main_card_sprites_playing_area.cards[mat_index][-1], self.held_card)
 
             # Move cards to proper position
             self.held_card.position = mat.center_x, mat.center_y
@@ -242,15 +185,11 @@ class GameView(arcade.View):
             # to its original spot.
             self.held_card.position = self.held_card_original_position
         else:
-            # We were dropped on a valid spot. If we were dropped on a main play  mat  TODO: This is just added, so I won't forget
-            # Add the card and mat to the list
-            self.utils.add_card_and_mat_to_area(area_index, mat_index, self.held_card)
-            # # area, we need to check for a win.
-            # if area_index == MAIN_AREA:
-            #     self.check_for_win()
-            # Remove the card and mat from original area and index
-            hand_card: Card = self.held_card
-            self.utils.remove_card_and_mat_from_area(hand_card.original_card_area, hand_card.original_card_index)
+            # Add the card and mat to the main cards list
+            self.main_card_sprites_playing_area.add_card_and_mat(mat_index, self.held_card)
+
+            # remove card from human player
+            self.human_player.remove_card(self.human_player.find_card(self.held_card))
 
         # We are no longer holding cards
         self.held_card = None
