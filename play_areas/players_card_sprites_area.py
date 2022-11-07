@@ -9,6 +9,7 @@ class PlayersCardSpritesArea:
         self.mat_list: arcade.SpriteList = arcade.SpriteList()
         self.start_x_position = self.config.start_x + self.config.x_spacing
         self.cards = []
+        self.is_attacking = True
         self.__init_with_six_sprites()
 
     def __init_with_six_sprites(self):

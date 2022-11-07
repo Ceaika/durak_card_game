@@ -17,4 +17,8 @@ class GameLogic:
     def validate_player_defence(self, bottom_card, top_card):
         self.strategy_context.validate_defence_move(bottom_card, top_card)
 
+    def gameplay(self):
+        self.strategy_context.make_computer_move()
+        pass
+
 

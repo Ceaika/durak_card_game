@@ -28,8 +28,8 @@ class MainCardSpritesPlayingArea:
             self.cards[-1].append(card)
             if len(self.cards[-1]) == 2:
                 self.cards[-1][-1].center_y -= self.config.card_height / 4
-                self.cards.append([])
-                self.add_new_sprite()
+                # self.cards.append([])
+                # self.add_new_sprite()
 
     def move_card_and_mat(self, card_index):
 

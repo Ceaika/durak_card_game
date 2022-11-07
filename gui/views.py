@@ -271,7 +271,17 @@ class GameView(arcade.View):
             # self.init_Animation()
 
     def on_update(self, delta_time: float):
-        print("update")
+        """ Movement and game logic """
+        # self.card_list.update()
+        # if isinstance(self.held_card, Card):
+        #     if self.held_card.collides_with_list(self.main_card_sprites_playing_area.mat_list):
+        #         print("Collides with main mat")
+
+        if len(self.main_card_sprites_playing_area.cards[-1]) == 1:
+            print("One card in main area")
+        if len(self.main_card_sprites_playing_area.cards[-1]) == 2:
+            self.main_card_sprites_playing_area.cards.append([[]])
+            self.main_card_sprites_playing_area.add_new_sprite()
 
 
 class QuitButton(arcade.gui.UIFlatButton):
