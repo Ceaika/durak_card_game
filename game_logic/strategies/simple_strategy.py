@@ -15,7 +15,7 @@ class SimpleStrategy(Strategy):
             for card in cards:
                 playable_cards.update(self.computer_card_sprites_area.get_cards_with_same_value(card))
                 # Filter out the cards with the same suit as the trump card
-                playable_cards = {card for card in playable_cards if card.suit != self.game_logic.trump_card.suit}
+                playable_cards = {card for card in playable_cards if card.suit != self.not_active_cards.trump_card.suit}
                 # Get the card with the lowest value
                 card_to_play = min(playable_cards, key=lambda card: card.value)
 
@@ -29,8 +29,8 @@ class SimpleStrategy(Strategy):
         # Get the card with the lowest value that is higher than the bottom card from cards_with_same_suit
         card_to_play = min(cards_with_same_suit, key=lambda card: card.value)
 
-        if card_to_play is not None and bottom_card.suit != self.game_logic.trump_card.suit:
-            trump_cards = self.computer_card_sprites_area.get_cards_with_same_suit(self.game_logic.trump_card)
+        if card_to_play is not None and bottom_card.suit != self.not_active_cards.trump_card.suit:
+            trump_cards = self.computer_card_sprites_area.get_cards_with_same_suit(self.not_active_cards.trump_card)
             if len(trump_cards) > 0:
                 card_to_play = min(trump_cards, key=lambda card: card.value)
 

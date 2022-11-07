@@ -43,3 +43,10 @@ class MainCardSpritesPlayingArea:
 
     def get_all_cards(self):
         return [card for card in self.cards]
+
+    def get_and_remove_all_cards(self):
+        lst = [card for card in self.cards]
+        self.cards = [[]]
+        self.mat_list = arcade.SpriteList()
+        self.add_new_sprite()
+        return lst

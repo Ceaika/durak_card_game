@@ -50,7 +50,8 @@ class GameView(arcade.View):
         # Initialize the utils so we can use helper functions
         self.utils = Utils(self.players_card_sprites_area, self.computer_card_sprites_area,
                            self.main_card_sprites_playing_area, self.not_active_cards)
-        self.game_logic = GameLogic(self.players_card_sprites_area, self.computer_card_sprites_area, self.main_card_sprites_playing_area)
+        self.game_logic = GameLogic(self.players_card_sprites_area, self.computer_card_sprites_area, self.main_card_sprites_playing_area,
+                                    self.not_active_cards)
 
         self.setup()
 
@@ -98,7 +99,7 @@ class GameView(arcade.View):
 
         # Pick the trump card
         trump_card: Card = self.not_active_cards.cards[0]
-        self.game_logic.set_trump_card(trump_card)
+        self.not_active_cards.set_trump_card(trump_card)
         trump_card.face_up()
         trump_card.angle = 90
         trump_card.center_x = self.config.card_width * 1.2
@@ -229,7 +230,7 @@ class GameView(arcade.View):
                     elif len(self.main_card_sprites_playing_area.cards[mat_index]) == 1:
 
                         # We can put the card there
-                        reset_position = not self.game_logic.validate_defence(self.main_card_sprites_playing_area.cards[mat_index][-1], self.held_card)
+                        reset_position = self.game_logic.validate_player_defence(self.main_card_sprites_playing_area.cards[mat_index][-1], self.held_card)
 
 
             # Move cards to proper position
@@ -268,6 +269,9 @@ class GameView(arcade.View):
         if symbol == arcade.key.ENTER:
             pass
             # self.init_Animation()
+
+    def on_update(self, delta_time: float):
+        print("update")
 
 
 class QuitButton(arcade.gui.UIFlatButton):
