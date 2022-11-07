@@ -3,7 +3,7 @@ from time import sleep
 
 import arcade
 import arcade.gui
-
+import webbrowser
 
 from gui.card import Card
 from play_areas.Player import Player
@@ -207,25 +207,35 @@ class GameView(arcade.View):
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.ESCAPE:
-            arcade.close_window()
+            arcade.get_window().show_view(MenuView(self.config))
         if symbol == arcade.key.ENTER:
             self.draw_a_card_from_stack(self.player,PLAYER_AREA)
             self.draw_a_card_from_stack(self.bot, PLAYER_AREA)
 
 
 class QuitButton(arcade.gui.UIFlatButton):
+    def __init__(self):
+        super(QuitButton, self).__init__(text="Quit", width=200)
     def on_click(self, event: arcade.gui.UIOnClickEvent):
         arcade.exit()
 
 
 class StartButton(arcade.gui.UIFlatButton):
-    def __init__(self, screen_config: ScreenConfiguration):
+    def __init__(self,screen_config: ScreenConfiguration, manager):
         super(StartButton, self).__init__(text="Start Game", width=200)
         self.config = screen_config
+        self.manager = manager
 
     def on_click(self, event: arcade.gui.UIOnClickEvent):
         arcade.get_window().show_view(GameView(self.config))
+        self.manager.disable()
 
+class Rules_Button(arcade.gui.UIFlatButton):
+    def __init__(self):
+        super(Rules_Button, self).__init__(text="Rules", width=200)
+        #self.config = screen_config
+    def on_click(self, event: arcade.gui.UIOnClickEvent):
+        webbrowser.open('https://de.wikipedia.org/wiki/Durak_(Kartenspiel)', new=2 ,autoraise=True)
 
 class MenuView(arcade.View):
     def __init__(self, screen_config: ScreenConfiguration):
@@ -243,12 +253,18 @@ class MenuView(arcade.View):
         self.v_box = arcade.gui.UIBoxLayout()
 
         # Create the buttons
-        start_button = StartButton(self.configuration)
+        start_button = StartButton(self.configuration,self.manager)
         self.v_box.add(start_button.with_space_around(bottom=20))
 
+        # Rules Button
+        rules_button = Rules_Button()
+        self.v_box.add(rules_button.with_space_around(bottom=20))
+
         # Again, method 1. Use a child class to handle events.
-        quit_button = QuitButton(text="Quit", width=200)
+        quit_button = QuitButton()
         self.v_box.add(quit_button)
+
+
 
         # Create a widget to hold the v_box widget, that will center the buttons
         self.manager.add(
