@@ -33,17 +33,23 @@ class ScreenConfiguration:
         self.horizontal_margin_percent = 0.10
 
         self.bottom_y = self.mat_height / 2 + self.mat_height * self.vertical_margin_percent
+        # How far apart each pile goes
+        self.x_spacing = self.mat_width + self.mat_width * self.horizontal_margin_percent
         # The X of where to start putting things on the left side
-        self.start_x = self.mat_width / 2 + self.mat_width * self.horizontal_margin_percent
+        self.start_x_bottom = self.mat_width / 2 + self.mat_width * self.horizontal_margin_percent
+        #The X of bot playing area
+        self.start_x_top = self.current_x - self.x_spacing + self.mat_width/2
         # The Y of the top row
         self.top_y = self.current_y - self.mat_height / 2 - self.mat_height * self.vertical_margin_percent
         # The Y of the middle row
         self.middle_y = self.current_y / 2
-        # How far apart each pile goes
-        self.x_spacing = self.mat_width + self.mat_width * self.horizontal_margin_percent
+        self.middle_x = self.current_x / 2
+
+        self.card_vertical_offset = self.card_height * self.card_scale
+
         self.__init_values()
 
     def __init_values(self):
-        self.sprite_color = arcade.csscolor.GOLD
+        self.sprite_color = arcade.csscolor.GREENYELLOW
         self.card_values = ["6", "7", "8", "9", "10", "jack", "queen", "king", "ace"]
         self.card_suites = ["clubs", "hearts", "spades", "diamonds"]
