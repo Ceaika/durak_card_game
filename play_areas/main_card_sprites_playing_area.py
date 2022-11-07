@@ -29,12 +29,11 @@ class MainCardSpritesPlayingArea:
 
     def add_new_card(self, card, mat_index):
         self.cards.append(card)
-        mat = self.mat_list.__getitem__(mat_index)
-        count = len(self.cards_mats.get(mat))
-        if count < 2:
-            self.cards_mats[mat].append(card)
-        self.check_count()
 
+        mat = self.mat_list.__getitem__(mat_index)
+        print("1")
+        if self.cards_mats.get(mat) is None or len(self.cards_mats.get(mat)) < 2:
+                self.cards_mats[mat].append(card)
     def check_count(self):
         at_least_one = True
         for mat in self.cards_mats.keys():
@@ -55,17 +54,6 @@ class MainCardSpritesPlayingArea:
             else:
                 self.mat_list.move(self.move_const, 0)
                 self.start_x_position += self.move_const
-
-    def add_card_and_mat(self, mat_index, card):
-
-        # check if mat_index is in range of cards
-        if mat_index < len(self.cards):
-            self.cards.insert(mat_index, card)
-        else:
-            self.cards.append(card)
-
-        if len(self.mat_list) == len(self.cards):
-            self.add_new_sprite()
 
     def get_size(self):
         return len(self.cards)

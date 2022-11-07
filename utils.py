@@ -2,14 +2,12 @@ import arcade
 
 from Constants import PLAYER_AREA, COMPUTER_AREA, MAIN_AREA
 from gui.screen_configuration import ScreenConfiguration
-from play_areas.computer_card_sprites_area import ComputerCardSpritesArea
 from play_areas.main_card_sprites_playing_area import MainCardSpritesPlayingArea
-from play_areas.players_card_sprites_area import PlayersCardSpritesArea
-
+from play_areas.Player import Player
 
 class Utils:
 
-    def __init__(self, player: PlayersCardSpritesArea, computer: ComputerCardSpritesArea,
+    def __init__(self, player: Player, computer: Player,
                  main: MainCardSpritesPlayingArea, screen_configuration: ScreenConfiguration):
         self.player = player
         self.computer = computer

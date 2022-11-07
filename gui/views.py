@@ -6,11 +6,10 @@ import arcade.gui
 
 
 from gui.card import Card
-from play_areas.computer_card_sprites_area import ComputerCardSpritesArea
+from play_areas.Player import Player
 
 from play_areas.main_card_sprites_playing_area import MainCardSpritesPlayingArea
 from play_areas.not_active_cards import NotActiveCards
-from play_areas.players_card_sprites_area import PlayersCardSpritesArea
 from gui.screen_configuration import ScreenConfiguration
 from Constants import PLAYER_AREA, COMPUTER_AREA, MAIN_AREA, INIT_CARDS
 from utils import Utils
@@ -44,12 +43,12 @@ class GameView(arcade.View):
 
         # Initialize the sprite lists
         self.main_card_sprites_playing_area = MainCardSpritesPlayingArea(self.config)
-        self.players_card_sprites_area = PlayersCardSpritesArea(self.config)
-        self.computer_card_sprites_area = ComputerCardSpritesArea(self.config)
+        self.player = Player(self.config.start_x_bottom, self.config.bottom_y, self.config.x_spacing)
+        self.bot = Player(self.config.start_x_top, self.config.top_y, -(self.config.x_spacing))
         self.not_active_cards = NotActiveCards()
 
         # Initialize the utils so we can use helper functions
-        self.utils = Utils(self.players_card_sprites_area, self.computer_card_sprites_area,
+        self.utils = Utils(self.player, self.bot,
                            self.main_card_sprites_playing_area,self.config)
 
         self.setup()
@@ -79,15 +78,11 @@ class GameView(arcade.View):
         for index in range(0, 2*INIT_CARDS):
             card = self.not_active_cards.remove_last_card()
             if index % 2 == 0:
-                self.players_card_sprites_area.add_next_x_position()
-                self.players_card_sprites_area.add_card(card)
-                card.position = self.players_card_sprites_area.get_x_y()
-                #self.pull_to_top(card)
+                card.position = self.player.get_x_y()
+                self.player.add_card(card)
             else:
-                self.computer_card_sprites_area.add_next_x_position()
-                self.computer_card_sprites_area.add_card(card)
-                card.position = self.computer_card_sprites_area.get_x_y()
-                #self.pull_to_top(card)
+                card.position = self.bot.get_x_y()
+                self.bot.add_card(card)
 
 
     def on_draw(self):
@@ -128,7 +123,7 @@ class GameView(arcade.View):
                 return
 
             # Get the index of the card in the list
-            card_index = self.players_card_sprites_area.cards.index(primary_card)
+            card_index = self.player.cards.index(primary_card)
 
             # All other cases, grab the face-up card we are clicking on
             self.held_card = primary_card
@@ -175,11 +170,12 @@ class GameView(arcade.View):
                 self.main_card_sprites_playing_area.add_new_card(dropped_card, mat_index)
 
                 # Remove dropped card from players lists
-                self.players_card_sprites_area.remove_card(dropped_card)
+                self.player.remove_card(dropped_card)
 
                 # Success, don't reset position of cards
                 reset_position = False
-
+            else:
+                self.main_card_sprites_playing_area.check_count()
         # Release on top play mat? And only one card held?
         if reset_position:
             # Where-ever we were dropped, it wasn't valid. Reset the card's position
@@ -201,30 +197,20 @@ class GameView(arcade.View):
             self.held_card.center_y += dy
 
 
-    # def update_animation(self,player,card):
-    #     target_x, target_y = player.get_x_y()
-    #     card_x, card_y = card.position
-    #     dx = abs(target_x - card_x) / ANIMATION_STEPS
-    #     dy = abs(target_y - card_y) / ANIMATION_STEPS
-    #     card.change_x = dx
-    #     card.change_y = dy
-    #     # for i in range(ANIMATION_STEPS):
-    #     #     card.update()
-    #     card.stop()
     def draw_a_card_from_stack(self,player,area_index):
-        player.add_next_x_position()
+        #player.add_next_x_position()
         card = self.not_active_cards.remove_last_card()
-        player.add_card(card)
-        #self.update_animation(player,card)
         card.position = player.get_x_y()
+        player.add_card(card)
+
 
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.ESCAPE:
             arcade.close_window()
         if symbol == arcade.key.ENTER:
-            self.draw_a_card_from_stack(self.players_card_sprites_area,PLAYER_AREA)
-            self.draw_a_card_from_stack(self.computer_card_sprites_area, PLAYER_AREA)
+            self.draw_a_card_from_stack(self.player,PLAYER_AREA)
+            self.draw_a_card_from_stack(self.bot, PLAYER_AREA)
 
 
 class QuitButton(arcade.gui.UIFlatButton):
