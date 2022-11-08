@@ -8,10 +8,10 @@ from play_areas.player_area import PlayerArea
 
 class Strategy(ABC):
 
-    def __init__(self, computer_card_sprites_area: PlayerArea, main_card_sprites_playing_area: MainCardSpritesPlayingArea,
+    def __init__(self, computer_area: PlayerArea, main_card_sprites_playing_area: MainCardSpritesPlayingArea,
                  not_active_cards: NotActiveCards):
         super().__init__()
-        self.computer_card_sprites_area = computer_card_sprites_area
+        self.computer_area = computer_area
         self.main_card_sprites_playing_area = main_card_sprites_playing_area
         self.not_active_cards = not_active_cards
 
@@ -38,14 +38,9 @@ class Strategy(ABC):
             # Get all the cards from the main area
             cards = self.main_card_sprites_playing_area.get_all_cards()
             print(cards)
-            # empty set of playable cards
-            playable_cards = set()
-            # Get the cards with the same value
-            for card in cards:
-                playable_cards.update(self.computer_card_sprites_area.get_cards_with_same_value(card))
-                # Filter out the cards with the same suit as the trump card
-                playable_cards = {card for card in playable_cards if card.suit != self.not_active_cards.trump_card.suit}
-            if top_card in playable_cards:
+            # create a set with all the values from the cards
+            values = {card.value for card in cards}
+            if top_card.value in values:
                 return True
         return False
 
