@@ -30,6 +30,10 @@ class GameLogic:
                 card = self.not_active_cards.remove_last_card()
                 card.face_up()
                 self.player.add_new_card(card)
+            if len(self.computer.cards) < 6:
+                card = self.not_active_cards.remove_last_card()
+                card.face_down()
+                self.computer.add_new_card(card)
 
         # We must also remove all cards from the main area
         lst = self.main.get_and_remove_all_cards()
