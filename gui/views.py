@@ -48,6 +48,7 @@ class GameView(arcade.View):
                                           -self.config.x_spacing)
         self.not_active_cards = NotActiveCards(self.config)
 
+        # Initialize the utils so we can use helper functions
         self.game_logic = GameLogic(self.human_player, self.computer_player, self.main_card_sprites_playing_area,
                                     self.not_active_cards)
         # --- Required for all code that uses UI element,
