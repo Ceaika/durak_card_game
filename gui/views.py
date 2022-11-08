@@ -277,6 +277,9 @@ class QuitButton(arcade.gui.UIFlatButton):
     def on_click(self, event: arcade.gui.UIOnClickEvent):
         arcade.exit()
 
+class RulesButton(arcade.gui.UIFlatButton):
+    def __init__(self):
+        super(RulesButton, self).__init__(text="Rules", width=200)
 
 class RulesButton(arcade.gui.UIFlatButton):
     def __init__(self, config: ScreenConfiguration,rgb,multiplikator):
