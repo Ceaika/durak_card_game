@@ -5,9 +5,9 @@ from gui.screen_configuration import ScreenConfiguration
 
 class PlayerArea:
 
-    def __init__(self, config: ScreenConfiguration, beginning_y):
-        self.config = config
-        self.beginning_x = self.config.start_x
+    def __init__(self, beginning_x, beginning_y, x_spacing):
+        self.x_spacing = x_spacing
+        self.beginning_x = beginning_x
         self.beginning_y = beginning_y
         self.cards = arcade.SpriteList()
         self.is_attacking = True
@@ -15,18 +15,18 @@ class PlayerArea:
 
     def add_new_card(self, card):
         card.position = self.beginning_x, self.beginning_y
-        self.beginning_x += self.config.x_spacing
+        self.beginning_x += self.x_spacing
         self.cards.append(card)
 
     def remove_card(self, card_index):
         if card_index < len(self.cards):
-            self.beginning_x -= self.config.x_spacing
+            self.beginning_x -= self.x_spacing
             self.cards.remove(self.cards[card_index])
             self.move_card(card_index)
 
     def move_card(self, card_index):
         for card in self.cards[card_index:]:
-            card.center_x -= self.config.x_spacing
+            card.center_x -= self.x_spacing
 
     def find_card(self, card):
         if card in self.cards:
