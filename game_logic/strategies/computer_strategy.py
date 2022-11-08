@@ -35,10 +35,9 @@ class Strategy(ABC):
         if len(self.main_card_sprites_playing_area.cards[0]) == 0 and isinstance(top_card, Card):
             return True
         else:
-            # Get all the cards from the main area
+            # Get all the unused_cards from the main area
             cards = self.main_card_sprites_playing_area.get_all_cards()
-            print(cards)
-            # create a set with all the values from the cards
+            # create a set with all the values from the unused_cards
             values = {card.value for card in cards}
             if top_card.value in values:
                 return True

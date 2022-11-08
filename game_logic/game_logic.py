@@ -10,6 +10,7 @@ class GameLogic:
         self.player = player
         self.computer = computer
         self.main = main
+        self.not_active_cards = not_active_cards
         self.strategy = SimpleStrategy(computer, main, not_active_cards)
         self.strategy_context = StrategyContext(self.strategy, self.main, self.computer)
 
@@ -22,5 +23,18 @@ class GameLogic:
     def validate_player_attack(self, held_card):
         return self.strategy_context.validate_attack_move(held_card)
 
+    def finish_turn(self):
+        # First we take unused unused_cards from the not active unused_cards and add them to the computer and player area
+        for i in range(6):
+            if len(self.player.cards) < 6:
+                card = self.not_active_cards.remove_last_card()
+                card.face_up()
+                self.player.add_new_card(card)
 
+        # We must also remove all cards from the main area
+        lst = self.main.get_and_remove_all_cards()
+        # Now add them to the used cards
+        for card in lst:
+            print(card)
+            self.not_active_cards.add_played_card(card)
 

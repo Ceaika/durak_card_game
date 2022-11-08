@@ -17,22 +17,22 @@ class GameView(arcade.View):
         self.config = screen_config
         super().__init__()
 
-        # This scales the cards and the rest of the play area according to screen size
+        # This scales the unused_cards and the rest of the play area according to screen size
         self.config.init_current_screen()
 
-        # Sprite list with all the cards, no matter what area they are in.
+        # Sprite list with all the unused_cards, no matter what area they are in.
         self.card_list = None
 
         arcade.set_background_color(arcade.color.AMAZON)
 
-        # List of cards we are dragging with the mouse
+        # List of unused_cards we are dragging with the mouse
         self.held_card = None
 
-        # Original location of cards we are dragging with the mouse in case
+        # Original location of unused_cards we are dragging with the mouse in case
         # they have to go back.
         self.held_card_original_position = None
 
-        # Sprite list with all the mats that cards lay on.
+        # Sprite list with all the mats that unused_cards lay on.
         self.mat_list: arcade.SpriteList = arcade.SpriteList()
 
         # Flag for checking if card was moved to new area
@@ -42,28 +42,45 @@ class GameView(arcade.View):
         self.main_card_sprites_playing_area = MainCardSpritesPlayingArea(self.config)
         self.human_player = PlayerArea(self.config, self.config.bottom_y)
         self.computer_player = PlayerArea(self.config, self.config.top_y)
-        self.not_active_cards = NotActiveCards()
+        self.not_active_cards = NotActiveCards(self.config)
 
-        # Initialize the utils so we can use helper functions
         self.game_logic = GameLogic(self.human_player, self.computer_player, self.main_card_sprites_playing_area,
                                     self.not_active_cards)
+        # --- Required for all code that uses UI element,
+        # a UIManager to handle the UI.
+        self.manager = arcade.gui.UIManager()
+        self.manager.enable()
+
+        # Create a vertical BoxGroup to align buttons
+        self.v_box = arcade.gui.UIBoxLayout()
+
+        # Create the buttons
+        self.finish_move_button = arcade.gui.UIFlatButton(text="Finish move", width=200)
+        self.v_box.add(self.finish_move_button.with_space_around(bottom=20))
+
+        self.manager.add(
+            arcade.gui.UIAnchorWidget(
+                anchor_x="right",
+                anchor_y="bottom",
+                child=self.v_box)
+        )
 
         self.setup()
 
     def setup(self):
         """ Set up the game here. Call this function to restart the game. """
 
-        # List of cards we are dragging with the mouse
+        # List of unused_cards we are dragging with the mouse
         self.held_card = arcade.Sprite
 
-        # Original location of cards we are dragging with the mouse in case
+        # Original location of unused_cards we are dragging with the mouse in case
         # they have to go back.
         self.held_card_original_position = ()
 
         # init main playing area with one sprite
         self.main_card_sprites_playing_area.add_new_sprite()
 
-        # Sprite list with all the cards, no matter what play area they are in.
+        # Sprite list with all the unused_cards, no matter what play area they are in.
         self.card_list = arcade.SpriteList()
 
         # Create every card
@@ -73,10 +90,10 @@ class GameView(arcade.View):
                 card.position = self.config.start_x, self.config.middle_y
                 self.card_list.append(card)
 
-        # Shuffle the cards
+        # Shuffle the unused_cards
         self.card_list.shuffle()
 
-        # Put all the cards face down in the not active area
+        # Put all the unused_cards face down in the not active area
         for card in self.card_list:
             self.not_active_cards.add_new_card(card)
 
@@ -91,11 +108,15 @@ class GameView(arcade.View):
                 self.pull_to_top(card)
 
         # Pick the trump card
-        trump_card: Card = self.not_active_cards.cards[0]
+        trump_card: Card = self.not_active_cards.unused_cards[0]
         self.not_active_cards.set_trump_card(trump_card)
         trump_card.face_up()
         trump_card.angle = 90
         trump_card.center_x = self.config.card_width * 1.2
+        self.finish_move_button.on_click = self.finish_move
+
+    def finish_move(self, event):
+        self.game_logic.finish_turn()
 
     def on_draw(self):
         """ Render the screen. """
@@ -104,8 +125,9 @@ class GameView(arcade.View):
         # Draw the mats for the main card area
         self.main_card_sprites_playing_area.mat_list.draw()
 
-        # Draw the cards
+        # Draw the unused_cards
         self.card_list.draw()
+        self.manager.draw()
 
     def pull_to_top(self, card: arcade.Sprite):
         """ Pull card to top of rendering order (last to render, looks on-top) """
@@ -118,12 +140,12 @@ class GameView(arcade.View):
     def on_mouse_press(self, x, y, button, key_modifiers):
         """ Called when the user presses a mouse button. """
 
-        # Get list of cards we've clicked on
+        # Get list of unused_cards we've clicked on
         cards: list[Card] = arcade.get_sprites_at_point((x, y), self.card_list)
 
         # Have we clicked on a card?
         if len(cards) > 0:
-            # Might be a stack of cards, get the top one
+            # Might be a stack of unused_cards, get the top one
             self.held_card = cards[-1]
 
             card_index = self.human_player.find_card(self.held_card)
@@ -145,7 +167,7 @@ class GameView(arcade.View):
                          modifiers: int):
         """ Called when the user presses a mouse button. """
 
-        # If we don't have any cards, who cares
+        # If we don't have any unused_cards, who cares
         if not isinstance(self.held_card, Card):
             return
 
@@ -164,16 +186,16 @@ class GameView(arcade.View):
             # Check if index is empty
             if len(self.main_card_sprites_playing_area.cards) > mat_index:
                 if len(self.main_card_sprites_playing_area.cards[mat_index]) >= 2:
-                    # There are two cards in the mat, so we can't put our card there
+                    # There are two unused_cards in the mat, so we can't put our card there
                     reset_position = True
                 elif len(self.main_card_sprites_playing_area.cards[mat_index]) == 1:
                     # There is one card in the mat, so we need to check if the new card can be put there
                     reset_position = not self.game_logic.validate_player_defence(self.main_card_sprites_playing_area.cards[mat_index][-1], self.held_card)
                 elif len(self.main_card_sprites_playing_area.cards[mat_index]) == 0:
-                    # There are no cards in the mat, so we need to check if the new card can be put there
+                    # There are no unused_cards in the mat, so we need to check if the new card can be put there
                     reset_position = not self.game_logic.validate_player_attack(self.held_card)
 
-            # Move cards to proper position
+            # Move unused_cards to proper position
             self.held_card.position = mat.center_x, mat.center_y
 
             # Release on top play mat? And only one card held?
@@ -182,19 +204,19 @@ class GameView(arcade.View):
             # to its original spot.
             self.held_card.position = self.held_card_original_position
         else:
-            # Add the card and mat to the main cards list
+            # Add the card and mat to the main unused_cards list
             self.main_card_sprites_playing_area.add_card_and_mat(mat_index, self.held_card)
 
             # remove card from human player
             self.human_player.remove_card(self.human_player.find_card(self.held_card))
 
-        # We are no longer holding cards
+        # We are no longer holding unused_cards
         self.held_card = None
 
     def on_mouse_motion(self, x: float, y: float, dx: float, dy: float):
         """ User moves mouse """
 
-        # If we are holding cards, move them with the mouse
+        # If we are holding unused_cards, move them with the mouse
         if isinstance(self.held_card, Card):
             self.held_card.center_x += dx
             self.held_card.center_y += dy

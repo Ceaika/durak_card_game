@@ -7,14 +7,14 @@ class SimpleStrategy(Strategy):
         if self.main_card_sprites_playing_area.cards[0].is_empty():
             card_to_play = min(self.computer_area.cards, key=lambda card: card.value)
         else:
-            # Get all the cards from the main area
+            # Get all the unused_cards from the main area
             cards = self.main_card_sprites_playing_area.get_all_cards()
-            # empty set of playable cards
+            # empty set of playable unused_cards
             playable_cards = set()
-            # Get the cards with the same value
+            # Get the unused_cards with the same value
             for card in cards:
                 playable_cards.update(self.computer_area.get_cards_with_same_value(card))
-                # Filter out the cards with the same suit as the trump card
+                # Filter out the unused_cards with the same suit as the trump card
                 playable_cards = {card for card in playable_cards if card.suit != self.not_active_cards.trump_card.suit}
                 # Get the card with the lowest value
                 card_to_play = min(playable_cards, key=lambda card: card.value)
@@ -22,9 +22,9 @@ class SimpleStrategy(Strategy):
         return card_to_play
 
     def compute_best_defense_move(self):
-        # Filter out the cards that are not playable
+        # Filter out the unused_cards that are not playable
         bottom_card = self.main_card_sprites_playing_area.get_bottom_card()
-        # Filter the cards with the same suit
+        # Filter the unused_cards with the same suit
         cards_with_same_suit = self.computer_area.get_cards_with_same_suit(bottom_card)
         # Get the card with the lowest value that is higher than the bottom card from cards_with_same_suit
         card_to_play = min(cards_with_same_suit, key=lambda card: card.value)
