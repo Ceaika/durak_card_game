@@ -23,16 +23,16 @@ class StrategyContext:
             # Get the mat that corresponds to the card
             mat = self.computer_card_sprites_area.get_mat_for_card(card_to_play)
             # Get the index of the card and the mat
-            card_index = self.computer_card_sprites_area.cards.index(card_to_play)
+            card_index = self.computer_card_sprites_area.unused_cards.index(card_to_play)
             mat_index = self.computer_card_sprites_area.mat_list.index(mat)
             # Remove the card and mat from the computer area
             self.computer_card_sprites_area.remove_card_and_mat(card_index)
             # Add the card and mat to the main area
             self.main_card_sprites_playing_area.add_card_and_mat(mat_index, card_to_play)
         else:
-            # Take the cards from the main area
+            # Take the unused_cards from the main area
             cards = self.take_cards_from_main_area()
-            # Add the cards to the computer area
+            # Add the unused_cards to the computer area
             for card in cards:
                 self.computer_card_sprites_area.add_card_and_mat(-1, card)
 
