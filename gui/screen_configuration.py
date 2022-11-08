@@ -35,6 +35,9 @@ class ScreenConfiguration:
         self.bottom_y = self.mat_height / 2 + self.mat_height * self.vertical_margin_percent
         # The X of where to start putting things on the left side
         self.start_x = self.mat_width / 2 + self.mat_width * self.horizontal_margin_percent
+        self.start_x_bottom = self.start_x
+        #The X for the bots cards
+        self.start_x_top = self.current_x - self.start_x_bottom
         # The Y of the top row
         self.top_y = self.current_y - self.mat_height / 2 - self.mat_height * self.vertical_margin_percent
         # The Y of the middle row

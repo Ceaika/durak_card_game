@@ -1,3 +1,5 @@
+import webbrowser
+
 import arcade
 import arcade.gui
 
@@ -40,8 +42,10 @@ class GameView(arcade.View):
 
         # Initialize the sprite lists
         self.main_card_sprites_playing_area = MainCardSpritesPlayingArea(self.config)
-        self.human_player = PlayerArea(self.config, self.config.bottom_y)
-        self.computer_player = PlayerArea(self.config, self.config.top_y)
+        self.human_player = PlayerArea(self.config.start_x_bottom, self.config.bottom_y,
+                                       self.config.x_spacing)
+        self.computer_player = PlayerArea(self.config.start_x_top, self.config.top_y,
+                                          -self.config.x_spacing)
         self.not_active_cards = NotActiveCards()
 
         # Initialize the utils so we can use helper functions
@@ -221,10 +225,17 @@ class GameView(arcade.View):
 
 
 class QuitButton(arcade.gui.UIFlatButton):
+    def __init__(self):
+        super(QuitButton, self).__init__(text="Quit Game", width=200)
     def on_click(self, event: arcade.gui.UIOnClickEvent):
         arcade.exit()
 
+class RulesButton(arcade.gui.UIFlatButton):
+    def __init__(self):
+        super(RulesButton, self).__init__(text="Rules", width=200)
 
+    def on_click(self, event: arcade.gui.UIOnClickEvent):
+        webbrowser.open('https://de.wikipedia.org/wiki/Durak_(Kartenspiel)', 2, True)
 class StartButton(arcade.gui.UIFlatButton):
     def __init__(self, screen_config: ScreenConfiguration):
         super(StartButton, self).__init__(text="Start Game", width=200)
@@ -242,7 +253,8 @@ class MenuView(arcade.View):
         # a UIManager to handle the UI.
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
-
+        self.rgb = [125, 1, 1]
+        self.multilikator = 1
         # Set background color
         arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
 
@@ -253,8 +265,11 @@ class MenuView(arcade.View):
         start_button = StartButton(self.configuration)
         self.v_box.add(start_button.with_space_around(bottom=20))
 
+        rules_button = RulesButton()
+        self.v_box.add(rules_button.with_space_around(bottom=20))
+
         # Again, method 1. Use a child class to handle events.
-        quit_button = QuitButton(text="Quit", width=200)
+        quit_button = QuitButton()
         self.v_box.add(quit_button)
 
         # Create a widget to hold the v_box widget, that will center the buttons
@@ -265,6 +280,17 @@ class MenuView(arcade.View):
                 child=self.v_box)
         )
 
+    def on_update(self, delta_time:0.25):
+        #self.rgb[0] += self.multilikator*1
+        self.rgb[1] += self.multilikator*2
+        self.rgb[2] += self.multilikator*4
+        for f in self.rgb[1:]:
+            if f > 255:
+                self.multilikator = -1
+            elif f < 0:
+                self.multilikator = 1
+
+        arcade.set_background_color(self.rgb)
     def on_draw(self):
         self.clear()
         self.manager.draw()
