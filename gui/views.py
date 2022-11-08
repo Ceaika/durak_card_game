@@ -3,15 +3,11 @@ import arcade.gui
 
 from game_logic.game_logic import GameLogic
 from gui.card import Card
-from play_areas.computer_card_sprites_area import ComputerCardSpritesArea
 
 from play_areas.main_card_sprites_playing_area import MainCardSpritesPlayingArea
 from play_areas.not_active_cards import NotActiveCards
 from play_areas.player_area import PlayerArea
-from play_areas.players_card_sprites_area import PlayersCardSpritesArea
 from gui.screen_configuration import ScreenConfiguration
-from Constants import PLAYER_AREA, COMPUTER_AREA, MAIN_AREA
-from utils import Utils
 
 
 class GameView(arcade.View):
@@ -49,8 +45,6 @@ class GameView(arcade.View):
         self.not_active_cards = NotActiveCards()
 
         # Initialize the utils so we can use helper functions
-        self.utils = Utils(self.human_player, self.computer_player,
-                           self.main_card_sprites_playing_area, self.not_active_cards)
         self.game_logic = GameLogic(self.human_player, self.computer_player, self.main_card_sprites_playing_area,
                                     self.not_active_cards)
 

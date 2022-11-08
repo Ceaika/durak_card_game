@@ -37,6 +37,7 @@ class Strategy(ABC):
         else:
             # Get all the cards from the main area
             cards = self.main_card_sprites_playing_area.get_all_cards()
+            print(cards)
             # empty set of playable cards
             playable_cards = set()
             # Get the cards with the same value

@@ -46,6 +46,7 @@ class MainCardSpritesPlayingArea:
         for card_pair in self.cards:
             for card in card_pair:
                 lst.append(card)
+        return lst
 
     def get_and_remove_all_cards(self):
         lst = [card for card in self.cards]
