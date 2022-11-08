@@ -32,7 +32,7 @@ class Strategy(ABC):
         return False
 
     def validate_attack_move(self, top_card):
-        if self.main_card_sprites_playing_area.cards[0].is_empty() and isinstance(top_card, Card):
+        if len(self.main_card_sprites_playing_area.cards[0]) == 0 and isinstance(top_card, Card):
             return True
         else:
             # Get all the cards from the main area

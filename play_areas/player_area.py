@@ -7,14 +7,14 @@ class PlayerArea:
 
     def __init__(self, config: ScreenConfiguration, beginning_y):
         self.config = config
-        self.beginning_x = self.config.start_x + self.config.x_spacing
+        self.beginning_x = self.config.start_x
         self.beginning_y = beginning_y
-        self.cards = []
+        self.cards = arcade.SpriteList()
         self.is_attacking = True
 
     def add_new_card(self, card):
-        self.beginning_x += self.config.x_spacing
         card.position = self.beginning_x, self.beginning_y
+        self.beginning_x += self.config.x_spacing
         self.cards.append(card)
 
     def remove_card(self, card_index):
@@ -38,5 +38,9 @@ class PlayerArea:
         return [card for card in self.cards if card.suit == bottom_card.suit]
 
     def get_cards_with_same_value(self, available_card):
-        # return list of cards with same value as available_card
-        return [card for card in self.cards if card.value == available_card.value]
+        # Create empty set
+        cards_with_same_value = set()
+        # Add all cards with same value to set
+        for card in self.cards:
+            if card.value == available_card.value:
+                cards_with_same_value.add(card)

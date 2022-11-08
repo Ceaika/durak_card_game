@@ -174,7 +174,10 @@ class GameView(arcade.View):
                     reset_position = True
                 elif len(self.main_card_sprites_playing_area.cards[mat_index]) == 1:
                     # There is one card in the mat, so we need to check if the new card can be put there
-                    reset_position = self.game_logic.validate_player_defence(self.main_card_sprites_playing_area.cards[mat_index][-1], self.held_card)
+                    reset_position = not self.game_logic.validate_player_defence(self.main_card_sprites_playing_area.cards[mat_index][-1], self.held_card)
+                elif len(self.main_card_sprites_playing_area.cards[mat_index]) == 0:
+                    # There are no cards in the mat, so we need to check if the new card can be put there
+                    reset_position = not self.game_logic.validate_player_attack(self.held_card)
 
             # Move cards to proper position
             self.held_card.position = mat.center_x, mat.center_y
@@ -217,9 +220,9 @@ class GameView(arcade.View):
         #         print("Collides with main mat")
 
         if len(self.main_card_sprites_playing_area.cards[-1]) == 1:
-            print("One card in main area")
+            pass
         if len(self.main_card_sprites_playing_area.cards[-1]) == 2:
-            self.main_card_sprites_playing_area.cards.append([[]])
+            self.main_card_sprites_playing_area.cards.append([])
             self.main_card_sprites_playing_area.add_new_sprite()
 
 
