@@ -218,10 +218,11 @@ class GameView(arcade.View):
             self.held_card.position = self.held_card_original_position
         else:
             # Add the card and mat to the main unused_cards list
-            self.main_card_sprites_playing_area.add_card_and_mat(mat_index, self.held_card)
+            self.main_card_sprites_playing_area.add_new_card(self.held_card)
 
             # remove card from human player
             self.human_player.remove_card(self.human_player.find_card(self.held_card))
+            self.human_player.is_turn = False
 
         # We are no longer holding unused_cards
         self.held_card = None
@@ -250,11 +251,15 @@ class GameView(arcade.View):
         if len(self.main_card_sprites_playing_area.cards[-1]) == 0:
             if not self.human_player.is_turn:
                 if not self.game_logic.make_computer_attack_move():
+                    self.game_logic.finish_turn()
                     self.human_player.is_turn = True
 
         if len(self.main_card_sprites_playing_area.cards[-1]) == 1:
             if not self.human_player.is_turn:
-                self.game_logic.make_computer_defence_move()
+                if not self.game_logic.make_computer_defence_move():
+                    self.game_logic.finish_turn()
+                    self.human_player.is_turn = True
+
 
         if len(self.main_card_sprites_playing_area.cards[-1]) == 2:
             self.main_card_sprites_playing_area.cards.append([])
