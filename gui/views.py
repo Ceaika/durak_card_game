@@ -205,7 +205,7 @@ class GameView(arcade.View):
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.ESCAPE:
-            arcade.close_window()
+            arcade.get_window().show_view(MenuView(ScreenConfiguration))
         if symbol == arcade.key.ENTER:
             pass
             # self.init_Animation()
@@ -237,12 +237,14 @@ class RulesButton(arcade.gui.UIFlatButton):
     def on_click(self, event: arcade.gui.UIOnClickEvent):
         webbrowser.open('https://de.wikipedia.org/wiki/Durak_(Kartenspiel)', 2, True)
 class StartButton(arcade.gui.UIFlatButton):
-    def __init__(self, screen_config: ScreenConfiguration):
+    def __init__(self, screen_config: ScreenConfiguration, manager):
         super(StartButton, self).__init__(text="Start Game", width=200)
+        self.manager = manager
         self.config = screen_config
 
     def on_click(self, event: arcade.gui.UIOnClickEvent):
         arcade.get_window().show_view(GameView(self.config))
+        self.manager.disable()
 
 
 class MenuView(arcade.View):
@@ -262,7 +264,7 @@ class MenuView(arcade.View):
         self.v_box = arcade.gui.UIBoxLayout()
 
         # Create the buttons
-        start_button = StartButton(self.configuration)
+        start_button = StartButton(self.configuration,self.manager)
         self.v_box.add(start_button.with_space_around(bottom=20))
 
         rules_button = RulesButton()
