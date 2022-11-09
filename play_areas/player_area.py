@@ -11,6 +11,7 @@ class PlayerArea:
         self.beginning_y = beginning_y
         self.cards = arcade.SpriteList()
         self.is_attacking = True
+        self.is_turn = True
 
     def add_new_card(self, card):
         card.position = self.beginning_x, self.beginning_y

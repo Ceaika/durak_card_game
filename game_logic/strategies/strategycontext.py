@@ -17,9 +17,10 @@ class StrategyContext:
     def strategy(self, strategy: Strategy) -> None:
         self.__strategy = strategy
 
-    def make_computer_move(self):
-        card_to_play = self.pick_card()
+    def make_computer_move(self, is_attack):
+        card_to_play = self.pick_card(is_attack)
         if card_to_play is not None:
+            card_to_play.face_up()
             # Get the mat that corresponds to the card
             mat = self.computer_card_sprites_area.get_mat_for_card(card_to_play)
             # Get the index of the card and the mat
@@ -29,17 +30,21 @@ class StrategyContext:
             self.computer_card_sprites_area.remove_card_and_mat(card_index)
             # Add the card and mat to the main area
             self.main_card_sprites_playing_area.add_card_and_mat(mat_index, card_to_play)
+            return True
         else:
             # Take the unused_cards from the main area
             cards = self.take_cards_from_main_area()
             # Add the unused_cards to the computer area
             for card in cards:
                 self.computer_card_sprites_area.add_card_and_mat(-1, card)
+            return False
 
 
 
-    def pick_card(self):
-        if self.computer_card_sprites_area.is_attack:
+
+
+    def pick_card(self, is_attack):
+        if is_attack:
             return self.strategy.compute_best_attack_move()
         else:
             return self.strategy.compute_best_defense_move()
