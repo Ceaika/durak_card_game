@@ -21,22 +21,19 @@ class StrategyContext:
         card_to_play = self.pick_card(is_attack)
         if card_to_play is not None:
             card_to_play.face_up()
-            # Get the mat that corresponds to the card
-            mat = self.computer_card_sprites_area.get_mat_for_card(card_to_play)
-            # Get the index of the card and the mat
-            card_index = self.computer_card_sprites_area.unused_cards.index(card_to_play)
-            mat_index = self.computer_card_sprites_area.mat_list.index(mat)
+            card_index = self.computer_card_sprites_area.cards.index(card_to_play)
             # Remove the card and mat from the computer area
-            self.computer_card_sprites_area.remove_card_and_mat(card_index)
+            self.computer_card_sprites_area.remove_card(card_index)
             # Add the card and mat to the main area
-            self.main_card_sprites_playing_area.add_card_and_mat(mat_index, card_to_play)
+            self.main_card_sprites_playing_area.add_new_card(card_to_play)
             return True
-        else:
+        elif card_to_play is None and not is_attack:
             # Take the unused_cards from the main area
             cards = self.take_cards_from_main_area()
             # Add the unused_cards to the computer area
             for card in cards:
-                self.computer_card_sprites_area.add_card_and_mat(-1, card)
+                card.face_down()
+                self.computer_card_sprites_area.add_new_card(card)
             return False
 
 

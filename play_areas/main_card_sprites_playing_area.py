@@ -22,14 +22,17 @@ class MainCardSpritesPlayingArea:
         self.mat_list.remove(self.mat_list[card_index])
         self.move_card_and_mat(card_index)
 
-    def add_card_and_mat(self, mat_index, card):
+    def add_new_card(self, card):
 
         if len(self.cards[-1]) < 2:
+            card.center_x = self.mat_list[-1].center_x
+            card.center_y = self.mat_list[-1].center_y
             self.cards[-1].append(card)
             if len(self.cards[-1]) == 2:
                 self.cards[-1][-1].center_y -= self.config.card_height / 4
-                # self.unused_cards.append([])
-                # self.add_new_sprite()
+                self.cards[-1].remove(card)
+                self.cards[-1].append(card)
+
 
     def move_card_and_mat(self, card_index):
 

@@ -21,9 +21,11 @@ class GameLogic:
         return self.strategy_context.validate_attack_move(held_card)
 
     def make_computer_defence_move(self):
+        self.player.is_turn = True
         return self.strategy_context.make_computer_move(False)
 
     def make_computer_attack_move(self):
+        self.player.is_turn = True
         return self.strategy_context.make_computer_move(True)
 
     def finish_turn(self):

@@ -45,3 +45,5 @@ class PlayerArea:
         for card in self.cards:
             if card.value == available_card.value:
                 cards_with_same_value.add(card)
+
+        return cards_with_same_value
