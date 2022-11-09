@@ -22,10 +22,10 @@ class StrategyContext:
         if card_to_play is not None:
             card_to_play.face_up()
             card_index = self.computer_card_sprites_area.cards.index(card_to_play)
-            # Remove the card and mat from the computer area
-            self.computer_card_sprites_area.remove_card(card_index)
             # Add the card and mat to the main area
             self.main_card_sprites_playing_area.add_new_card(card_to_play)
+            # Remove the card and mat from the computer area
+            self.computer_card_sprites_area.remove_card(card_index)
             return True
         elif card_to_play is None and not is_attack:
             # Take the unused_cards from the main area

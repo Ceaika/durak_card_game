@@ -29,7 +29,7 @@ class MainCardSpritesPlayingArea:
             card.center_y = self.mat_list[-1].center_y
             self.cards[-1].append(card)
             if len(self.cards[-1]) == 2:
-                self.cards[-1][-1].center_y -= self.config.card_height / 4
+                card.center_y -= self.config.card_height / 4
                 self.cards[-1].remove(card)
                 self.cards[-1].append(card)
 
