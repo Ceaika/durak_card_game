@@ -58,6 +58,9 @@ class GameView(arcade.View):
         self.finish_move_button = arcade.gui.UIFlatButton(text="Finish move", width=200)
         self.v_box.add(self.finish_move_button.with_space_around(bottom=20))
 
+        self.take_cards_button = arcade.gui.UIFlatButton(text="Take cards", width=200)
+        self.v_box.add(self.take_cards_button.with_space_around(bottom=20))
+
         self.manager.add(
             arcade.gui.UIAnchorWidget(
                 anchor_x="right",
@@ -114,9 +117,15 @@ class GameView(arcade.View):
         trump_card.angle = 90
         trump_card.center_x = self.config.card_width * 1.2
         self.finish_move_button.on_click = self.finish_move
+        self.take_cards_button.on_click = self.take_cards
 
     def finish_move(self, event):
         self.game_logic.finish_turn()
+        self.human_player.is_turn = False
+
+    def take_cards(self, event):
+        self.game_logic.take_all_cards()
+        self.human_player.is_turn = False
 
     def on_draw(self):
         """ Render the screen. """
@@ -234,9 +243,15 @@ class GameView(arcade.View):
         # if isinstance(self.held_card, Card):
         #     if self.held_card.collides_with_list(self.main_card_sprites_playing_area.mat_list):
         #         print("Collides with main mat")
+        if len(self.main_card_sprites_playing_area.cards[-1]) == 0:
+            if not self.human_player.is_turn:
+                if not self.game_logic.make_computer_attack_move():
+                    self.human_player.is_turn = True
 
         if len(self.main_card_sprites_playing_area.cards[-1]) == 1:
-            pass
+            if not self.human_player.is_turn:
+                self.game_logic.make_computer_defence_move()
+
         if len(self.main_card_sprites_playing_area.cards[-1]) == 2:
             self.main_card_sprites_playing_area.cards.append([])
             self.main_card_sprites_playing_area.add_new_sprite()
