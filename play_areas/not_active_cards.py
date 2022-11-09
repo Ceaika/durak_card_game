@@ -22,7 +22,12 @@ class NotActiveCards:
 
     # remove and return last card from the list
     def remove_last_card(self):
-        return self.unused_cards.pop()
+        if len(self.unused_cards) > 1:
+            return self.unused_cards.pop()
+        elif len(self.unused_cards) == 1:
+            card = self.unused_cards.pop()
+            card.angle = 0
+            return card
 
     def set_trump_card(self, card):
         self.trump_card = card

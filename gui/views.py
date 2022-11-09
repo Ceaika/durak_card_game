@@ -46,7 +46,7 @@ class GameView(arcade.View):
                                        self.config.x_spacing)
         self.computer_player = PlayerArea(self.config.start_x_top, self.config.top_y,
                                           -self.config.x_spacing)
-        self.not_active_cards = NotActiveCards()
+        self.not_active_cards = NotActiveCards(self.config)
 
         self.game_logic = GameLogic(self.human_player, self.computer_player, self.main_card_sprites_playing_area,
                                     self.not_active_cards)
