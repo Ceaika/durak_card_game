@@ -118,7 +118,6 @@ class GameView(arcade.View):
         self.card_list.remove(card)
         self.card_list.append(card)
 
-
     def on_mouse_press(self, x, y, button, key_modifiers):
         """ Called when the user presses a mouse button. """
 
@@ -172,7 +171,8 @@ class GameView(arcade.View):
                     reset_position = True
                 elif len(self.main_card_sprites_playing_area.cards[mat_index]) == 1:
                     # There is one card in the mat, so we need to check if the new card can be put there
-                    reset_position = not self.game_logic.validate_player_defence(self.main_card_sprites_playing_area.cards[mat_index][-1], self.held_card)
+                    reset_position = not self.game_logic.validate_player_defence(
+                        self.main_card_sprites_playing_area.cards[mat_index][-1], self.held_card)
                 elif len(self.main_card_sprites_playing_area.cards[mat_index]) == 0:
                     # There are no cards in the mat, so we need to check if the new card can be put there
                     reset_position = not self.game_logic.validate_player_attack(self.held_card)
@@ -227,15 +227,22 @@ class GameView(arcade.View):
 class QuitButton(arcade.gui.UIFlatButton):
     def __init__(self):
         super(QuitButton, self).__init__(text="Quit Game", width=200)
+
     def on_click(self, event: arcade.gui.UIOnClickEvent):
         arcade.exit()
 
+
 class RulesButton(arcade.gui.UIFlatButton):
-    def __init__(self):
+    def __init__(self, config: ScreenConfiguration,rgb,multiplikator):
         super(RulesButton, self).__init__(text="Rules", width=200)
+        self.config = config
+        self.rgb = rgb
+        self.multiplikator = multiplikator
 
     def on_click(self, event: arcade.gui.UIOnClickEvent):
-        webbrowser.open('https://de.wikipedia.org/wiki/Durak_(Kartenspiel)', 2, True)
+        #webbrowser.open('https://de.wikipedia.org/wiki/Durak_(Kartenspiel)', 2, True)
+        arcade.get_window().show_view(RulesView(self.config, self.rgb, self.multiplikator))
+
 class StartButton(arcade.gui.UIFlatButton):
     def __init__(self, screen_config: ScreenConfiguration, manager):
         super(StartButton, self).__init__(text="Start Game", width=200)
@@ -251,12 +258,14 @@ class MenuView(arcade.View):
     def __init__(self, screen_config: ScreenConfiguration):
         super().__init__()
         self.configuration = screen_config
+        #self.configuration.init_current_screen()
         # --- Required for all code that uses UI element,
         # a UIManager to handle the UI.
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
         self.rgb = [125, 1, 1]
         self.multilikator = 1
+
         # Set background color
         arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
 
@@ -264,10 +273,10 @@ class MenuView(arcade.View):
         self.v_box = arcade.gui.UIBoxLayout()
 
         # Create the buttons
-        start_button = StartButton(self.configuration,self.manager)
+        start_button = StartButton(self.configuration, self.manager)
         self.v_box.add(start_button.with_space_around(bottom=20))
 
-        rules_button = RulesButton()
+        rules_button = RulesButton(screen_config,self.rgb,self.multilikator)
         self.v_box.add(rules_button.with_space_around(bottom=20))
 
         # Again, method 1. Use a child class to handle events.
@@ -282,10 +291,10 @@ class MenuView(arcade.View):
                 child=self.v_box)
         )
 
-    def on_update(self, delta_time:0.25):
-        #self.rgb[0] += self.multilikator*1
-        self.rgb[1] += self.multilikator*2
-        self.rgb[2] += self.multilikator*4
+    def on_update(self, delta_time: 0.25):
+        # self.rgb[0] += self.multilikator*1
+        self.rgb[1] += self.multilikator * 2
+        self.rgb[2] += self.multilikator * 4
         for f in self.rgb[1:]:
             if f > 255:
                 self.multilikator = -1
@@ -293,9 +302,73 @@ class MenuView(arcade.View):
                 self.multilikator = 1
 
         arcade.set_background_color(self.rgb)
+
     def on_draw(self):
         self.clear()
         self.manager.draw()
+
+
+class Rules(arcade.gui.UITextArea):
+    def __int__(self):
+        super(Rules, self).__int__()
+        self.fit_content()
+
+
+class RulesView(arcade.View):
+    def __init__(self, config: ScreenConfiguration, rgb, multilikator):
+        super().__init__()
+        self.config = config
+        self.rgb = rgb
+        self.multilikator = multilikator
+
+        # open File and read Rules
+        self.manager = arcade.gui.UIManager()
+        self.v_box = arcade.gui.UIBoxLayout()
+
+        f = open('../Rules.txt', 'r')
+        self.rules = f.read()
+        f.close()
+
+        self.config.init_current_screen()
+
+        arcade.set_background_color(arcade.color.AMAZON)
+
+        rules = Rules(self.config.current_x / 2, self.config.middle_y,
+                      self.config.current_x * 0.8, self.config.current_y * 0.8, self.rules,'arial', 14,
+                      arcade.color.BLACK,True, 5.5)
+
+        self.v_box.add(rules)
+
+        # Create a widget to hold the v_box widget, that will center the buttons
+        self.manager.add(
+            arcade.gui.UIAnchorWidget(
+                anchor_x="center_x",
+                anchor_y="center_y",
+                child=self.v_box)
+        )
+
+
+    def on_update(self, delta_time: 0.25):
+        # self.rgb[0] += self.multilikator*1
+        self.rgb[1] += self.multilikator * 2
+        self.rgb[2] += self.multilikator * 4
+        for f in self.rgb[1:]:
+            if f > 255:
+                self.multilikator = -1
+            elif f < 0:
+                self.multilikator = 1
+
+        arcade.set_background_color(self.rgb)
+
+
+    def on_draw(self):
+        self.clear()
+        self.manager.draw()
+
+    def on_key_press(self, symbol: int, modifiers: int):
+        if symbol == arcade.key.ESCAPE:
+            arcade.get_window().show_view(MenuView(ScreenConfiguration))
+
 
 
 def main():
