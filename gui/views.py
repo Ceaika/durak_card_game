@@ -124,12 +124,16 @@ class GameView(arcade.View):
         self.take_cards_button.on_click = self.take_cards
 
     def finish_move(self, event):
-        self.game_logic.finish_turn()
-        self.human_player.is_turn = False
+        if self.human_player.is_turn:
+            self.game_logic.finish_turn()
+            self.human_player.is_turn = False
+
 
     def take_cards(self, event):
-        self.game_logic.take_all_cards()
-        self.human_player.is_turn = False
+        if self.human_player.is_turn:
+            self.game_logic.take_all_cards()
+            self.human_player.is_turn = False
+            self.game_logic.finish_turn()
 
     def on_draw(self):
         """ Render the screen. """
