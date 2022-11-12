@@ -33,7 +33,6 @@ class MainCardSpritesPlayingArea:
                 self.cards[-1].remove(card)
                 self.cards[-1].append(card)
 
-
     def move_card_and_mat(self, card_index):
 
         for card in self.cards[card_index:]:
