@@ -247,7 +247,7 @@ class GameView(arcade.View):
             pass
             # self.init_Animation()
 
-    def on_update(self, delta_time: float):
+    def on_update(self, delta_time:1):
         """ Movement and game logic """
         # self.card_list.update()
         # if isinstance(self.held_card, Card):
@@ -378,7 +378,7 @@ class RulesView(arcade.View):
         self.v_box = arcade.gui.UIBoxLayout()
 
         # open File and read Rules
-        f = open('../Rules.txt', 'r')
+        f = open('../Rules.txt', 'r',encoding= 'UTF-8')
         self.rules = f.read()
         f.close()
 
@@ -386,7 +386,7 @@ class RulesView(arcade.View):
 
         #Text Field to be put in V_Box
         rules = Rules(self.config.width / 2, self.config.height/2,
-                      self.config.width * 0.7, self.config.height * 0.7, self.rules,'arial', 14,
+                      self.config.width * 0.7, self.config.height * 0.7, self.rules,'arial', 25,
                       arcade.color.BLACK,True, 5.5)
 
         self.v_box.add(rules)
