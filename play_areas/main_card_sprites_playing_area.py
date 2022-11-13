@@ -23,7 +23,6 @@ class MainCardSpritesPlayingArea:
         self.move_card_and_mat(card_index)
 
     def add_new_card(self, card):
-
         if len(self.cards[-1]) == 0:
             card.center_x = self.mat_list[-1].center_x
             card.center_y = self.mat_list[-1].center_y
@@ -32,12 +31,7 @@ class MainCardSpritesPlayingArea:
         elif len(self.cards[-1]) == 1:
             card.center_x = self.mat_list[-1].center_x
             card.center_y = self.mat_list[-1].center_y - self.config.card_height / 4
-            #card.center_y -= self.config.card_height / 4
-            #self.cards[-1].remove(card)
-            bottom = self.get_bottom_card()
-            self.cards[-1].clear()
             self.cards[-1].append(card)
-            self.cards[-1].append(bottom)
 
     def move_card_and_mat(self, card_index):
 
@@ -50,7 +44,7 @@ class MainCardSpritesPlayingArea:
         return self.cards[-1][0]
 
     def get_all_cards(self):
-        lst = []
+        lst = arcade.SpriteList()
         for card_pair in self.cards:
             for card in card_pair:
                 lst.append(card)
@@ -61,7 +55,7 @@ class MainCardSpritesPlayingArea:
         for card_pair in self.cards:
             for card in card_pair:
                 lst.append(card)
-        self.cards = [[]]
+        self.cards = [arcade.SpriteList()]
         self.start_x_position = self.config.current_x / 2
         self.mat_list = arcade.SpriteList()
         self.add_new_sprite()

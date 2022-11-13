@@ -22,9 +22,6 @@ class GameView(arcade.View):
         # This scales the unused_cards and the rest of the play area according to screen size
         self.config.init_current_screen()
 
-        # Sprite list with all the unused_cards, no matter what area they are in.
-        self.card_list = None
-
         arcade.set_background_color(arcade.color.AMAZON)
 
         # List of unused_cards we are dragging with the mouse
@@ -88,32 +85,24 @@ class GameView(arcade.View):
         # init main playing area with one sprite
         self.main_card_sprites_playing_area.add_new_sprite()
 
-        # Sprite list with all the unused_cards, no matter what play area they are in.
-        self.card_list = arcade.SpriteList()
-
         # Create every card
         for card_suit in self.config.card_suites:
             for card_value in self.config.card_values:
                 card = Card(card_suit, card_value, self.config.card_scale)
                 card.position = self.config.start_x, self.config.middle_y
-                self.card_list.append(card)
+                self.not_active_cards.add_new_card(card)
 
         # Shuffle the unused_cards
-        self.card_list.shuffle()
+        self.not_active_cards.unused_cards.shuffle()
 
-        # Put all the unused_cards face down in the not active area
-        for card in self.card_list:
-            self.not_active_cards.add_new_card(card)
 
         for index in range(0, 12):
             card = self.not_active_cards.remove_last_card()
             if index < 6:
                 card.face_up()
                 self.human_player.add_new_card(card)
-                self.pull_to_top(card)
             else:
                 self.computer_player.add_new_card(card)
-                self.pull_to_top(card)
 
         # Pick the trump card
         trump_card: Card = self.not_active_cards.unused_cards[0]
@@ -128,8 +117,6 @@ class GameView(arcade.View):
         if self.human_player.is_turn:
             self.game_logic.finish_turn()
             self.human_player.is_turn = False
-
-
     def take_cards(self, event):
         if self.human_player.is_turn:
             self.game_logic.take_all_cards()
@@ -140,25 +127,40 @@ class GameView(arcade.View):
         """ Render the screen. """
         # Clear the screen
         self.clear()
+        #Draw v_box with buttons
+        self.manager.draw()
+
         # Draw the mats for the main card area
         self.main_card_sprites_playing_area.mat_list.draw()
 
-        # Draw the unused_cards
-        self.card_list.draw()
-        self.manager.draw()
+        #if any cards placed in the playground draw them
+        if len(self.main_card_sprites_playing_area.cards) != 0:
+            self.main_card_sprites_playing_area.get_all_cards().draw()
 
-    def pull_to_top(self, card: arcade.Sprite):
-        """ Pull card to top of rendering order (last to render, looks on-top) """
 
-        # Remove, and append to the end
-        self.card_list.remove(card)
-        self.card_list.append(card)
+        #draw not active cards
+        self.not_active_cards.unused_cards.draw()
+        self.not_active_cards.played_cards.draw()
+        # draw player cards
+        self.human_player.cards.draw()
+        #draw computer cards
+        self.computer_player.cards.draw()
+
+
+
+
+    # def pull_to_top(self, card: arcade.Sprite):
+    #     """ Pull card to top of rendering order (last to render, looks on-top) """
+    #
+    #     # Remove, and append to the end
+    #     # self.card_list.remove(card)
+    #     # self.card_list.append(card)
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         """ Called when the user presses a mouse button. """
 
         # Get list of unused_cards we've clicked on
-        cards: list[Card] = arcade.get_sprites_at_point((x, y), self.card_list)
+        cards: list[Card] = arcade.get_sprites_at_point((x, y), self.human_player.cards)
 
         # Have we clicked on a card?
         if len(cards) > 0:
@@ -176,7 +178,7 @@ class GameView(arcade.View):
 
             self.held_card_original_position = self.held_card.position
             # Put on top in drawing order
-            self.pull_to_top(self.held_card)
+            #self.pull_to_top(self.held_card)
 
             self.held_card.original_card_index = card_index
 
