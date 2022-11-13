@@ -95,7 +95,6 @@ class GameView(arcade.View):
         # Shuffle the unused_cards
         self.not_active_cards.unused_cards.shuffle()
 
-
         for index in range(0, 12):
             card = self.not_active_cards.remove_last_card()
             if index < 6:
@@ -117,6 +116,7 @@ class GameView(arcade.View):
         if self.human_player.is_turn:
             self.game_logic.finish_turn()
             self.human_player.is_turn = False
+
     def take_cards(self, event):
         if self.human_player.is_turn:
             self.game_logic.take_all_cards()
@@ -127,27 +127,23 @@ class GameView(arcade.View):
         """ Render the screen. """
         # Clear the screen
         self.clear()
-        #Draw v_box with buttons
+        # Draw v_box with buttons
         self.manager.draw()
 
         # Draw the mats for the main card area
         self.main_card_sprites_playing_area.mat_list.draw()
 
-        #if any cards placed in the playground draw them
+        # if any cards placed in the playground draw them
         if len(self.main_card_sprites_playing_area.cards) != 0:
             self.main_card_sprites_playing_area.get_all_cards().draw()
 
-
-        #draw not active cards
+        # draw not active cards
         self.not_active_cards.unused_cards.draw()
         self.not_active_cards.played_cards.draw()
         # draw player cards
         self.human_player.cards.draw()
-        #draw computer cards
+        # draw computer cards
         self.computer_player.cards.draw()
-
-
-
 
     # def pull_to_top(self, card: arcade.Sprite):
     #     """ Pull card to top of rendering order (last to render, looks on-top) """
@@ -178,7 +174,7 @@ class GameView(arcade.View):
 
             self.held_card_original_position = self.held_card.position
             # Put on top in drawing order
-            #self.pull_to_top(self.held_card)
+            # self.pull_to_top(self.held_card)
 
             self.held_card.original_card_index = card_index
 
@@ -244,12 +240,12 @@ class GameView(arcade.View):
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.ESCAPE:
-            arcade.get_window().show_view(MenuView(ScreenConfiguration))
+            arcade.get_window().show_view(MenuView(ScreenConfiguration()))
         if symbol == arcade.key.ENTER:
             pass
             # self.init_Animation()
 
-    def on_update(self, delta_time:1):
+    def on_update(self, delta_time: 1):
         """ Movement and game logic """
         # self.card_list.update()
         # if isinstance(self.held_card, Card):
@@ -267,11 +263,9 @@ class GameView(arcade.View):
                     self.game_logic.finish_turn()
                     self.human_player.is_turn = True
 
-
         if len(self.main_card_sprites_playing_area.cards[-1]) == 2:
             self.main_card_sprites_playing_area.cards.append([])
             self.main_card_sprites_playing_area.add_new_sprite()
-
 
 
 class StartButton(arcade.gui.UIFlatButton):
@@ -284,14 +278,16 @@ class StartButton(arcade.gui.UIFlatButton):
         arcade.get_window().show_view(GameView(self.config))
         self.manager.disable()
 
+
 class RulesButton(arcade.gui.UIFlatButton):
     def __init__(self, config: ScreenConfiguration):
         super(RulesButton, self).__init__(text="Rules", width=200)
         self.config = config
 
     def on_click(self, event: arcade.gui.UIOnClickEvent):
-        #webbrowser.open('https://de.wikipedia.org/wiki/Durak_(Kartenspiel)', 2, True)
+        # webbrowser.open('https://de.wikipedia.org/wiki/Durak_(Kartenspiel)', 2, True)
         arcade.get_window().show_view(RulesView(self.config))
+
 
 class QuitButton(arcade.gui.UIFlatButton):
     def __init__(self):
@@ -299,7 +295,6 @@ class QuitButton(arcade.gui.UIFlatButton):
 
     def on_click(self, event: arcade.gui.UIOnClickEvent):
         arcade.exit()
-
 
 
 class MenuView(arcade.View):
@@ -315,7 +310,6 @@ class MenuView(arcade.View):
 
         self.rgb = [125, 1, 1]
         self.multilikator = 1
-
 
         # Set background color
         arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
@@ -376,20 +370,20 @@ class RulesView(arcade.View):
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
 
-        #Create Vertical Box to place the items in
+        # Create Vertical Box to place the items in
         self.v_box = arcade.gui.UIBoxLayout()
 
         # open File and read Rules
-        f = open('../Rules.txt', 'r',encoding= 'UTF-8')
+        f = open('../Rules.txt', 'r', encoding='UTF-8')
         self.rules = f.read()
         f.close()
 
         arcade.set_background_color(arcade.color.WHITE_SMOKE)
 
-        #Text Field to be put in V_Box
-        rules = Rules(self.config.width / 2, self.config.height/2,
-                      self.config.width * 0.7, self.config.height * 0.7, self.rules,'arial', 25,
-                      arcade.color.BLACK,True, 5.5)
+        # Text Field to be put in V_Box
+        rules = Rules(self.config.width / 2, self.config.height / 2,
+                      self.config.width * 0.7, self.config.height * 0.7, self.rules, 'arial', 25,
+                      arcade.color.BLACK, True, 5.5)
 
         self.v_box.add(rules)
 
@@ -408,7 +402,6 @@ class RulesView(arcade.View):
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.ESCAPE:
             arcade.get_window().show_view(MenuView(self.config))
-
 
 
 def main():
