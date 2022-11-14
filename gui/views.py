@@ -68,6 +68,8 @@ class GameView(arcade.View):
                 align_y=self.config.bottom_y - self.config.card_height * 2,
                 child=self.v_box)
         )
+        self.hint_text = "Your turn!\nAttack!"
+        self.computer_text = ""
 
         self.setup()
 
@@ -143,6 +145,9 @@ class GameView(arcade.View):
         self.human_player.cards.draw()
         # draw computer cards
         self.computer_player.cards.draw()
+        # draw the label
+        arcade.draw_text(self.hint_text, self.config.start_x, self.config.bottom_y + self.config.card_height, arcade.color.BLACK, 24)
+        arcade.draw_text(self.computer_text, self.config.start_x, self.config.top_y - (self.config.card_height * 1.5), arcade.color.BLACK, 24)
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         """ Called when the user presses a mouse button. """
@@ -245,15 +250,23 @@ class GameView(arcade.View):
         #         print("Collides with main mat")
         if len(self.main_card_sprites_playing_area.cards[-1]) == 0:
             if not self.human_player.is_turn:
+                self.computer_text = "Computer attacked"
                 if not self.game_logic.make_computer_attack_move():
                     self.game_logic.finish_turn()
                     self.human_player.is_turn = True
+                    self.computer_text = "Computer finished his turn"
+            else:
+                self.hint_text = "Your turn!\nAttack or finish move"
 
         elif len(self.main_card_sprites_playing_area.cards[-1]) == 1:
             if not self.human_player.is_turn:
+                self.computer_text = "Computer defended"
                 if not self.game_logic.make_computer_defence_move():
                     self.game_logic.finish_turn()
                     self.human_player.is_turn = True
+                    self.computer_text = "Computer took all cards"
+            else:
+                self.hint_text = "Your turn!\nDefend or take cards"
 
         elif len(self.main_card_sprites_playing_area.cards[-1]) == 2:
             self.main_card_sprites_playing_area.cards.append([])
