@@ -65,8 +65,7 @@ class GameView(arcade.View):
 
         self.manager.add(
             arcade.gui.UIAnchorWidget(
-                anchor_x="right",
-                anchor_y="bottom",
+                align_y=self.config.bottom_y - self.config.card_height * 2,
                 child=self.v_box)
         )
 
@@ -113,12 +112,12 @@ class GameView(arcade.View):
         self.take_cards_button.on_click = self.take_cards
 
     def finish_move(self, event):
-        if self.human_player.is_turn:
+        if self.human_player.is_turn and len(self.main_card_sprites_playing_area.cards[-1]) == 0:
             self.game_logic.finish_turn()
             self.human_player.is_turn = False
 
     def take_cards(self, event):
-        if self.human_player.is_turn:
+        if self.human_player.is_turn and len(self.main_card_sprites_playing_area.cards[-1]) == 1:
             self.game_logic.take_all_cards()
             self.human_player.is_turn = False
             self.game_logic.finish_turn()
@@ -144,13 +143,6 @@ class GameView(arcade.View):
         self.human_player.cards.draw()
         # draw computer cards
         self.computer_player.cards.draw()
-
-    # def pull_to_top(self, card: arcade.Sprite):
-    #     """ Pull card to top of rendering order (last to render, looks on-top) """
-    #
-    #     # Remove, and append to the end
-    #     # self.card_list.remove(card)
-    #     # self.card_list.append(card)
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         """ Called when the user presses a mouse button. """
@@ -257,15 +249,20 @@ class GameView(arcade.View):
                     self.game_logic.finish_turn()
                     self.human_player.is_turn = True
 
-        if len(self.main_card_sprites_playing_area.cards[-1]) == 1:
+        elif len(self.main_card_sprites_playing_area.cards[-1]) == 1:
             if not self.human_player.is_turn:
                 if not self.game_logic.make_computer_defence_move():
                     self.game_logic.finish_turn()
                     self.human_player.is_turn = True
 
-        if len(self.main_card_sprites_playing_area.cards[-1]) == 2:
+        elif len(self.main_card_sprites_playing_area.cards[-1]) == 2:
             self.main_card_sprites_playing_area.cards.append([])
             self.main_card_sprites_playing_area.add_new_sprite()
+
+        if len(self.not_active_cards.unused_cards) == 0 and len(self.human_player.cards) == 0:
+            arcade.get_window().show_view(WinView(self.config))
+        elif len(self.not_active_cards.unused_cards) == 0 and len(self.computer_player.cards) == 0:
+            arcade.get_window().show_view(LoseView(self.config))
 
 
 class StartButton(arcade.gui.UIFlatButton):
@@ -295,6 +292,17 @@ class QuitButton(arcade.gui.UIFlatButton):
 
     def on_click(self, event: arcade.gui.UIOnClickEvent):
         arcade.exit()
+
+
+class ToMenuButton(arcade.gui.UIFlatButton):
+    def __init__(self, config: ScreenConfiguration, manager):
+        super(ToMenuButton, self).__init__(text="Back to Menu", width=200)
+        self.config = config
+        self.manager = manager
+
+    def on_click(self, event: arcade.gui.UIOnClickEvent):
+        arcade.get_window().show_view(MenuView(self.config))
+        self.manager.disable()
 
 
 class MenuView(arcade.View):
@@ -355,7 +363,7 @@ class MenuView(arcade.View):
 
 class Rules(arcade.gui.UITextArea):
     def __int__(self):
-        super(Rules, self).__int__()
+        super(Rules, self)
         self.fit_content()
 
 
@@ -374,7 +382,7 @@ class RulesView(arcade.View):
         self.v_box = arcade.gui.UIBoxLayout()
 
         # open File and read Rules
-        f = open('../Rules.txt', 'r', encoding='UTF-8')
+        f = open('../resources/Rules.txt', 'r', encoding='UTF-8')
         self.rules = f.read()
         f.close()
 
@@ -402,6 +410,86 @@ class RulesView(arcade.View):
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.ESCAPE:
             arcade.get_window().show_view(MenuView(self.config))
+
+
+class LoseView(arcade.View):
+    def __init__(self, config: ScreenConfiguration):
+        super().__init__()
+
+        self.config = config
+
+        # --- Required for all code that uses UI element,
+        # a UIManager to handle the UI.
+        self.manager = arcade.gui.UIManager()
+        self.manager.enable()
+        self.lose_image = arcade.load_texture('../resources/lose.png')
+
+        # Create Vertical Box to place the items in
+        self.v_box = arcade.gui.UIBoxLayout()
+
+        arcade.set_background_color(arcade.color.BLACK)
+
+        self.v_box.add(StartButton(self.config, self.manager).with_space_around(bottom=20))
+        self.v_box.add(ToMenuButton(self.config, self.manager).with_space_around(bottom=20))
+
+        # Create a widget to hold the v_box widget, that will center the buttons
+        self.manager.add(
+            arcade.gui.UIAnchorWidget(
+                anchor_x="center_x",
+                anchor_y="bottom",
+                child=self.v_box)
+        )
+
+    def on_draw(self):
+        # This command has to happen before we start drawing
+        self.clear()
+
+        # Draw the background texture
+        arcade.draw_lrwh_rectangle_textured((self.config.current_x / 2) - 585 * self.config.screen_ratio,
+                                            (self.config.current_y / 2) - 85 * self.config.screen_ratio,
+                                            1170 * self.config.screen_ratio, 170 * self.config.screen_ratio,
+                                            self.lose_image)
+        self.manager.draw()
+
+
+class WinView(arcade.View):
+    def __init__(self, config: ScreenConfiguration):
+        super().__init__()
+
+        self.config = config
+
+        # --- Required for all code that uses UI element,
+        # a UIManager to handle the UI.
+        self.manager = arcade.gui.UIManager()
+        self.manager.enable()
+        self.win_image = arcade.load_texture('../resources/win.png')
+
+        # Create Vertical Box to place the items in
+        self.v_box = arcade.gui.UIBoxLayout()
+
+        arcade.set_background_color(arcade.color.BLACK)
+
+        self.v_box.add(StartButton(self.config, self.manager).with_space_around(bottom=20))
+        self.v_box.add(ToMenuButton(self.config, self.manager).with_space_around(bottom=20))
+
+        # Create a widget to hold the v_box widget, that will center the buttons
+        self.manager.add(
+            arcade.gui.UIAnchorWidget(
+                anchor_x="center_x",
+                anchor_y="bottom",
+                child=self.v_box)
+        )
+
+    def on_draw(self):
+        # This command has to happen before we start drawing
+        self.clear()
+
+        # Draw the background texture
+        arcade.draw_lrwh_rectangle_textured((self.config.current_x / 2) - 585 * self.config.screen_ratio,
+                                            (self.config.current_y / 2) - 85 * self.config.screen_ratio,
+                                            1170 * self.config.screen_ratio, 170 * self.config.screen_ratio,
+                                            self.win_image)
+        self.manager.draw()
 
 
 def main():
