@@ -35,7 +35,7 @@ class Card(arcade.Sprite):
 
         self.is_face_up = False
         super().__init__(self.face_down_image, scale, hit_box_algorithm="None")
-
+        #super().__init__(self.image_file_name, scale, hit_box_algorithm="None")
 
     def face_down(self):
         """ Turn card face-down """
