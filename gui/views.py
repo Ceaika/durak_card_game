@@ -65,8 +65,7 @@ class GameView(arcade.View):
 
         self.manager.add(
             arcade.gui.UIAnchorWidget(
-                anchor_x="right",
-                anchor_y="bottom",
+                align_y=self.config.bottom_y - self.config.card_height * 2,
                 child=self.v_box)
         )
 
@@ -113,12 +112,12 @@ class GameView(arcade.View):
         self.take_cards_button.on_click = self.take_cards
 
     def finish_move(self, event):
-        if self.human_player.is_turn:
+        if self.human_player.is_turn and len(self.main_card_sprites_playing_area.cards[-1]) == 0:
             self.game_logic.finish_turn()
             self.human_player.is_turn = False
 
     def take_cards(self, event):
-        if self.human_player.is_turn:
+        if self.human_player.is_turn and len(self.main_card_sprites_playing_area.cards[-1]) == 1:
             self.game_logic.take_all_cards()
             self.human_player.is_turn = False
             self.game_logic.finish_turn()
@@ -266,9 +265,6 @@ class GameView(arcade.View):
             arcade.get_window().show_view(LoseView(self.config))
 
 
-
-
-
 class StartButton(arcade.gui.UIFlatButton):
     def __init__(self, screen_config: ScreenConfiguration, manager):
         super(StartButton, self).__init__(text="Start Game", width=200)
@@ -296,6 +292,7 @@ class QuitButton(arcade.gui.UIFlatButton):
 
     def on_click(self, event: arcade.gui.UIOnClickEvent):
         arcade.exit()
+
 
 class ToMenuButton(arcade.gui.UIFlatButton):
     def __init__(self, config: ScreenConfiguration, manager):
@@ -448,10 +445,12 @@ class LoseView(arcade.View):
         self.clear()
 
         # Draw the background texture
-        arcade.draw_lrwh_rectangle_textured((self.config.current_x / 2) - 585 *  self.config.screen_ratio, (self.config.current_y / 2) - 85 * self.config.screen_ratio,
-                                            1170 *  self.config.screen_ratio, 170 * self.config.screen_ratio,
+        arcade.draw_lrwh_rectangle_textured((self.config.current_x / 2) - 585 * self.config.screen_ratio,
+                                            (self.config.current_y / 2) - 85 * self.config.screen_ratio,
+                                            1170 * self.config.screen_ratio, 170 * self.config.screen_ratio,
                                             self.lose_image)
         self.manager.draw()
+
 
 class WinView(arcade.View):
     def __init__(self, config: ScreenConfiguration):
@@ -486,7 +485,8 @@ class WinView(arcade.View):
         self.clear()
 
         # Draw the background texture
-        arcade.draw_lrwh_rectangle_textured((self.config.current_x / 2) - 585 *  self.config.screen_ratio, (self.config.current_y / 2) - 85 * self.config.screen_ratio,
+        arcade.draw_lrwh_rectangle_textured((self.config.current_x / 2) - 585 * self.config.screen_ratio,
+                                            (self.config.current_y / 2) - 85 * self.config.screen_ratio,
                                             1170 * self.config.screen_ratio, 170 * self.config.screen_ratio,
                                             self.win_image)
         self.manager.draw()

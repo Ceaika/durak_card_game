@@ -30,8 +30,9 @@ class GameLogic:
 
     def finish_turn(self):
         # First we take unused unused_cards from the not active unused_cards and add them to the computer and player area
-        if len(self.not_active_cards.unused_cards) > 0:
-            for i in range(6):
+
+        for i in range(6):
+            if len(self.not_active_cards.unused_cards) > 0:
                 if len(self.player.cards) < 6:
                     card = self.not_active_cards.remove_last_card()
                     card.face_up()
