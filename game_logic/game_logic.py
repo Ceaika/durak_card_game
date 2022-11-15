@@ -28,6 +28,14 @@ class GameLogic:
         self.player.is_turn = True
         return self.strategy_context.make_computer_move(True)
 
+    def computer_take_cards(self):
+        # Take the unused_cards from the main area
+        cards = self.strategy_context.take_cards_from_main_area()
+        # Add the unused_cards to the computer area
+        for card in cards:
+            card.face_down()
+            self.computer.add_new_card(card)
+
     def finish_turn(self):
         # First we take unused unused_cards from the not active unused_cards and add them to the computer and player area
 
@@ -48,7 +56,7 @@ class GameLogic:
         for card in lst:
             self.not_active_cards.add_played_card(card)
 
-    def take_all_cards(self):
+    def take_all_cards_human(self):
         # Take the unused_cards from the main area
         cards = self.strategy_context.take_cards_from_main_area()
         # Add the unused_cards to the computer area

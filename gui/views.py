@@ -114,15 +114,27 @@ class GameView(arcade.View):
         self.take_cards_button.on_click = self.take_cards
 
     def finish_move(self, event):
-        if self.human_player.is_turn and len(self.main_card_sprites_playing_area.cards[-1]) == 0:
+        print("Turn")
+        if len(self.main_card_sprites_playing_area.cards[-1]) == 0:
+
+            if self.computer_player.is_taking:
+                self.game_logic.computer_take_cards()
+                self.computer_player.is_taking = False
+                self.human_player.is_turn = True
+            elif self.human_player.is_turn:
+                self.human_player.is_turn = False
+
             self.game_logic.finish_turn()
-            self.human_player.is_turn = False
+
+
+
 
     def take_cards(self, event):
         if self.human_player.is_turn and len(self.main_card_sprites_playing_area.cards[-1]) == 1:
-            self.game_logic.take_all_cards()
+            self.game_logic.take_all_cards_human()
             self.human_player.is_turn = False
-            self.game_logic.finish_turn()
+            self.human_player.is_taking = True
+            #self.game_logic.finish_turn()
 
     def on_draw(self):
         """ Render the screen. """
@@ -248,29 +260,47 @@ class GameView(arcade.View):
         # if isinstance(self.held_card, Card):
         #     if self.held_card.collides_with_list(self.main_card_sprites_playing_area.mat_list):
         #         print("Collides with main mat")
-        if len(self.main_card_sprites_playing_area.cards[-1]) == 0:
-            if not self.human_player.is_turn:
-                self.computer_text = "Computer attacked"
-                if not self.game_logic.make_computer_attack_move():
-                    self.game_logic.finish_turn()
-                    self.human_player.is_turn = True
-                    self.computer_text = "Computer finished his turn"
-            else:
-                self.hint_text = "Your turn!\nAttack or finish move"
-
-        elif len(self.main_card_sprites_playing_area.cards[-1]) == 1:
-            if not self.human_player.is_turn:
-                self.computer_text = "Computer defended"
-                if not self.game_logic.make_computer_defence_move():
-                    self.game_logic.finish_turn()
-                    self.human_player.is_turn = True
-                    self.computer_text = "Computer took all cards"
-            else:
-                self.hint_text = "Your turn!\nDefend or take cards"
-
-        elif len(self.main_card_sprites_playing_area.cards[-1]) == 2:
+        if self.computer_player.is_taking:
+            if len(self.main_card_sprites_playing_area.cards[-1]) == 1:
+                self.main_card_sprites_playing_area.cards.append([])
+                self.main_card_sprites_playing_area.add_new_sprite()
+        elif self.human_player.is_taking:
             self.main_card_sprites_playing_area.cards.append([])
             self.main_card_sprites_playing_area.add_new_sprite()
+            if not self.game_logic.make_computer_attack_move():
+                self.human_player.is_turn = False
+                self.human_player.is_taking = False
+                self.game_logic.finish_turn()
+        else:
+            if len(self.main_card_sprites_playing_area.cards[-1]) == 0:
+                if not self.human_player.is_turn:
+                    self.computer_text = "Computer attacked"
+                    if not self.game_logic.make_computer_attack_move():
+                        self.game_logic.finish_turn()
+                        self.human_player.is_turn = True
+                        self.computer_text = "Computer finished his turn"
+                else:
+                    self.hint_text = "Your turn!\nAttack or finish move"
+
+            elif len(self.main_card_sprites_playing_area.cards[-1]) == 1:
+                if not self.human_player.is_turn:
+                    self.computer_text = "Computer defended"
+                    if not self.game_logic.make_computer_defence_move():
+                        # self.game_logic.finish_turn()
+                        self.computer_player.is_taking = True
+                        self.human_player.is_turn = True
+                        self.computer_text = "Computer took all cards"
+                else:
+                    self.hint_text = "Your turn!\nDefend or take cards"
+
+            elif len(self.main_card_sprites_playing_area.cards[-1]) == 2:
+                self.main_card_sprites_playing_area.cards.append([])
+                self.main_card_sprites_playing_area.add_new_sprite()
+
+        # if self.human_player.is_taking:
+        #     pass
+        # if self.computer_player.is_taking:
+        #     pass
 
         if len(self.not_active_cards.unused_cards) == 0 and len(self.human_player.cards) == 0:
             arcade.get_window().show_view(WinView(self.config))
