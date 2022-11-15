@@ -268,6 +268,7 @@ class GameView(arcade.View):
             self.main_card_sprites_playing_area.cards.append([])
             self.main_card_sprites_playing_area.add_new_sprite()
             if not self.game_logic.make_computer_attack_move():
+                print("Computer can't attack")
                 self.human_player.is_turn = False
                 self.human_player.is_taking = False
                 self.game_logic.finish_turn()

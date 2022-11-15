@@ -27,7 +27,7 @@ class StrategyContext:
             # Remove the card and mat from the computer area
             self.computer_card_sprites_area.remove_card(card_index)
             return True
-        elif card_to_play is None and not is_attack:
+        elif card_to_play is None:
             # # Take the unused_cards from the main area
             # cards = self.take_cards_from_main_area()
             # # Add the unused_cards to the computer area
