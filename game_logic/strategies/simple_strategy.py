@@ -4,7 +4,8 @@ from game_logic.strategies.computer_strategy import Strategy
 class SimpleStrategy(Strategy):
     def compute_best_attack_move(self):
         card_to_play = None
-        if len(self.main_card_sprites_playing_area.cards[0]) == 0:
+        if len(self.main_card_sprites_playing_area.mat_list) == 1:
+            print("First move")
             card_to_play = min(self.computer_area.cards, key=lambda card: card.value)
         else:
             # Get all the unused_cards from the main area

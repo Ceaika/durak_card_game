@@ -126,15 +126,12 @@ class GameView(arcade.View):
 
             self.game_logic.finish_turn()
 
-
-
-
     def take_cards(self, event):
         if self.human_player.is_turn and len(self.main_card_sprites_playing_area.cards[-1]) == 1:
             self.game_logic.take_all_cards_human()
             self.human_player.is_turn = False
             self.human_player.is_taking = True
-            #self.game_logic.finish_turn()
+            # self.game_logic.finish_turn()
 
     def on_draw(self):
         """ Render the screen. """
@@ -158,8 +155,10 @@ class GameView(arcade.View):
         # draw computer cards
         self.computer_player.cards.draw()
         # draw the label
-        arcade.draw_text(self.hint_text, self.config.start_x, self.config.bottom_y + self.config.card_height, arcade.color.BLACK, 24)
-        arcade.draw_text(self.computer_text, self.config.start_x, self.config.top_y - (self.config.card_height * 1.5), arcade.color.BLACK, 24)
+        arcade.draw_text(self.hint_text, self.config.start_x, self.config.bottom_y + self.config.card_height,
+                         arcade.color.BLACK, 24)
+        arcade.draw_text(self.computer_text, self.config.start_x, self.config.top_y - (self.config.card_height * 1.5),
+                         arcade.color.BLACK, 24)
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         """ Called when the user presses a mouse button. """
@@ -261,6 +260,7 @@ class GameView(arcade.View):
         #     if self.held_card.collides_with_list(self.main_card_sprites_playing_area.mat_list):
         #         print("Collides with main mat")
         if self.computer_player.is_taking:
+            self.hint_text = "Add more cards or finish turn"
             if len(self.main_card_sprites_playing_area.cards[-1]) == 1:
                 self.main_card_sprites_playing_area.cards.append([])
                 self.main_card_sprites_playing_area.add_new_sprite()
@@ -272,6 +272,7 @@ class GameView(arcade.View):
                 self.human_player.is_turn = False
                 self.human_player.is_taking = False
                 self.game_logic.finish_turn()
+
         else:
             if len(self.main_card_sprites_playing_area.cards[-1]) == 0:
                 if not self.human_player.is_turn:
@@ -290,7 +291,7 @@ class GameView(arcade.View):
                         # self.game_logic.finish_turn()
                         self.computer_player.is_taking = True
                         self.human_player.is_turn = True
-                        self.computer_text = "Computer took all cards"
+                        self.computer_text = "Computer is taking the cards"
                 else:
                     self.hint_text = "Your turn!\nDefend or take cards"
 
@@ -540,6 +541,7 @@ def main():
     """ Main function """
     config = ScreenConfiguration()
     window = arcade.Window(config.width, config.height, config.screen_title, fullscreen=True)
+
     menu_view = MenuView(config)
     window.show_view(menu_view)
     arcade.run()
