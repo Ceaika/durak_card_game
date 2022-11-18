@@ -1,3 +1,5 @@
+import copy
+
 import arcade
 
 from gui.screen_configuration import ScreenConfiguration
@@ -13,6 +15,8 @@ class PlayerArea:
         self.is_attacking = True
         self.is_turn = True
 
+    def get_cards(self):
+        return self.cards
     def add_new_card(self, card):
         card.position = self.beginning_x, self.beginning_y
         self.beginning_x += self.x_spacing

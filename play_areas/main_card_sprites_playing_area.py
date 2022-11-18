@@ -17,6 +17,15 @@ class MainCardSpritesPlayingArea:
         self.start_x_position += self.config.x_spacing
         self.mat_list.append(mat)
 
+    # def get_position(self):
+    #     return self.mat_list[-1].position
+    # def set_position(self,dx,dy):
+    #     self.cards[-1][0].center_x +=dx
+    #     self.cards[-1][0].center_y +=dy
+    def get_mat_list(self):
+        return self.mat_list
+    def get_card_list(self):
+        return self.cards
     def remove_card_and_mat(self, card_index):
         self.cards.remove(self.cards[card_index])
         self.mat_list.remove(self.mat_list[card_index])
