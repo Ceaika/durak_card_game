@@ -35,11 +35,11 @@ class PlayerArea:
         else:
             return None
 
-    def get_cards_with_same_suit(self, bottom_card):
+    def get_cards_with_same_suit_as_card(self, bottom_card):
         # return list of unused_cards with same suit as bottom card
         return [card for card in self.cards if card.suit == bottom_card.suit]
 
-    def get_cards_with_same_value(self, available_card):
+    def get_cards_with_same_value_as_card(self, available_card):
         # Create empty set
         cards_with_same_value = set()
         # Add all unused_cards with same value to set
@@ -48,3 +48,23 @@ class PlayerArea:
                 cards_with_same_value.add(card)
 
         return cards_with_same_value
+
+    def get_cards_with_same_value_int(self, value):
+        # Create empty set
+        cards_with_same_value = set()
+        # Add all cards with same value to set
+        for card in self.cards:
+            if card.value == value:
+                cards_with_same_value.add(card)
+
+        return cards_with_same_value
+
+    def get_cards_with_same_suit_str(self, suit):
+        # Create empty set
+        cards_with_same_suit = set()
+        # Add all cards with same suit to set
+        for card in self.cards:
+            if card.suit == suit:
+                cards_with_same_suit.add(card)
+
+        return cards_with_same_suit

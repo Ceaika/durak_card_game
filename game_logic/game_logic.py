@@ -1,3 +1,4 @@
+from game_logic.strategies.advanced_strategy_test import AdvancedStrategy
 from game_logic.strategies.simple_strategy import SimpleStrategy
 from game_logic.strategies.strategycontext import StrategyContext
 from play_areas.main_card_sprites_playing_area import MainCardSpritesPlayingArea
@@ -11,7 +12,8 @@ class GameLogic:
         self.computer = computer
         self.main = main
         self.not_active_cards = not_active_cards
-        self.strategy = SimpleStrategy(computer, main, not_active_cards)
+        #self.strategy = SimpleStrategy(computer, main, not_active_cards)
+        self.strategy = AdvancedStrategy(computer, main, not_active_cards)
         self.strategy_context = StrategyContext(self.strategy, self.main, self.computer)
 
     def validate_player_defence(self, bottom_card, top_card):
