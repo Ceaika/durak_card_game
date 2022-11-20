@@ -19,9 +19,11 @@ class DifficultStrategy(Strategy):
         # get the available card suits
         available_cards = {}
         for card in self.computer_area.cards:
-            if card.suit not in available_cards:
-                available_cards[card.suit] = []
-            available_cards[card.suit].append(card.value)
+            if card.suit != self.not_active_cards.trump_card.suit:
+                if card.suit not in available_cards:
+                    available_cards[card.suit] = []
+                available_cards[card.suit].append(card.value)
+
         return available_cards
 
     def lenght_of_suit_not_played(self):
@@ -46,13 +48,17 @@ class DifficultStrategy(Strategy):
         for card in self.main_card_sprites_playing_area.get_all_cards():
             values.add(card.value)
 
-        # Remove the values that are not int the main area
+        valid_bot_hand = {}
+
+        # Remove the values that are not in the main area
         for suit in bot_hand:
             for value in bot_hand[suit]:
-                if value not in values:
-                    bot_hand[suit].remove(value)
+                if value in values:
+                    if suit not in valid_bot_hand:
+                        valid_bot_hand[suit] = []
+                    valid_bot_hand[suit].append(value)
 
-        return bot_hand
+        return valid_bot_hand
 
     def compute_best_attack_move(self):
         card_to_play = None
@@ -73,7 +79,6 @@ class DifficultStrategy(Strategy):
                     card_to_play = self.find_card(suit, card_to_play)
                     # Get the card out of the set
                     card_to_play = card_to_play
-                    print("card to play: ", card_to_play)
                     break
 
             if card_to_play is None:
@@ -82,7 +87,8 @@ class DifficultStrategy(Strategy):
                 card_to_play = self.find_card(self.not_active_cards.trump_card.suit, card_to_play)
 
         else:
-            valid_bot_hand = self.validate_bot_hand(self.calc_bot_hand())
+            hand = self.calc_bot_hand()
+            valid_bot_hand = self.validate_bot_hand(hand)
             #lenght_of_suit_bot = self.lenght_of_suit_bot(valid_bot_hand)
 
             if self.not_active_cards.trump_card.suit in valid_bot_hand:
