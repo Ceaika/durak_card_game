@@ -4,10 +4,10 @@ from play_areas.not_active_cards import NotActiveCards
 from play_areas.player_area import PlayerArea
 
 
-class AdvancedStrategy(Strategy):
+class MediumStrategy(Strategy):
     def __init__(self, computer_area: PlayerArea, main_card_sprites_playing_area: MainCardSpritesPlayingArea,
-                 not_active_cards: NotActiveCards):
-        super().__init__(computer_area, main_card_sprites_playing_area, not_active_cards)
+                 not_active_cards: NotActiveCards, player_area: PlayerArea):
+        super().__init__(computer_area, main_card_sprites_playing_area, not_active_cards, player_area)
         self.all_possible_cards = {"clubs": [6, 7, 8, 9, 10, 11, 12, 13, 14],
                                    "diamonds": [6, 7, 8, 9, 10, 11, 12, 13, 14],
                                    "hearts": [6, 7, 8, 9, 10, 11, 12, 13, 14],
