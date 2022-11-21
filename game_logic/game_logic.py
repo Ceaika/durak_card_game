@@ -1,3 +1,4 @@
+from Constants import EASY, MEDIUM, HARD
 from game_logic.strategies.difficult_strategy import DifficultStrategy
 from game_logic.strategies.medium_strategy import MediumStrategy
 from game_logic.strategies.simple_strategy import SimpleStrategy
@@ -8,13 +9,18 @@ from play_areas.player_area import PlayerArea
 
 class GameLogic:
     def __init__(self, player: PlayerArea, computer: PlayerArea,
-                 main: MainCardSpritesPlayingArea, not_active_cards: NotActiveCards):
+                 main: MainCardSpritesPlayingArea, not_active_cards: NotActiveCards, difficulty: int):
         self.player = player
         self.computer = computer
         self.main = main
         self.not_active_cards = not_active_cards
-        #self.strategy = SimpleStrategy(computer, main, not_active_cards, player)
-        self.strategy = DifficultStrategy(computer, main, not_active_cards, player)
+        self.strategy = None
+        if difficulty == EASY:
+            self.strategy = SimpleStrategy(computer, main, not_active_cards, player)
+        elif difficulty == MEDIUM:
+            self.strategy = MediumStrategy(computer, main, not_active_cards, player)
+        elif difficulty == HARD:
+            self.strategy = DifficultStrategy(computer, main, not_active_cards, player)
         self.strategy_context = StrategyContext(self.strategy, self.main, self.computer)
 
     def validate_player_defence(self, bottom_card, top_card):

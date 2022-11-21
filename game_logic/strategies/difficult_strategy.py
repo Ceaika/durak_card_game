@@ -9,6 +9,7 @@ class DifficultStrategy(Strategy):
                  not_active_cards: NotActiveCards, player_area: PlayerArea):
         super().__init__(computer_area, main_card_sprites_playing_area, not_active_cards, player_area)
         self.not_played_cards = {"clubs": [range(6, 15)], "diamonds": [range(6, 15)], "hearts": [range(6, 15)]}
+        self.player = player_area
 
     def remove_played_cards(self):
         for card in self.not_active_cards.played_cards:
@@ -81,7 +82,7 @@ class DifficultStrategy(Strategy):
                     card_to_play = card_to_play
                     break
 
-            if card_to_play is None:
+            if card_to_play is None and bot_hand_trump is not None:
                 # Get the minimum value of bot_hand_trump
                 card_to_play = min(bot_hand_trump)
                 card_to_play = self.find_card(self.not_active_cards.trump_card.suit, card_to_play)
@@ -123,3 +124,20 @@ class DifficultStrategy(Strategy):
                 card_to_play = min(trump_cards, key=lambda card: card.value)
 
         return card_to_play
+
+    # def endgame_make_move(self):
+    #     # Create a dummy human player and dummy computer player
+    #     dummy_human_player_cards = self.player.cards
+    #     dummy_computer_player_cards = self.computer_area.cards
+    #
+    #     dummy_main_area = self.main_card_sprites_playing_area.cards
+    #
+    # def get_all_player_moves(self, dummy_player_cards):
+    #     # Get all the possible moves for the player
+    #     all_player_moves = []
+    #     for card in dummy_player_cards:
+    #         for card2 in dummy_main_area:
+    #             if card.suit == card2.suit:
+    #                 if card.value > card2.value:
+    #                     all_player_moves.append((card, card2))
+    #     return all_player_moves

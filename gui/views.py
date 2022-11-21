@@ -3,6 +3,7 @@ import webbrowser
 import arcade
 import arcade.gui
 
+from Constants import EASY, MEDIUM, HARD
 from game_logic.game_logic import GameLogic
 from gui.card import Card
 
@@ -15,7 +16,7 @@ from gui.screen_configuration import ScreenConfiguration
 class GameView(arcade.View):
     """ Main application class. """
 
-    def __init__(self, screen_config: ScreenConfiguration):
+    def __init__(self, screen_config: ScreenConfiguration, difficulty: int):
         self.config = screen_config
         super().__init__()
 
@@ -47,7 +48,7 @@ class GameView(arcade.View):
 
         # Initialize the utils so we can use helper functions
         self.game_logic = GameLogic(self.human_player, self.computer_player, self.main_card_sprites_playing_area,
-                                    self.not_active_cards)
+                                    self.not_active_cards, difficulty)
         # --- Required for all code that uses UI element,
         # a UIManager to handle the UI.
         self.manager = arcade.gui.UIManager()
@@ -310,6 +311,91 @@ class GameView(arcade.View):
         elif len(self.not_active_cards.unused_cards) == 0 and len(self.computer_player.cards) == 0:
             arcade.get_window().show_view(LoseView(self.config))
 
+class DifficultyView(arcade.View):
+    def __init__(self, screen_config: ScreenConfiguration):
+        super().__init__()
+
+        self.config = screen_config
+
+        # --- Required for all code that uses UI element,
+        # a UIManager to handle the UI.
+        self.manager = arcade.gui.UIManager()
+        self.manager.enable()
+
+        # Set background color
+        arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
+
+        # Create a vertical BoxGroup to align buttons
+        self.v_box = arcade.gui.UIBoxLayout()
+
+        # Add the difficulty buttons
+        self.easy_button = EasyButton(self.config, self.manager)
+        self.medium_button = MediumButton(self.config, self.manager)
+        self.hard_button = HardButton(self.config, self.manager)
+        self.v_box.add(self.easy_button)
+        self.v_box.add(self.medium_button)
+        self.v_box.add(self.hard_button)
+
+        # Create a widget to hold the v_box widget, that will center the buttons
+        self.manager.add(
+            arcade.gui.UIAnchorWidget(
+                anchor_x="center_x",
+                anchor_y="center_y",
+                child=self.v_box)
+        )
+
+    def on_draw(self):
+        self.clear()
+        self.manager.draw()
+
+class EasyButton(arcade.gui.UIFlatButton):
+    def __init__(self, screen_config: ScreenConfiguration, manager):
+        super().__init__(
+            text="Easy",
+            center_x=0,
+            center_y=0,
+            width=200,
+            height=50,
+        )
+        self.config = screen_config
+        self.manager = manager
+
+    def on_click(self, event):
+        arcade.get_window().show_view(GameView(self.config, EASY))
+        self.manager.disable()
+
+class MediumButton(arcade.gui.UIFlatButton):
+    def __init__(self, screen_config: ScreenConfiguration, manager):
+        super().__init__(
+            text="Medium",
+            center_x=0,
+            center_y=0,
+            width=200,
+            height=50,
+        )
+        self.config = screen_config
+        self.manager = manager
+
+    def on_click(self, event):
+        arcade.get_window().show_view(GameView(self.config, MEDIUM))
+        self.manager.disable()
+
+class HardButton(arcade.gui.UIFlatButton):
+    def __init__(self, screen_config: ScreenConfiguration, manager):
+        super().__init__(
+            text="Hard",
+            center_x=0,
+            center_y=0,
+            width=200,
+            height=50,
+        )
+        self.config = screen_config
+        self.manager = manager
+
+    def on_click(self, event):
+        arcade.get_window().show_view(GameView(self.config, HARD))
+        self.manager.disable()
+
 
 class StartButton(arcade.gui.UIFlatButton):
     def __init__(self, screen_config: ScreenConfiguration, manager):
@@ -318,7 +404,7 @@ class StartButton(arcade.gui.UIFlatButton):
         self.config = screen_config
 
     def on_click(self, event: arcade.gui.UIOnClickEvent):
-        arcade.get_window().show_view(GameView(self.config))
+        arcade.get_window().show_view(DifficultyView(self.config))
         self.manager.disable()
 
 
