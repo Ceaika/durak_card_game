@@ -1,9 +1,6 @@
-import webbrowser
-
 import arcade
 import arcade.gui
 
-from Constants import EASY, MEDIUM, HARD
 from game_logic.game_logic import GameLogic
 from gui.card import Card
 
@@ -11,6 +8,7 @@ from play_areas.main_card_sprites_playing_area import MainCardSpritesPlayingArea
 from play_areas.not_active_cards import NotActiveCards
 from play_areas.player_area import PlayerArea
 from gui.screen_configuration import ScreenConfiguration
+from Constants import WIN, LOSE
 
 
 class GameView(arcade.View):
@@ -24,6 +22,8 @@ class GameView(arcade.View):
         self.config.init_current_screen()
 
         arcade.set_background_color(arcade.color.AMAZON)
+        # Show buttons if needed
+        self.show_btn = False
 
         # List of unused_cards we are dragging with the mouse
         self.held_card = None
@@ -95,7 +95,7 @@ class GameView(arcade.View):
                 self.not_active_cards.add_new_card(card)
 
         # Shuffle the unused_cards
-        self.not_active_cards.unused_cards.shuffle()
+        self.not_active_cards.get_unused_cards().shuffle()
 
         for index in range(0, 12):
             card = self.not_active_cards.remove_last_card()
@@ -106,7 +106,7 @@ class GameView(arcade.View):
                 self.computer_player.add_new_card(card)
 
         # Pick the trump card
-        trump_card: Card = self.not_active_cards.unused_cards[0]
+        trump_card: Card = self.not_active_cards.get_unused_cards()[0]
         self.not_active_cards.set_trump_card(trump_card)
         trump_card.face_up()
         trump_card.angle = 90
@@ -115,6 +115,7 @@ class GameView(arcade.View):
         self.take_cards_button.on_click = self.take_cards
 
     def finish_move(self, event):
+
         if len(self.playground.get_cards()[-1]) == 0:
             self.finish_turn()
 
@@ -123,6 +124,8 @@ class GameView(arcade.View):
             self.game_logic.computer_take_cards()
             self.computer_player.is_taking = False
             self.human_player.is_turn = True
+
+
         elif self.human_player.is_turn:
             self.human_player.is_turn = False
 
@@ -138,54 +141,49 @@ class GameView(arcade.View):
         """ Render the screen. """
         # Clear the screen
         self.clear()
-        # Draw v_box with buttons
-        self.manager.draw()
 
         # Draw the mats for the main card area
         self.playground.get_mats().draw()
 
         # if any cards placed in the playground draw them
-        if len(self.playground.get_cards()) != 0:
-            self.playground.get_all_cards().draw()
+        self.playground.get_all_cards().draw()
 
         # draw not active cards
-        self.not_active_cards.unused_cards.draw()
-        self.not_active_cards.played_cards.draw()
-        # draw player cards
-        self.human_player.get_cards().draw()
+        self.not_active_cards.get_unused_cards().draw()
+
+        # draw played cards
+        self.not_active_cards.get_played_cards().draw()
+
         # draw computer cards
         self.computer_player.get_cards().draw()
+
         # draw the label
         arcade.draw_text(self.hint_text, self.config.start_x, self.config.bottom_y + self.config.card_height,
                          arcade.color.BLACK, 24)
+        # draw the label
         arcade.draw_text(self.computer_text, self.config.start_x, self.config.top_y - (self.config.card_height * 1.5),
                          arcade.color.BLACK, 24)
+
+        if self.show_btn:
+            # Draw v_box with buttons
+            self.manager.draw()
+
+        # draw player cards
+        self.human_player.get_cards().draw()
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         """ Called when the user presses a mouse button. """
 
         # Get list of unused_cards we've clicked on
-        cards: list[Card] = arcade.get_sprites_at_point((x, y), self.human_player.get_cards())
+        cards: list[arcade.Sprite] = arcade.get_sprites_at_point((x, y), self.human_player.get_cards())
 
         # Have we clicked on a card?
         if len(cards) > 0:
             # Might be a stack of unused_cards, get the top one
             self.held_card = cards[-1]
 
-            card_index = self.human_player.find_card(self.held_card)
-
-            # Check if card is in human player area
-            if card_index is None:
-                self.held_card = None
-                return
-
-            # Get the index of the card in the list
-
+            # Get original position
             self.held_card_original_position = self.held_card.position
-            # Put on top in drawing order
-            # self.pull_to_top(self.held_card)
-
-            self.held_card.original_card_index = card_index
 
     def on_mouse_release(self, x: float, y: float, button: int,
                          modifiers: int):
@@ -201,29 +199,13 @@ class GameView(arcade.View):
 
         # See if we are in contact with the closest mat
         if arcade.check_for_collision(self.held_card, mat):
-
-            # If there won't be any problems, we don't need to reset the position
-            reset_position = False
+            # Take index of the mat the player wants to put his card on
+            mat_index = self.playground.get_mats().index(mat)
 
             # Check if the card can be placed on the mat
-            mat_index = self.playground.get_mats().index(mat)
-            # Check if index is empty
-            if len(self.playground.get_cards()) >= mat_index:
-                if len(self.playground.get_cards()[mat_index]) >= 2:
-                    # There are two unused_cards in the mat, so we can't put our card there
-                    reset_position = True
-                elif len(self.playground.get_cards()[mat_index]) == 1:
-                    # There is one card in the mat, so we need to check if the new card can be put there
-                    reset_position = not self.game_logic.validate_player_defence(
-                        self.playground.get_cards()[mat_index][-1], self.held_card)
-                elif len(self.playground.get_cards()[mat_index]) == 0:
-                    # There are no unused_cards in the mat, so we need to check if the new card can be put there
-                    reset_position = not self.game_logic.validate_player_attack(self.held_card)
+            reset_position = self.game_logic.player_move(mat_index, self.held_card)
 
-            # Move unused_cards to proper position
-            self.held_card.position = mat.center_x, mat.center_y
-
-            # Release on top play mat? And only one card held?
+        # Check if the card must be put back
         if reset_position:
             # Where-ever we were dropped, it wasn't valid. Reset the card's position
             # to its original spot.
@@ -235,20 +217,21 @@ class GameView(arcade.View):
             # remove card from human player
             self.human_player.remove_card(self.human_player.find_card(self.held_card))
             self.human_player.is_turn = False
+            self.show_btn = True
 
         # We are no longer holding unused_cards
         self.held_card = None
 
     def on_mouse_motion(self, x: float, y: float, dx: float, dy: float):
         """ User moves mouse """
-
-        # If we are holding unused_cards, move them with the mouse
+        # If we are holding a card , move them with the mouse
         if isinstance(self.held_card, Card):
             self.held_card.center_x += dx
             self.held_card.center_y += dy
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.ESCAPE:
+            from start_screen import MenuView
             arcade.get_window().show_view(MenuView(ScreenConfiguration()))
         if symbol == arcade.key.ENTER:
             pass
@@ -279,8 +262,10 @@ class GameView(arcade.View):
                         self.game_logic.finish_turn()
                         self.human_player.is_turn = True
                         self.computer_text = "Computer finished his turn"
+                        self.show_btn = False
                 else:
-                    self.hint_text = "Your turn!\nAttack or finish move"
+                    self.hint_text = "Your turn!\nAttack"
+
 
             elif len(self.playground.get_cards()[-1]) == 1:
                 if not self.human_player.is_turn:
@@ -298,334 +283,253 @@ class GameView(arcade.View):
             elif len(self.playground.get_cards()[-1]) == 2:
                 self.playground.add_new_sprite()
 
-        # if self.human_player.is_taking:
-        #     pass
-        # if self.computer_player.is_taking:
-        #     pass
-
-        if len(self.not_active_cards.unused_cards) == 0 and len(self.human_player.get_cards()) == 0:
-            arcade.get_window().show_view(WinView(self.config))
-        elif len(self.not_active_cards.unused_cards) == 0 and len(self.computer_player.get_cards()) == 0:
-            arcade.get_window().show_view(LoseView(self.config))
-
-class DifficultyView(arcade.View):
-    def __init__(self, screen_config: ScreenConfiguration):
-        super().__init__()
-
-        self.config = screen_config
-
-        # --- Required for all code that uses UI element,
-        # a UIManager to handle the UI.
-        self.manager = arcade.gui.UIManager()
-        self.manager.enable()
-
-        # Set background color
-        arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
-
-        # Create a vertical BoxGroup to align buttons
-        self.v_box = arcade.gui.UIBoxLayout()
-
-        # Add the difficulty buttons
-        self.easy_button = EasyButton(self.config, self.manager)
-        self.medium_button = MediumButton(self.config, self.manager)
-        self.hard_button = HardButton(self.config, self.manager)
-        self.v_box.add(self.easy_button)
-        self.v_box.add(self.medium_button)
-        self.v_box.add(self.hard_button)
-
-        # Create a widget to hold the v_box widget, that will center the buttons
-        self.manager.add(
-            arcade.gui.UIAnchorWidget(
-                anchor_x="center_x",
-                anchor_y="center_y",
-                child=self.v_box)
-        )
-
-    def on_draw(self):
-        self.clear()
-        self.manager.draw()
-
-class EasyButton(arcade.gui.UIFlatButton):
-    def __init__(self, screen_config: ScreenConfiguration, manager):
-        super().__init__(
-            text="Easy",
-            center_x=0,
-            center_y=0,
-            width=200,
-            height=50,
-        )
-        self.config = screen_config
-        self.manager = manager
-
-    def on_click(self, event):
-        arcade.get_window().show_view(GameView(self.config, EASY))
-        self.manager.disable()
-
-class MediumButton(arcade.gui.UIFlatButton):
-    def __init__(self, screen_config: ScreenConfiguration, manager):
-        super().__init__(
-            text="Medium",
-            center_x=0,
-            center_y=0,
-            width=200,
-            height=50,
-        )
-        self.config = screen_config
-        self.manager = manager
-
-    def on_click(self, event):
-        arcade.get_window().show_view(GameView(self.config, MEDIUM))
-        self.manager.disable()
-
-class HardButton(arcade.gui.UIFlatButton):
-    def __init__(self, screen_config: ScreenConfiguration, manager):
-        super().__init__(
-            text="Hard",
-            center_x=0,
-            center_y=0,
-            width=200,
-            height=50,
-        )
-        self.config = screen_config
-        self.manager = manager
-
-    def on_click(self, event):
-        arcade.get_window().show_view(GameView(self.config, HARD))
-        self.manager.disable()
-
-
-class StartButton(arcade.gui.UIFlatButton):
-    def __init__(self, screen_config: ScreenConfiguration, manager):
-        super(StartButton, self).__init__(text="Start Game", width=200)
-        self.manager = manager
-        self.config = screen_config
-
-    def on_click(self, event: arcade.gui.UIOnClickEvent):
-        arcade.get_window().show_view(DifficultyView(self.config))
-        self.manager.disable()
-
-
-class RulesButton(arcade.gui.UIFlatButton):
-    def __init__(self, config: ScreenConfiguration):
-        super(RulesButton, self).__init__(text="Rules", width=200)
-        self.config = config
-
-    def on_click(self, event: arcade.gui.UIOnClickEvent):
-        # webbrowser.open('https://de.wikipedia.org/wiki/Durak_(Kartenspiel)', 2, True)
-        arcade.get_window().show_view(RulesView(self.config))
-
-
-class QuitButton(arcade.gui.UIFlatButton):
-    def __init__(self):
-        super(QuitButton, self).__init__(text="Quit Game", width=200)
-
-    def on_click(self, event: arcade.gui.UIOnClickEvent):
-        arcade.exit()
-
-
-class ToMenuButton(arcade.gui.UIFlatButton):
-    def __init__(self, config: ScreenConfiguration, manager):
-        super(ToMenuButton, self).__init__(text="Back to Menu", width=200)
-        self.config = config
-        self.manager = manager
-
-    def on_click(self, event: arcade.gui.UIOnClickEvent):
-        arcade.get_window().show_view(MenuView(self.config))
-        self.manager.disable()
-
-
-class MenuView(arcade.View):
-    def __init__(self, screen_config: ScreenConfiguration):
-        super().__init__()
-
-        self.config = screen_config
-
-        # --- Required for all code that uses UI element,
-        # a UIManager to handle the UI.
-        self.manager = arcade.gui.UIManager()
-        self.manager.enable()
-
-        self.rgb = [125, 1, 1]
-        self.multilikator = 1
-
-        # Set background color
-        arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
-
-        # Create a vertical BoxGroup to align buttons
-        self.v_box = arcade.gui.UIBoxLayout()
-
-        # Create the buttons
-        start_button = StartButton(self.config, self.manager)
-        self.v_box.add(start_button.with_space_around(bottom=20))
-
-        rules_button = RulesButton(self.config)
-        self.v_box.add(rules_button.with_space_around(bottom=20))
-
-        # Again, method 1. Use a child class to handle events.
-        quit_button = QuitButton()
-        self.v_box.add(quit_button)
-
-        # Create a widget to hold the v_box widget, that will center the buttons
-        self.manager.add(
-            arcade.gui.UIAnchorWidget(
-                anchor_x="center_x",
-                anchor_y="center_y",
-                child=self.v_box)
-        )
-
-    def on_update(self, delta_time: 0.25):
-        # self.rgb[0] += self.multilikator*1
-        self.rgb[1] += self.multilikator * 2
-        self.rgb[2] += self.multilikator * 4
-        for f in self.rgb[1:]:
-            if f > 255:
-                self.multilikator = -1
-            elif f < 0:
-                self.multilikator = 1
-
-        arcade.set_background_color(self.rgb)
-
-    def on_draw(self):
-        self.clear()
-        self.manager.draw()
-
-
-class Rules(arcade.gui.UITextArea):
-    def __int__(self):
-        super(Rules, self)
-        self.fit_content()
-
-
-class RulesView(arcade.View):
-    def __init__(self, config: ScreenConfiguration):
-        super().__init__()
-
-        self.config = config
-
-        # --- Required for all code that uses UI element,
-        # a UIManager to handle the UI.
-        self.manager = arcade.gui.UIManager()
-        self.manager.enable()
-
-        # Create Vertical Box to place the items in
-        self.v_box = arcade.gui.UIBoxLayout()
-
-        # open File and read Rules
-        f = open('../resources/Rules.txt', 'r', encoding='UTF-8')
-        self.rules = f.read()
-        f.close()
-
-        arcade.set_background_color(arcade.color.WHITE_SMOKE)
-
-        # Text Field to be put in V_Box
-        rules = Rules(self.config.width / 2, self.config.height / 2,
-                      self.config.width * 0.7, self.config.height * 0.7, self.rules, 'arial', 25,
-                      arcade.color.BLACK, True, 5.5)
-
-        self.v_box.add(rules)
-
-        # Create a widget to hold the v_box widget, that will center the buttons
-        self.manager.add(
-            arcade.gui.UIAnchorWidget(
-                anchor_x="center_x",
-                anchor_y="center_y",
-                child=self.v_box)
-        )
-
-    def on_draw(self):
-        self.clear()
-        self.manager.draw()
-
-    def on_key_press(self, symbol: int, modifiers: int):
-        if symbol == arcade.key.ESCAPE:
-            arcade.get_window().show_view(MenuView(self.config))
-
-
-class LoseView(arcade.View):
-    def __init__(self, config: ScreenConfiguration):
-        super().__init__()
-
-        self.config = config
-
-        # --- Required for all code that uses UI element,
-        # a UIManager to handle the UI.
-        self.manager = arcade.gui.UIManager()
-        self.manager.enable()
-        self.lose_image = arcade.load_texture('../resources/lose.png')
-
-        # Create Vertical Box to place the items in
-        self.v_box = arcade.gui.UIBoxLayout()
-
-        arcade.set_background_color(arcade.color.BLACK)
-
-        self.v_box.add(StartButton(self.config, self.manager).with_space_around(bottom=20))
-        self.v_box.add(ToMenuButton(self.config, self.manager).with_space_around(bottom=20))
-
-        # Create a widget to hold the v_box widget, that will center the buttons
-        self.manager.add(
-            arcade.gui.UIAnchorWidget(
-                anchor_x="center_x",
-                anchor_y="bottom",
-                child=self.v_box)
-        )
-
-    def on_draw(self):
-        # This command has to happen before we start drawing
-        self.clear()
-
-        # Draw the background texture
-        arcade.draw_lrwh_rectangle_textured((self.config.current_x / 2) - 585 * self.config.screen_ratio,
-                                            (self.config.current_y / 2) - 85 * self.config.screen_ratio,
-                                            1170 * self.config.screen_ratio, 170 * self.config.screen_ratio,
-                                            self.lose_image)
-        self.manager.draw()
-
-
-class WinView(arcade.View):
-    def __init__(self, config: ScreenConfiguration):
-        super().__init__()
-
-        self.config = config
-
-        # --- Required for all code that uses UI element,
-        # a UIManager to handle the UI.
-        self.manager = arcade.gui.UIManager()
-        self.manager.enable()
-        self.win_image = arcade.load_texture('../resources/win.png')
-
-        # Create Vertical Box to place the items in
-        self.v_box = arcade.gui.UIBoxLayout()
-
-        arcade.set_background_color(arcade.color.BLACK)
-
-        self.v_box.add(StartButton(self.config, self.manager).with_space_around(bottom=20))
-        self.v_box.add(ToMenuButton(self.config, self.manager).with_space_around(bottom=20))
-
-        # Create a widget to hold the v_box widget, that will center the buttons
-        self.manager.add(
-            arcade.gui.UIAnchorWidget(
-                anchor_x="center_x",
-                anchor_y="bottom",
-                child=self.v_box)
-        )
-
-    def on_draw(self):
-        # This command has to happen before we start drawing
-        self.clear()
-
-        # Draw the background texture
-        arcade.draw_lrwh_rectangle_textured((self.config.current_x / 2) - 585 * self.config.screen_ratio,
-                                            (self.config.current_y / 2) - 85 * self.config.screen_ratio,
-                                            1170 * self.config.screen_ratio, 170 * self.config.screen_ratio,
-                                            self.win_image)
-        self.manager.draw()
+        if len(self.not_active_cards.get_unused_cards()) == 0 and len(self.human_player.get_cards()) == 0:
+            from win_lose_screen import WinLoseView
+            arcade.get_window().show_view(WinLoseView(self.config, WIN))
+        elif len(self.not_active_cards.get_unused_cards()) == 0 and len(self.computer_player.get_cards()) == 0:
+            from win_lose_screen import WinLoseView
+            arcade.get_window().show_view(WinLoseView(self.config,LOSE))
+
+
+# class DifficultyView(arcade.View):
+#     def __init__(self, screen_config: ScreenConfiguration):
+#         super().__init__()
+#
+#         self.config = screen_config
+#
+#         # --- Required for all code that uses UI element,
+#         # a UIManager to handle the UI.
+#         self.manager = arcade.gui.UIManager()
+#         self.manager.enable()
+#
+#         # Set background color
+#         arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
+#
+#         # Create a vertical BoxGroup to align buttons
+#         self.v_box = arcade.gui.UIBoxLayout()
+#
+#         # Add the difficulty buttons
+#         self.easy_button = EasyButton(self.config, self.manager)
+#         self.medium_button = MediumButton(self.config, self.manager)
+#         self.hard_button = HardButton(self.config, self.manager)
+#         self.v_box.add(self.easy_button)
+#         self.v_box.add(self.medium_button)
+#         self.v_box.add(self.hard_button)
+#
+#         # Create a widget to hold the v_box widget, that will center the buttons
+#         self.manager.add(
+#             arcade.gui.UIAnchorWidget(
+#                 anchor_x="center_x",
+#                 anchor_y="center_y",
+#                 child=self.v_box)
+#         )
+#
+#     def on_draw(self):
+#         self.clear()
+#         self.manager.draw()
+#
+# class EasyButton(arcade.gui.UIFlatButton):
+#     def __init__(self, screen_config: ScreenConfiguration, manager):
+#         super().__init__(
+#             text="Easy",
+#             center_x=0,
+#             center_y=0,
+#             width=200,
+#             height=50,
+#         )
+#         self.config = screen_config
+#         self.manager = manager
+#
+#     def on_click(self, event):
+#         arcade.get_window().show_view(GameView(self.config, EASY))
+#         self.manager.disable()
+#
+# class MediumButton(arcade.gui.UIFlatButton):
+#     def __init__(self, screen_config: ScreenConfiguration, manager):
+#         super().__init__(
+#             text="Medium",
+#             center_x=0,
+#             center_y=0,
+#             width=200,
+#             height=50,
+#         )
+#         self.config = screen_config
+#         self.manager = manager
+#
+#     def on_click(self, event):
+#         arcade.get_window().show_view(GameView(self.config, MEDIUM))
+#         self.manager.disable()
+#
+# class HardButton(arcade.gui.UIFlatButton):
+#     def __init__(self, screen_config: ScreenConfiguration, manager):
+#         super().__init__(
+#             text="Hard",
+#             center_x=0,
+#             center_y=0,
+#             width=200,
+#             height=50,
+#         )
+#         self.config = screen_config
+#         self.manager = manager
+#
+#     def on_click(self, event):
+#         arcade.get_window().show_view(GameView(self.config, HARD))
+#         self.manager.disable()
+
+
+# class StartButton(arcade.gui.UIFlatButton):
+#     def __init__(self, screen_config: ScreenConfiguration, manager):
+#         super(StartButton, self).__init__(text="Start Game", width=200)
+#         self.manager = manager
+#         self.config = screen_config
+#
+#     def on_click(self, event: arcade.gui.UIOnClickEvent):
+#         arcade.get_window().show_view(DifficultyView(self.config))
+#         self.manager.disable()
+#
+#
+# class RulesButton(arcade.gui.UIFlatButton):
+#     def __init__(self, config: ScreenConfiguration):
+#         super(RulesButton, self).__init__(text="Rules", width=200)
+#         self.config = config
+#
+#     def on_click(self, event: arcade.gui.UIOnClickEvent):
+#         # webbrowser.open('https://de.wikipedia.org/wiki/Durak_(Kartenspiel)', 2, True)
+#         arcade.get_window().show_view(RulesView(self.config))
+#
+#
+# class QuitButton(arcade.gui.UIFlatButton):
+#     def __init__(self):
+#         super(QuitButton, self).__init__(text="Quit Game", width=200)
+#
+#     def on_click(self, event: arcade.gui.UIOnClickEvent):
+#         arcade.exit()
+#
+
+# class ToMenuButton(arcade.gui.UIFlatButton):
+#     def __init__(self, config: ScreenConfiguration, manager):
+#         super(ToMenuButton, self).__init__(text="Back to Menu", width=200)
+#         self.config = config
+#         self.manager = manager
+#
+#     def on_click(self, event: arcade.gui.UIOnClickEvent):
+#         from start_screen import MenuView
+#         arcade.get_window().show_view(MenuView(self.config))
+#         self.manager.disable()
+#
+
+# class MenuView(arcade.View):
+#     def __init__(self, screen_config: ScreenConfiguration):
+#         super().__init__()
+#
+#         self.config = screen_config
+#
+#         # --- Required for all code that uses UI element,
+#         # a UIManager to handle the UI.
+#         self.manager = arcade.gui.UIManager()
+#         self.manager.enable()
+#
+#         self.rgb = [125, 1, 1]
+#         self.multilikator = 1
+#
+#         # Set background color
+#         arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
+#
+#         # Create a vertical BoxGroup to align buttons
+#         self.v_box = arcade.gui.UIBoxLayout()
+#
+#         # Create the buttons
+#         start_button = StartButton(self.config, self.manager)
+#         self.v_box.add(start_button.with_space_around(bottom=20))
+#
+#         rules_button = RulesButton(self.config)
+#         self.v_box.add(rules_button.with_space_around(bottom=20))
+#
+#         # Again, method 1. Use a child class to handle events.
+#         quit_button = QuitButton()
+#         self.v_box.add(quit_button)
+#
+#         # Create a widget to hold the v_box widget, that will center the buttons
+#         self.manager.add(
+#             arcade.gui.UIAnchorWidget(
+#                 anchor_x="center_x",
+#                 anchor_y="center_y",
+#                 child=self.v_box)
+#         )
+#
+#     def on_update(self, delta_time: 0.25):
+#         # self.rgb[0] += self.multilikator*1
+#         self.rgb[1] += self.multilikator * 2
+#         self.rgb[2] += self.multilikator * 4
+#         for f in self.rgb[1:]:
+#             if f > 255:
+#                 self.multilikator = -1
+#             elif f < 0:
+#                 self.multilikator = 1
+#
+#         arcade.set_background_color(self.rgb)
+#
+#     def on_draw(self):
+#         self.clear()
+#         self.manager.draw()
+
+
+# class Rules(arcade.gui.UITextArea):
+#     def __int__(self):
+#         super(Rules, self)
+#         self.fit_content()
+#
+#
+# class RulesView(arcade.View):
+#     def __init__(self, config: ScreenConfiguration):
+#         super().__init__()
+#
+#         self.config = config
+#
+#         # --- Required for all code that uses UI element,
+#         # a UIManager to handle the UI.
+#         self.manager = arcade.gui.UIManager()
+#         self.manager.enable()
+#
+#         # Create Vertical Box to place the items in
+#         self.v_box = arcade.gui.UIBoxLayout()
+#
+#         # open File and read Rules
+#         f = open('../resources/Rules.txt', 'r', encoding='UTF-8')
+#         self.rules = f.read()
+#         f.close()
+#
+#         arcade.set_background_color(arcade.color.WHITE_SMOKE)
+#
+#         # Text Field to be put in V_Box
+#         rules = Rules(self.config.width / 2, self.config.height / 2,
+#                       self.config.width * 0.7, self.config.height * 0.7, self.rules, 'arial', 25,
+#                       arcade.color.BLACK, True, 5.5)
+#
+#         self.v_box.add(rules)
+#
+#         # Create a widget to hold the v_box widget, that will center the buttons
+#         self.manager.add(
+#             arcade.gui.UIAnchorWidget(
+#                 anchor_x="center_x",
+#                 anchor_y="center_y",
+#                 child=self.v_box)
+#         )
+#
+#     def on_draw(self):
+#         self.clear()
+#         self.manager.draw()
+#
+#     def on_key_press(self, symbol: int, modifiers: int):
+#         if symbol == arcade.key.ESCAPE:
+#             arcade.get_window().show_view(MenuView(self.config))
 
 
 def main():
     """ Main function """
     config = ScreenConfiguration()
     window = arcade.Window(config.width, config.height, config.screen_title, fullscreen=True)
-
+    from start_screen import MenuView
     menu_view = MenuView(config)
     window.show_view(menu_view)
     arcade.run()

@@ -6,12 +6,12 @@ from gui.screen_configuration import ScreenConfiguration
 class MainCardSpritesPlayingArea:
     def __init__(self, screen_configuration: ScreenConfiguration):
         self.config = screen_configuration
-        self.mat_list: arcade.SpriteList = arcade.SpriteList()
+        self.mat_list = arcade.SpriteList()
         # self.start_x_position = self.config.start_x + self.config.x_spacing
         self.start_x_position = self.config.current_x / 2
         self.cards = [arcade.SpriteList()]
 
-    def get_cards(self) -> [[]]:
+    def get_cards(self) -> [arcade.SpriteList()]:
         return self.cards
     def add_new_sprite(self):
         mat = arcade.SpriteSolidColor(self.config.mat_width, self.config.mat_height, self.config.sprite_color)
@@ -60,9 +60,10 @@ class MainCardSpritesPlayingArea:
         for card_pair in self.cards:
             for card in card_pair:
                 lst.append(card)
-        self.cards = [arcade.SpriteList()]
+
+        self.cards.clear()
+        self.mat_list.clear()
         self.start_x_position = self.config.current_x / 2
-        self.mat_list = arcade.SpriteList()
         self.add_new_sprite()
 
         return lst

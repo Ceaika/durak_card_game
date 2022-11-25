@@ -13,6 +13,11 @@ class NotActiveCards:
         self.config = config
         self.trump_card = None
 
+    def get_played_cards(self):
+        return self.played_cards
+
+    def get_unused_cards(self):
+        return self.unused_cards
     def add_new_card(self, card):
         self.unused_cards.append(card)
 
