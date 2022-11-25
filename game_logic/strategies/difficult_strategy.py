@@ -118,7 +118,7 @@ class DifficultStrategy(Strategy):
         # Get the card with the lowest value
         card_to_play = min(cards_with_same_suit, key=lambda card: card.value, default=None)
 
-        if card_to_play is None and bottom_card.suit != self.not_active_cards.trump_card.suit:
+        if card_to_play is None and bottom_card.suit != self.not_active_cards.trump_card.suit and len(self.not_active_cards.unused_cards) < 20:
             trump_cards = self.computer_area.get_cards_with_same_suit_as_card(self.not_active_cards.trump_card)
             if len(trump_cards) > 0:
                 card_to_play = min(trump_cards, key=lambda card: card.value)
@@ -136,8 +136,10 @@ class DifficultStrategy(Strategy):
     #     # Get all the possible moves for the player
     #     all_player_moves = []
     #     for card in dummy_player_cards:
-    #         for card2 in dummy_main_area:
+    #         for card2 in self.get_dummy_area_cards():
     #             if card.suit == card2.suit:
     #                 if card.value > card2.value:
     #                     all_player_moves.append((card, card2))
     #     return all_player_moves
+    #
+    # def get_dummy_area_cards(self):
