@@ -14,6 +14,8 @@ class PlayerArea:
         self.is_turn = True
         self.is_taking = False
 
+    def get_cards(self):
+        return self.cards
     def add_new_card(self, card):
         card.position = self.beginning_x, self.beginning_y
         self.beginning_x += self.x_spacing

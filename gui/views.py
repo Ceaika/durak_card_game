@@ -39,7 +39,7 @@ class GameView(arcade.View):
         self.card_moved = False
 
         # Initialize the sprite lists
-        self.main_card_sprites_playing_area = MainCardSpritesPlayingArea(self.config)
+        self.playground = MainCardSpritesPlayingArea(self.config)
         self.human_player = PlayerArea(self.config.start_x_bottom, self.config.bottom_y,
                                        self.config.x_spacing)
         self.computer_player = PlayerArea(self.config.start_x_top, self.config.top_y,
@@ -47,7 +47,7 @@ class GameView(arcade.View):
         self.not_active_cards = NotActiveCards(self.config)
 
         # Initialize the utils so we can use helper functions
-        self.game_logic = GameLogic(self.human_player, self.computer_player, self.main_card_sprites_playing_area,
+        self.game_logic = GameLogic(self.human_player, self.computer_player, self.playground,
                                     self.not_active_cards, difficulty)
         # --- Required for all code that uses UI element,
         # a UIManager to handle the UI.
@@ -85,7 +85,7 @@ class GameView(arcade.View):
         self.held_card_original_position = ()
 
         # init main playing area with one sprite
-        self.main_card_sprites_playing_area.add_new_sprite()
+        self.playground.add_new_sprite()
 
         # Create every card
         for card_suit in self.config.card_suites:
@@ -115,7 +115,7 @@ class GameView(arcade.View):
         self.take_cards_button.on_click = self.take_cards
 
     def finish_move(self, event):
-        if len(self.main_card_sprites_playing_area.cards[-1]) == 0:
+        if len(self.playground.get_cards()[-1]) == 0:
             self.finish_turn()
 
     def finish_turn(self):
@@ -129,7 +129,7 @@ class GameView(arcade.View):
         self.game_logic.finish_turn()
 
     def take_cards(self, event):
-        if self.human_player.is_turn and len(self.main_card_sprites_playing_area.cards[-1]) == 1:
+        if self.human_player.is_turn and len(self.playground.get_cards()[-1]) == 1:
             self.game_logic.take_all_cards_human()
             self.human_player.is_turn = False
             self.human_player.is_taking = True
@@ -142,19 +142,19 @@ class GameView(arcade.View):
         self.manager.draw()
 
         # Draw the mats for the main card area
-        self.main_card_sprites_playing_area.mat_list.draw()
+        self.playground.get_mats().draw()
 
         # if any cards placed in the playground draw them
-        if len(self.main_card_sprites_playing_area.cards) != 0:
-            self.main_card_sprites_playing_area.get_all_cards().draw()
+        if len(self.playground.get_cards()) != 0:
+            self.playground.get_all_cards().draw()
 
         # draw not active cards
         self.not_active_cards.unused_cards.draw()
         self.not_active_cards.played_cards.draw()
         # draw player cards
-        self.human_player.cards.draw()
+        self.human_player.get_cards().draw()
         # draw computer cards
-        self.computer_player.cards.draw()
+        self.computer_player.get_cards().draw()
         # draw the label
         arcade.draw_text(self.hint_text, self.config.start_x, self.config.bottom_y + self.config.card_height,
                          arcade.color.BLACK, 24)
@@ -165,7 +165,7 @@ class GameView(arcade.View):
         """ Called when the user presses a mouse button. """
 
         # Get list of unused_cards we've clicked on
-        cards: list[Card] = arcade.get_sprites_at_point((x, y), self.human_player.cards)
+        cards: list[Card] = arcade.get_sprites_at_point((x, y), self.human_player.get_cards())
 
         # Have we clicked on a card?
         if len(cards) > 0:
@@ -196,7 +196,7 @@ class GameView(arcade.View):
             return
 
         # Find the closest mat, in case we are in contact with more than one
-        mat, distance = arcade.get_closest_sprite(self.held_card, self.main_card_sprites_playing_area.mat_list)
+        mat, distance = arcade.get_closest_sprite(self.held_card, self.playground.get_mats())
         reset_position = True
 
         # See if we are in contact with the closest mat
@@ -206,17 +206,17 @@ class GameView(arcade.View):
             reset_position = False
 
             # Check if the card can be placed on the mat
-            mat_index = self.main_card_sprites_playing_area.mat_list.index(mat)
+            mat_index = self.playground.get_mats().index(mat)
             # Check if index is empty
-            if len(self.main_card_sprites_playing_area.cards) > mat_index:
-                if len(self.main_card_sprites_playing_area.cards[mat_index]) >= 2:
+            if len(self.playground.get_cards()) >= mat_index:
+                if len(self.playground.get_cards()[mat_index]) >= 2:
                     # There are two unused_cards in the mat, so we can't put our card there
                     reset_position = True
-                elif len(self.main_card_sprites_playing_area.cards[mat_index]) == 1:
+                elif len(self.playground.get_cards()[mat_index]) == 1:
                     # There is one card in the mat, so we need to check if the new card can be put there
                     reset_position = not self.game_logic.validate_player_defence(
-                        self.main_card_sprites_playing_area.cards[mat_index][-1], self.held_card)
-                elif len(self.main_card_sprites_playing_area.cards[mat_index]) == 0:
+                        self.playground.get_cards()[mat_index][-1], self.held_card)
+                elif len(self.playground.get_cards()[mat_index]) == 0:
                     # There are no unused_cards in the mat, so we need to check if the new card can be put there
                     reset_position = not self.game_logic.validate_player_attack(self.held_card)
 
@@ -230,7 +230,7 @@ class GameView(arcade.View):
             self.held_card.position = self.held_card_original_position
         else:
             # Add the card and mat to the main unused_cards list
-            self.main_card_sprites_playing_area.add_new_card(self.held_card)
+            self.playground.add_new_card(self.held_card)
 
             # remove card from human player
             self.human_player.remove_card(self.human_player.find_card(self.held_card))
@@ -258,33 +258,31 @@ class GameView(arcade.View):
         """ Movement and game logic """
         # self.card_list.update()
         # if isinstance(self.held_card, Card):
-        #     if self.held_card.collides_with_list(self.main_card_sprites_playing_area.mat_list):
+        #     if self.held_card.collides_with_list(self.playground.get_mats()):
         #         print("Collides with main mat")
         if self.computer_player.is_taking:
             self.hint_text = "Add more cards or finish turn"
-            if len(self.main_card_sprites_playing_area.cards[-1]) == 1:
-                self.main_card_sprites_playing_area.cards.append([])
-                self.main_card_sprites_playing_area.add_new_sprite()
+            if len(self.playground.get_cards()[-1]) == 1:
+                self.playground.add_new_sprite()
         elif self.human_player.is_taking:
-            self.main_card_sprites_playing_area.cards.append([])
-            self.main_card_sprites_playing_area.add_new_sprite()
+            self.playground.add_new_sprite()
             if not self.game_logic.make_computer_attack_move():
                 self.human_player.is_turn = False
                 self.human_player.is_taking = False
                 self.game_logic.finish_turn()
 
         else:
-            if len(self.main_card_sprites_playing_area.cards[-1]) == 0:
+            if len(self.playground.get_cards()[-1]) == 0:
                 if not self.human_player.is_turn:
                     self.computer_text = "Computer attacked"
-                    if not self.game_logic.make_computer_attack_move() or len(self.human_player.cards) == 0:
+                    if not self.game_logic.make_computer_attack_move() or len(self.computer_player.get_cards()) == 0:
                         self.game_logic.finish_turn()
                         self.human_player.is_turn = True
                         self.computer_text = "Computer finished his turn"
                 else:
                     self.hint_text = "Your turn!\nAttack or finish move"
 
-            elif len(self.main_card_sprites_playing_area.cards[-1]) == 1:
+            elif len(self.playground.get_cards()[-1]) == 1:
                 if not self.human_player.is_turn:
                     self.computer_text = "Computer defended"
                     if not self.game_logic.make_computer_defence_move():
@@ -294,21 +292,20 @@ class GameView(arcade.View):
                         self.computer_text = "Computer is taking the cards"
                 else:
                     self.hint_text = "Your turn!\nDefend or take cards"
-                    if len(self.computer_player.cards) == 0:
+                    if len(self.computer_player.get_cards()) == 0:
                         self.finish_turn()
 
-            elif len(self.main_card_sprites_playing_area.cards[-1]) == 2:
-                self.main_card_sprites_playing_area.cards.append([])
-                self.main_card_sprites_playing_area.add_new_sprite()
+            elif len(self.playground.get_cards()[-1]) == 2:
+                self.playground.add_new_sprite()
 
         # if self.human_player.is_taking:
         #     pass
         # if self.computer_player.is_taking:
         #     pass
 
-        if len(self.not_active_cards.unused_cards) == 0 and len(self.human_player.cards) == 0:
+        if len(self.not_active_cards.unused_cards) == 0 and len(self.human_player.get_cards()) == 0:
             arcade.get_window().show_view(WinView(self.config))
-        elif len(self.not_active_cards.unused_cards) == 0 and len(self.computer_player.cards) == 0:
+        elif len(self.not_active_cards.unused_cards) == 0 and len(self.computer_player.get_cards()) == 0:
             arcade.get_window().show_view(LoseView(self.config))
 
 class DifficultyView(arcade.View):
