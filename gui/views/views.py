@@ -4,7 +4,7 @@ import arcade.gui
 from game_logic.game_logic import GameLogic
 from gui.card import Card
 
-from play_areas.main_card_sprites_playing_area import Playground
+from play_areas.playground import Playground
 from play_areas.not_active_cards import NotActiveCards
 from play_areas.player_area import PlayerArea
 from gui.screen_configuration import ScreenConfiguration

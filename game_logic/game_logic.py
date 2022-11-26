@@ -3,9 +3,10 @@ from game_logic.strategies.difficult_strategy import DifficultStrategy
 from game_logic.strategies.medium_strategy import MediumStrategy
 from game_logic.strategies.simple_strategy import SimpleStrategy
 from game_logic.strategies.strategycontext import StrategyContext
-from play_areas.main_card_sprites_playing_area import Playground
+from play_areas.playground import Playground
 from play_areas.not_active_cards import NotActiveCards
 from play_areas.player_area import PlayerArea
+
 
 class GameLogic:
     def __init__(self, player: PlayerArea, computer: PlayerArea,
@@ -23,18 +24,17 @@ class GameLogic:
             self.strategy = DifficultStrategy(computer, main, not_active_cards, player)
         self.strategy_context = StrategyContext(self.strategy, self.playground, self.computer)
 
-
     def player_move(self, mat_index, held_card) -> bool:
-        
+
         if len(self.playground.get_cards()[mat_index]) >= 2:
             # There are two played_cards in the mat, so we can't put our card there
             return True
-        
+
         elif len(self.playground.get_cards()[mat_index]) == 1:
             # There is one card in the mat, so we need to check if the new card can be put there
             return not self.validate_player_defence(
                 self.playground.get_cards()[mat_index][-1], held_card)
-        
+
         elif len(self.playground.get_cards()[mat_index]) == 0:
             # There are no unused_cards in the mat, so we need to check if the new card can be put there
             return not self.validate_player_attack(held_card)
@@ -62,7 +62,8 @@ class GameLogic:
             self.computer.add_new_card(card)
 
     def finish_turn(self):
-        # First we take unused unused_cards from the not active unused_cards and add them to the computer and player area
+        # First we take unused unused_cards from the not active unused_cards and add them to the computer and player
+        # area
 
         for i in range(6):
             if len(self.not_active_cards.unused_cards) > 0:
@@ -87,5 +88,3 @@ class GameLogic:
         # Add the unused_cards to the computer area
         for card in cards:
             self.player.add_new_card(card)
-
-

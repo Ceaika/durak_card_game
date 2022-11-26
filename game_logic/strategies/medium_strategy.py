@@ -1,5 +1,5 @@
 from game_logic.strategies.computer_strategy import Strategy
-from play_areas.main_card_sprites_playing_area import Playground
+from play_areas.playground import Playground
 from play_areas.not_active_cards import NotActiveCards
 from play_areas.player_area import PlayerArea
 
