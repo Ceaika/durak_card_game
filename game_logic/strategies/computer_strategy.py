@@ -1,14 +1,14 @@
 from abc import ABC, abstractmethod
 
 from gui.card import Card
-from play_areas.main_card_sprites_playing_area import MainCardSpritesPlayingArea
+from play_areas.main_card_sprites_playing_area import Playground
 from play_areas.not_active_cards import NotActiveCards
 from play_areas.player_area import PlayerArea
 
 
 class Strategy(ABC):
 
-    def __init__(self, computer_area: PlayerArea, main_card_sprites_playing_area: MainCardSpritesPlayingArea,
+    def __init__(self, computer_area: PlayerArea, main_card_sprites_playing_area: Playground,
                  not_active_cards: NotActiveCards, player_area: PlayerArea):
         super().__init__()
         self.computer_area = computer_area

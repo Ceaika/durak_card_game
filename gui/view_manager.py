@@ -2,7 +2,7 @@ import arcade
 
 from gui.screen_configuration import ScreenConfiguration
 from gui.views.difficulty_level import DifficultyView
-from gui.views.rules_screen import RulesView
+from gui.views.rules_view import RulesView
 from gui.views.start_screen import MenuView
 from gui.views.views import GameView
 

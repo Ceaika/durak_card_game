@@ -4,7 +4,7 @@ import arcade.gui
 from game_logic.game_logic import GameLogic
 from gui.card import Card
 
-from play_areas.main_card_sprites_playing_area import MainCardSpritesPlayingArea
+from play_areas.main_card_sprites_playing_area import Playground
 from play_areas.not_active_cards import NotActiveCards
 from play_areas.player_area import PlayerArea
 from gui.screen_configuration import ScreenConfiguration
@@ -20,9 +20,6 @@ class GameView(arcade.View):
         super().__init__()
 
         self.view_manager = gui.view_manager.ViewManager()
-
-        # This scales the unused_cards and the rest of the play area according to screen size
-        self.config.init_current_screen()
 
         arcade.set_background_color(arcade.color.AMAZON)
         # Show buttons if needed
@@ -42,7 +39,7 @@ class GameView(arcade.View):
         self.card_moved = False
 
         # Initialize the sprite lists
-        self.playground = MainCardSpritesPlayingArea(self.config)
+        self.playground = Playground(self.config)
         self.human_player = PlayerArea(self.config.start_x_bottom, self.config.bottom_y,
                                        self.config.x_spacing)
         self.computer_player = PlayerArea(self.config.start_x_top, self.config.top_y,

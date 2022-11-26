@@ -3,7 +3,7 @@ import arcade
 from gui.screen_configuration import ScreenConfiguration
 
 
-class MainCardSpritesPlayingArea:
+class Playground:
     def __init__(self, screen_configuration: ScreenConfiguration):
         self.config = screen_configuration
         self.mat_list = arcade.SpriteList()
@@ -13,6 +13,7 @@ class MainCardSpritesPlayingArea:
 
     def get_cards(self) -> [arcade.SpriteList()]:
         return self.cards
+
     def add_new_sprite(self):
         mat = arcade.SpriteSolidColor(self.config.mat_width, self.config.mat_height, self.config.sprite_color)
         mat.position = self.start_x_position, self.config.middle_y
@@ -48,6 +49,7 @@ class MainCardSpritesPlayingArea:
 
     def get_mats(self):
         return self.mat_list
+
     def get_all_cards(self):
         lst = arcade.SpriteList()
         for card_pair in self.cards:

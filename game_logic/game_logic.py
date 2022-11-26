@@ -3,13 +3,13 @@ from game_logic.strategies.difficult_strategy import DifficultStrategy
 from game_logic.strategies.medium_strategy import MediumStrategy
 from game_logic.strategies.simple_strategy import SimpleStrategy
 from game_logic.strategies.strategycontext import StrategyContext
-from play_areas.main_card_sprites_playing_area import MainCardSpritesPlayingArea
+from play_areas.main_card_sprites_playing_area import Playground
 from play_areas.not_active_cards import NotActiveCards
 from play_areas.player_area import PlayerArea
 
 class GameLogic:
     def __init__(self, player: PlayerArea, computer: PlayerArea,
-                 main: MainCardSpritesPlayingArea, not_active_cards: NotActiveCards, difficulty: int):
+                 main: Playground, not_active_cards: NotActiveCards, difficulty: int):
         self.player = player
         self.computer = computer
         self.playground = main

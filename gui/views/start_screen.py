@@ -1,6 +1,9 @@
 import arcade
 import arcade.gui
 
+from gui.buttons.quit_button import QuitButton
+from gui.buttons.rules_button import RulesButton
+from gui.buttons.start_button import StartButton
 from gui.screen_configuration import ScreenConfiguration
 import gui.view_manager
 
@@ -59,34 +62,3 @@ class MenuView(arcade.View):
     def on_draw(self):
         self.clear()
         self.manager.draw()
-
-
-class StartButton(arcade.gui.UIFlatButton):
-    def __init__(self, screen_config: ScreenConfiguration, manager):
-        super(StartButton, self).__init__(text="Start Game", width=200)
-        self.view_manager = gui.view_manager.ViewManager()
-        self.manager = manager
-        self.config = screen_config
-
-    def on_click(self, event: arcade.gui.UIOnClickEvent):
-        self.view_manager.show_difficulty_view()
-        self.manager.disable()
-
-
-class RulesButton(arcade.gui.UIFlatButton):
-    def __init__(self, config: ScreenConfiguration):
-        self.view_manager = gui.view_manager.ViewManager()
-        super(RulesButton, self).__init__(text="Rules", width=200)
-        self.config = config
-
-    def on_click(self, event: arcade.gui.UIOnClickEvent):
-        # webbrowser.open('https://de.wikipedia.org/wiki/Durak_(Kartenspiel)', 2, True)
-        self.view_manager.show_rules_view()
-
-
-class QuitButton(arcade.gui.UIFlatButton):
-    def __init__(self):
-        super(QuitButton, self).__init__(text="Quit Game", width=200)
-
-    def on_click(self, event: arcade.gui.UIOnClickEvent):
-        arcade.exit()

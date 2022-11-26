@@ -1,11 +1,11 @@
 from game_logic.strategies.computer_strategy import Strategy
-from play_areas.main_card_sprites_playing_area import MainCardSpritesPlayingArea
+from play_areas.main_card_sprites_playing_area import Playground
 from play_areas.not_active_cards import NotActiveCards
 from play_areas.player_area import PlayerArea
 
 
 class DifficultStrategy(Strategy):
-    def __init__(self, computer_area: PlayerArea, main_card_sprites_playing_area: MainCardSpritesPlayingArea,
+    def __init__(self, computer_area: PlayerArea, main_card_sprites_playing_area: Playground,
                  not_active_cards: NotActiveCards, player_area: PlayerArea):
         super().__init__(computer_area, main_card_sprites_playing_area, not_active_cards, player_area)
         self.not_played_cards = {"clubs": [range(6, 15)], "diamonds": [range(6, 15)], "hearts": [range(6, 15)]}
