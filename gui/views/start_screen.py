@@ -9,10 +9,7 @@ class MenuView(arcade.View):
     def __init__(self, screen_config: ScreenConfiguration):
         super().__init__()
 
-
-
         self.config = screen_config
-        self.config.init_current_screen()
 
         # --- Required for all code that uses UI element,
         # a UIManager to handle the UI.
@@ -85,7 +82,6 @@ class RulesButton(arcade.gui.UIFlatButton):
     def on_click(self, event: arcade.gui.UIOnClickEvent):
         # webbrowser.open('https://de.wikipedia.org/wiki/Durak_(Kartenspiel)', 2, True)
         self.view_manager.show_rules_view()
-
 
 
 class QuitButton(arcade.gui.UIFlatButton):

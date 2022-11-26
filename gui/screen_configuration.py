@@ -10,7 +10,7 @@ class ScreenConfiguration:
         self.screen_title = "Durak"
         self.__standard_screen_diagonal = math.sqrt(1920**2 + 1080**2)
 
-    def init_current_screen(self):
+    def __init_current_screen(self):
         self.current_x, self.current_y = arcade.get_window().get_size()
         self.current_diagonal = math.sqrt(self.current_x ** 2 + self.current_y ** 2)
         self.screen_ratio = self.current_diagonal / self.__standard_screen_diagonal

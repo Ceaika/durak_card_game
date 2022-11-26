@@ -1,31 +1,23 @@
 import os
+import time
 
 import arcade
 import arcade.gui
+
+from gui.screen_configuration import ScreenConfiguration
 import gui.view_manager
 
 
-
-# class Rules(arcade.gui.UITextArea):
-#     def __int__(self):
-#         super(Rules, self)
-#         self.fit_content()
-from gui.screen_configuration import ScreenConfiguration
+class Rules(arcade.gui.UITextArea):
+    def __int__(self):
+        super(Rules, self)
+        self.fit_content()
 
 
 class RulesView(arcade.View):
     def __init__(self, config: ScreenConfiguration):
         super().__init__()
-
         self.config = config
-
-        # --- Required for all code that uses UI element,
-        # a UIManager to handle the UI.
-        self.manager = arcade.gui.UIManager()
-        self.manager.enable()
-
-        # Create Vertical Box to place the items in
-        self.v_box = arcade.gui.UIBoxLayout()
 
         # get current working directory
         cwd = os.getcwd()
@@ -37,16 +29,22 @@ class RulesView(arcade.View):
         with open(f'{path}/Rules.txt', 'r', encoding='UTF-8') as f:
             self.__rules = f.read()
 
+        # --- Required for all code that uses UI element,
+        # a UIManager to handle the UI.
+        self.manager = arcade.gui.UIManager()
+        self.manager.enable()
+
+        # Create Vertical Box to place the items in
+        self.v_box = arcade.gui.UIBoxLayout()
+
         arcade.set_background_color(arcade.color.WHITE_SMOKE)
 
         # Text Field to be put in V_Box
-        self.rules = arcade.gui.UITextArea(self.config.width / 2, self.config.height / 2,
-                      self.config.width * 0.7, self.config.height * 0.7, self.rules, 'arial', 25,
-                      arcade.color.BLACK)
-        self.rules.fit_content()
-        self.rules.scroll_speed = 5.5
+        rules = Rules(self.config.width / 2, self.config.height / 2,
+                      self.config.width * 0.7, self.config.height * 0.7, self.__rules, 'arial', 25,
+                      arcade.color.BLACK, True, 5.5)
 
-        self.v_box.add(self.rules)
+        self.v_box.add(rules)
 
         # Create a widget to hold the v_box widget, that will center the buttons
         self.manager.add(
