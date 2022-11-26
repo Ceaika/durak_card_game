@@ -1,12 +1,10 @@
 import arcade
 
 from gui.screen_configuration import ScreenConfiguration
-from gui.views.difficulty_view import DifficultyView
-from gui.views.lose_view import LoseView
-from gui.views.main_game_view import MainGameView
-from gui.views.menu_view import MenuView
-from gui.views.rules_view import RulesView
-from gui.views.win_view import WinView
+from gui.views.difficulty_level import DifficultyView
+from gui.views.rules_screen import RulesView
+from gui.views.start_screen import MenuView
+from gui.views.views import GameView
 
 from gui.views.win_lose_screen import WinLoseView
 
@@ -25,7 +23,7 @@ class ViewManager(object):
         self.__rules_view = RulesView(self.config)
 
     def show_game_view(self, difficulty):
-        arcade.get_window().show_view(MainGameView(self.config, difficulty))
+        arcade.get_window().show_view(GameView(self.config, difficulty))
 
     def show_rules_view(self):
         arcade.get_window().show_view(self.__rules_view)
@@ -36,11 +34,11 @@ class ViewManager(object):
     def show_menu_view(self):
         arcade.get_window().show_view(MenuView(self.config))
 
-    def show_win_view(self):
-        arcade.get_window().show_view(WinView(self.config))
-
-    def show_lose_view(self):
-        arcade.get_window().show_view(LoseView(self.config))
+    # def show_win_view(self):
+    #     arcade.get_window().show_view(WinView(self.config))
+    #
+    # def show_lose_view(self):
+    #     arcade.get_window().show_view(LoseView(self.config))
 
     def show_win_lose_view(self, status):
         arcade.get_window().show_view(WinLoseView(self.config, status))

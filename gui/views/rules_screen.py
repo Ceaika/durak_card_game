@@ -1,3 +1,5 @@
+import os
+
 import arcade
 import arcade.gui
 import gui.view_manager
@@ -25,10 +27,15 @@ class RulesView(arcade.View):
         # Create Vertical Box to place the items in
         self.v_box = arcade.gui.UIBoxLayout()
 
+        # get current working directory
+        cwd = os.getcwd()
+
+        # create a path to the file
+        path = os.path.join(cwd, "resources")
+
         # open File and read Rules
-        f = open('../../resources/Rules.txt', 'r', encoding='UTF-8')
-        self.rules = f.read()
-        f.close()
+        with open(f'{path}/Rules.txt', 'r', encoding='UTF-8') as f:
+            self.__rules = f.read()
 
         arcade.set_background_color(arcade.color.WHITE_SMOKE)
 
