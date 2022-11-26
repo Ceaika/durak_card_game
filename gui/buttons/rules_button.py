@@ -1,10 +1,6 @@
-import os
-
-import arcade
 import arcade.gui
-
-from gui.screen_configuration import ScreenConfiguration
 import gui.view_manager
+from gui.screen_configuration import ScreenConfiguration
 
 
 class RulesButton(arcade.gui.UIFlatButton):
@@ -13,6 +9,5 @@ class RulesButton(arcade.gui.UIFlatButton):
         self.config = config
 
     def on_click(self, event: arcade.gui.UIOnClickEvent):
-        # webbrowser.open('https://de.wikipedia.org/wiki/Durak_(Kartenspiel)', 2, True)
         view_manager = gui.view_manager.ViewManager()
         view_manager.show_rules_view()

@@ -5,14 +5,14 @@ from gui.buttons.quit_button import QuitButton
 from gui.buttons.rules_button import RulesButton
 from gui.buttons.start_button import StartButton
 from gui.screen_configuration import ScreenConfiguration
-import gui.view_manager
 
 
-class MenuView(arcade.View):
+class StartView(arcade.View):
     def __init__(self, screen_config: ScreenConfiguration):
         super().__init__()
 
         self.config = screen_config
+        self.config.init_current_screen()
 
         # --- Required for all code that uses UI element,
         # a UIManager to handle the UI.
@@ -48,7 +48,6 @@ class MenuView(arcade.View):
         )
 
     def on_update(self, delta_time: 0.25):
-        # self.rgb[0] += self.multiplier*1
         self.rgb[1] += self.multiplier * 2
         self.rgb[2] += self.multiplier * 4
         for f in self.rgb[1:]:

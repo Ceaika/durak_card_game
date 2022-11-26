@@ -292,7 +292,7 @@ def main():
     """ Main function """
     config = ScreenConfiguration()
     window = arcade.Window(config.width, config.height, config.screen_title, fullscreen=True)
-    from gui.views.start_screen import MenuView
+    from gui.views.start_view import MenuView
     menu_view = MenuView(config)
     window.show_view(menu_view)
     arcade.run()

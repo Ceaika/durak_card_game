@@ -1,17 +1,9 @@
 import os
-import time
-
 import arcade
 import arcade.gui
-
-from gui.screen_configuration import ScreenConfiguration
 import gui.view_manager
-
-
-class Rules(arcade.gui.UITextArea):
-    def __int__(self):
-        super(Rules, self)
-        self.fit_content()
+from gui.text_fields.rules import Rules
+from gui.screen_configuration import ScreenConfiguration
 
 
 class RulesView(arcade.View):

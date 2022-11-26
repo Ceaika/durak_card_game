@@ -1,8 +1,6 @@
-import arcade
 import arcade.gui
-
-from gui.screen_configuration import ScreenConfiguration
 import gui.view_manager
+from gui.screen_configuration import ScreenConfiguration
 
 
 class ToMenuButton(arcade.gui.UIFlatButton):

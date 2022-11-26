@@ -58,5 +58,5 @@ class WinLoseView(arcade.View):
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.ESCAPE:
-            from gui.views.start_screen import MenuView
+            from gui.views.start_view import MenuView
             arcade.get_window().show_view(MenuView(self.config))
