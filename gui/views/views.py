@@ -9,6 +9,7 @@ from play_areas.not_active_cards import NotActiveCards
 from play_areas.player_area import PlayerArea
 from gui.screen_configuration import ScreenConfiguration
 from Constants import WIN, LOSE
+import gui.view_manager
 
 
 class GameView(arcade.View):
@@ -17,6 +18,8 @@ class GameView(arcade.View):
     def __init__(self, screen_config: ScreenConfiguration, difficulty: int):
         self.config = screen_config
         super().__init__()
+
+        self.view_manager = gui.view_manager.ViewManager()
 
         # This scales the unused_cards and the rest of the play area according to screen size
         self.config.init_current_screen()
@@ -231,8 +234,7 @@ class GameView(arcade.View):
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.ESCAPE:
-            from start_screen import MenuView
-            arcade.get_window().show_view(MenuView(ScreenConfiguration()))
+            self.view_manager.show_menu_view()
         if symbol == arcade.key.ENTER:
             pass
             # self.init_Animation()
@@ -284,11 +286,9 @@ class GameView(arcade.View):
                 self.playground.add_new_sprite()
 
         if len(self.not_active_cards.get_unused_cards()) == 0 and len(self.human_player.get_cards()) == 0:
-            from win_lose_screen import WinLoseView
-            arcade.get_window().show_view(WinLoseView(self.config, WIN))
+            self.view_manager.show_game_over_view(WIN)
         elif len(self.not_active_cards.get_unused_cards()) == 0 and len(self.computer_player.get_cards()) == 0:
-            from win_lose_screen import WinLoseView
-            arcade.get_window().show_view(WinLoseView(self.config,LOSE))
+            self.manager.show_game_over_view(LOSE)
 
 
 # class DifficultyView(arcade.View):
@@ -529,7 +529,7 @@ def main():
     """ Main function """
     config = ScreenConfiguration()
     window = arcade.Window(config.width, config.height, config.screen_title, fullscreen=True)
-    from start_screen import MenuView
+    from gui.views.start_screen import MenuView
     menu_view = MenuView(config)
     window.show_view(menu_view)
     arcade.run()

@@ -1,8 +1,6 @@
 import arcade
 import arcade.gui
-from gui.buttons.quit_button import QuitButton
-from gui.buttons.rules_button import RulesButton
-from gui.buttons.start_button import StartButton
+
 from gui.screen_configuration import ScreenConfiguration
 import gui.view_manager
 
@@ -11,8 +9,10 @@ class MenuView(arcade.View):
     def __init__(self, screen_config: ScreenConfiguration):
         super().__init__()
 
-        self.view_manager = gui.view_manager.ViewManager()
+
+
         self.config = screen_config
+        self.config.init_current_screen()
 
         # --- Required for all code that uses UI element,
         # a UIManager to handle the UI.
@@ -20,7 +20,7 @@ class MenuView(arcade.View):
         self.manager.enable()
 
         self.rgb = [125, 1, 1]
-        self.multilikator = 1
+        self.multiplier = 1
 
         # Set background color
         arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
@@ -47,21 +47,50 @@ class MenuView(arcade.View):
                 child=self.v_box)
         )
 
-    def my_button(self):
-        self.controller.show_main_game_view()
-
     def on_update(self, delta_time: 0.25):
-        # self.rgb[0] += self.multilikator*1
-        self.rgb[1] += self.multilikator * 2
-        self.rgb[2] += self.multilikator * 4
+        # self.rgb[0] += self.multiplier*1
+        self.rgb[1] += self.multiplier * 2
+        self.rgb[2] += self.multiplier * 4
         for f in self.rgb[1:]:
             if f > 255:
-                self.multilikator = -1
+                self.multiplier = -1
             elif f < 0:
-                self.multilikator = 1
+                self.multiplier = 1
 
         arcade.set_background_color(self.rgb)
 
     def on_draw(self):
         self.clear()
         self.manager.draw()
+
+
+class StartButton(arcade.gui.UIFlatButton):
+    def __init__(self, screen_config: ScreenConfiguration, manager):
+        super(StartButton, self).__init__(text="Start Game", width=200)
+        self.view_manager = gui.view_manager.ViewManager()
+        self.manager = manager
+        self.config = screen_config
+
+    def on_click(self, event: arcade.gui.UIOnClickEvent):
+        self.view_manager.show_difficulty_view()
+        self.manager.disable()
+
+
+class RulesButton(arcade.gui.UIFlatButton):
+    def __init__(self, config: ScreenConfiguration):
+        self.view_manager = gui.view_manager.ViewManager()
+        super(RulesButton, self).__init__(text="Rules", width=200)
+        self.config = config
+
+    def on_click(self, event: arcade.gui.UIOnClickEvent):
+        # webbrowser.open('https://de.wikipedia.org/wiki/Durak_(Kartenspiel)', 2, True)
+        self.view_manager.show_rules_view()
+
+
+
+class QuitButton(arcade.gui.UIFlatButton):
+    def __init__(self):
+        super(QuitButton, self).__init__(text="Quit Game", width=200)
+
+    def on_click(self, event: arcade.gui.UIOnClickEvent):
+        arcade.exit()

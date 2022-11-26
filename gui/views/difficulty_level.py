@@ -1,13 +1,17 @@
 import arcade
 import arcade.gui
-from screen_configuration import ScreenConfiguration
 
 from Constants import EASY, MEDIUM, HARD
+from gui.screen_configuration import ScreenConfiguration
+import gui.view_manager
 
 
 class DifficultyView(arcade.View):
     def __init__(self, screen_config: ScreenConfiguration):
         super().__init__()
+
+        # This is the manager used to switch between views
+        self.view_manager = gui.view_manager.ViewManager()
 
         self.config = screen_config
 
@@ -60,8 +64,7 @@ class DifficultyView(arcade.View):
         self.button_clicked(HARD)
 
     def button_clicked(self, mode):
-        from views import GameView
-        arcade.get_window().show_view(GameView(self.config, mode))
+        self.view_manager.show_game_view(mode)
         self.manager.disable()
 
     def on_draw(self):
@@ -70,5 +73,5 @@ class DifficultyView(arcade.View):
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.ESCAPE:
-            from start_screen import MenuView
-            arcade.get_window().show_view(MenuView(self.config))
+            self.view_manager.show_menu_view()
+            self.manager.disable()

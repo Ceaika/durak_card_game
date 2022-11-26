@@ -10,7 +10,7 @@ class Views:
 
     def __init__(self, screen_configuration: ScreenConfiguration):
         self.game_view = main_game.MainGameView(screen_configuration)
-        self.menu_view = gui.views.menu_view.MenuView(screen_configuration, view_controller)
+        self.menu_view = gui.views.views.menu_view.MenuView(screen_configuration, view_controller)
 
 
 
