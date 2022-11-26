@@ -10,6 +10,8 @@ class SimpleStrategy(Strategy):
             # Remove the cards that are the same suit as the trump card
             available_cards = {card for card in available_cards if card.suit != self.not_active_cards.trump_card.suit}
             card_to_play = min(available_cards, key=lambda card: card.value)
+            if card_to_play is None:
+                card_to_play = min(self.computer_area.cards, key=lambda card: card.value)
         else:
             # Get all the unused_cards from the main area
             cards = self.main_card_sprites_playing_area.get_all_cards()

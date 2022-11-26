@@ -1,3 +1,5 @@
+import os
+
 import arcade
 
 
@@ -15,12 +17,18 @@ class Card(arcade.Sprite):
         self.current_card_area = None
         self.current_card_index = None
 
+        # get current working directory
+        cwd = os.getcwd()
+
+        # get the path to the images folder
+        images_path = os.path.join(cwd, "playing_cards")
+
         # Face down image
-        self.face_down_image = "../playing_cards/cardBack_black2.png"
+        self.face_down_image = f"{images_path}/cardBack_black2.png"
 
         # Image to use for the sprite when face up and defining the value
         if self.value == "jack" or self.value == "queen" or self.value == "king" or self.value == "ace":
-            self.image_file_name = f"../playing_cards/{self.value}_of_{self.suit}2.png"
+            self.image_file_name = f"{images_path}/{self.value}_of_{self.suit}2.png"
             if self.value == "jack":
                 self.value = 11
             elif self.value == "queen":
@@ -30,12 +38,11 @@ class Card(arcade.Sprite):
             elif self.value == "ace":
                 self.value = 14
         else:
-            self.image_file_name = f"../playing_cards/{self.value}_of_{self.suit}.png"
+            self.image_file_name = f"{images_path}/{self.value}_of_{self.suit}.png"
             self.value = int(self.value)
 
         self.is_face_up = False
         super().__init__(self.face_down_image, scale, hit_box_algorithm="None")
-        #super().__init__(self.image_file_name, scale, hit_box_algorithm="None")
 
     def face_down(self):
         """ Turn card face-down """
@@ -51,5 +58,3 @@ class Card(arcade.Sprite):
     def is_face_down(self):
         """ Is this card face down? """
         return not self.is_face_up
-        # Call the parent
-        super().__init__(self.image_file_name, scale, hit_box_algorithm="None")

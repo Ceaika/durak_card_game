@@ -62,8 +62,12 @@ class MediumStrategy(Strategy):
             # If suit is a set, get the first element
             if isinstance(suit, set):
                 suit = suit.pop()
-            #TODO: What if bot has only trump cards?
             card_to_play = self.find_card(suit, highest_values[suit])
+            # What if bot has only trump cards?
+            if card_to_play is None and len(bot_cards[self.not_active_cards.trump_card.suit]) > 0:
+                card_to_play = min(bot_cards[self.not_active_cards.trump_card.suit])
+                card_to_play = self.find_card(self.not_active_cards.trump_card.suit, card_to_play)
+
             # If card_to_play is a set, get the first element
             if isinstance(card_to_play, set):
                 card_to_play = card_to_play.pop()
