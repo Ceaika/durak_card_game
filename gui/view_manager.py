@@ -8,6 +8,8 @@ from gui.views.menu_view import MenuView
 from gui.views.rules_view import RulesView
 from gui.views.win_view import WinView
 
+from gui.views.win_lose_screen import WinLoseView
+
 
 class ViewManager(object):
     __instance = None
@@ -39,5 +41,8 @@ class ViewManager(object):
 
     def show_lose_view(self):
         arcade.get_window().show_view(LoseView(self.config))
+
+    def show_win_lose_view(self, status):
+        arcade.get_window().show_view(WinLoseView(self.config, status))
 
 
