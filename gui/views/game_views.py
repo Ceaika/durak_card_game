@@ -2,6 +2,8 @@ import arcade
 import arcade.gui
 
 from game_logic.game_logic import GameLogic
+from gui.buttons.finish_move_buton import FinishMoveButton
+from gui.buttons.take_cards_button import TakeCardsButton
 from gui.card import Card
 
 from play_areas.playground import Playground
@@ -58,10 +60,11 @@ class GameView(arcade.View):
         self.v_box = arcade.gui.UIBoxLayout()
 
         # Create the buttons
-        self.finish_move_button = arcade.gui.UIFlatButton(text="Finish move", width=200)
+        self.finish_move_button = FinishMoveButton(self.playground, self.game_logic, self.human_player,
+                                                   self.computer_player)
         self.v_box.add(self.finish_move_button.with_space_around(bottom=20))
 
-        self.take_cards_button = arcade.gui.UIFlatButton(text="Take cards", width=200)
+        self.take_cards_button = TakeCardsButton(self.playground, self.game_logic, self.human_player)
         self.v_box.add(self.take_cards_button.with_space_around(bottom=20))
 
         self.manager.add(
@@ -111,13 +114,6 @@ class GameView(arcade.View):
         trump_card.face_up()
         trump_card.angle = 90
         trump_card.center_x = self.config.card_width * 1.2
-        self.finish_move_button.on_click = self.finish_move
-        self.take_cards_button.on_click = self.take_cards
-
-    def finish_move(self, event):
-
-        if len(self.playground.get_cards()[-1]) == 0:
-            self.finish_turn()
 
     def finish_turn(self):
         if self.computer_player.is_taking:
@@ -125,17 +121,10 @@ class GameView(arcade.View):
             self.computer_player.is_taking = False
             self.human_player.is_turn = True
 
-
         elif self.human_player.is_turn:
             self.human_player.is_turn = False
 
-        self.game_logic.finish_turn()
-
-    def take_cards(self, event):
-        if self.human_player.is_turn and len(self.playground.get_cards()[-1]) == 1:
-            self.game_logic.take_all_cards_human()
-            self.human_player.is_turn = False
-            self.human_player.is_taking = True
+            self.game_logic.finish_turn()
 
     def on_draw(self):
         """ Render the screen. """
@@ -215,7 +204,7 @@ class GameView(arcade.View):
             self.playground.add_new_card(self.held_card)
 
             # remove card from human player
-            self.human_player.remove_card(self.human_player.find_card(self.held_card))
+            self.human_player.remove_card(self.held_card)
             self.human_player.is_turn = False
             self.show_btn = True
 
@@ -274,29 +263,17 @@ class GameView(arcade.View):
                         self.computer_player.is_taking = True
                         self.human_player.is_turn = True
                         self.computer_text = "Computer is taking the cards"
+                        if len(self.computer_player.get_cards()) == 0:
+                            self.finish_move_button.on_event()
                 else:
                     self.hint_text = "Your turn!\nDefend or take cards"
                     if len(self.computer_player.get_cards()) == 0:
-                        self.finish_turn()
+                        self.finish_move_button.on_event()
 
             elif len(self.playground.get_cards()[-1]) == 2:
                 self.playground.add_new_sprite()
 
         if len(self.not_active_cards.get_unused_cards()) == 0 and len(self.human_player.get_cards()) == 0:
-            self.view_manager.show_win_lose_view(WIN)
+            self.view_manager.show_win_lose_view(WIN, self.config)
         elif len(self.not_active_cards.get_unused_cards()) == 0 and len(self.computer_player.get_cards()) == 0:
-            self.manager.show_win_lose_view(LOSE)
-
-
-def main():
-    """ Main function """
-    config = ScreenConfiguration()
-    window = arcade.Window(config.width, config.height, config.screen_title, fullscreen=True)
-    from gui.views.start_view import MenuView
-    menu_view = MenuView(config)
-    window.show_view(menu_view)
-    arcade.run()
-
-
-if __name__ == '__main__':
-    main()
+            self.view_manager.show_win_lose_view(LOSE, self.config)

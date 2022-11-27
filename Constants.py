@@ -23,5 +23,5 @@ MEDIUM = 1
 HARD = 2
 
 # Win/Lose png relative path
-WIN = '../resources/win.png'
-LOSE = '../resources/lose.png'
+WIN = f'../../resources/win.png'
+LOSE = f'../../resources/lose.png'

@@ -16,15 +16,17 @@ class PlayerArea:
 
     def get_cards(self):
         return self.cards
+
     def add_new_card(self, card):
         card.position = self.beginning_x, self.beginning_y
         self.beginning_x += self.x_spacing
         self.cards.append(card)
 
-    def remove_card(self, card_index):
-        if card_index < len(self.cards):
+    def remove_card(self, card):
+        if card is not None:
             self.beginning_x -= self.x_spacing
-            self.cards.remove(self.cards[card_index])
+            card_index = self.find_card(card)
+            self.cards.remove(card)
             self.move_card(card_index)
 
     def move_card(self, card_index):
