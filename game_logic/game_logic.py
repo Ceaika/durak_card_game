@@ -3,14 +3,17 @@ from game_logic.strategies.difficult_strategy import DifficultStrategy
 from game_logic.strategies.medium_strategy import MediumStrategy
 from game_logic.strategies.simple_strategy import SimpleStrategy
 from game_logic.strategies.strategycontext import StrategyContext
+from gui.Animations.animation import Animation
 from play_areas.playground import Playground
 from play_areas.not_active_cards import NotActiveCards
 from play_areas.player_area import PlayerArea
+from Constants import WIN, LOSE
 
 
 class GameLogic:
     def __init__(self, player: PlayerArea, computer: PlayerArea,
                  main: Playground, not_active_cards: NotActiveCards, difficulty: int):
+        self.view_manager = None
         self.player = player
         self.computer = computer
         self.playground = main
@@ -99,3 +102,78 @@ class GameLogic:
             self.player.is_turn = False
 
         self.finish_turn()
+
+    def taking_logic(self):
+
+        if self.computer.is_taking:
+            if len(self.playground.get_cards()[-1]) == 1:
+                self.playground.add_new_sprite()
+                return False
+        elif self.player.is_taking:
+            self.playground.add_new_sprite()
+            if self.make_computer_attack_move() == None:
+                self.player.is_turn = False
+                self.player.is_taking = False
+                self.finish_turn()
+                return False
+
+    def is_there_a_winner(self, view_manager):
+        if len(self.not_active_cards.get_unused_cards()) == 0 and len(self.player.get_cards()) == 0:
+            view_manager.show_win_lose_view(WIN, self.config)
+        elif len(self.not_active_cards.get_unused_cards()) == 0 and len(self.computer.get_cards()) == 0:
+            view_manager.show_win_lose_view(LOSE, self.config)
+    def on_update_logic(self):
+
+        playground_cards = self.playground.get_cards()[-1]
+
+        if len(playground_cards) == 0:
+
+            if not self.player.is_turn:
+                # self.computer_text = "Computer attacked"
+                card = self.make_computer_attack_move()
+
+                if card == None or len(self.computer.get_cards()) == 0:
+                    self.finish_turn()
+                    self.player.is_turn = True
+                    return False, False, None, None
+                else:
+                    animated_card = card
+                    animation = Animation(self.playground.get_mats()[-1].position, card.position)
+                    return True, True, animation, animated_card
+                return False, True, None, None
+            else:
+                return False, True, None, None
+
+        elif len(playground_cards) == 1:
+
+            if not self.player.is_turn:
+
+                card = self.make_computer_defence_move()
+
+                if card == None:
+                    # self.game_logic.finish_turn()
+                    self.computer.is_taking = True
+                    self.player.is_turn = True
+                    # self.computer_text = "Computer is taking the cards"
+                    if len(self.computer.get_cards()) == 0:
+                        self.finish_player_turn()
+                        return False, True, None, None
+                    return False, True, None, None
+                else:
+
+                    animated_card = card
+                    animation = Animation(playground_cards[0].position, card.position)
+                    return True, True, animation, animated_card
+                return False, True, None, None
+            else:
+
+                if len(self.computer.get_cards()) == 0:
+                    self.finish_player_turn()
+                    return False, True, None, None
+                return False, True, None, None
+
+        elif len(self.playground.get_cards()[-1]) == 2:
+            self.playground.add_new_sprite()
+            return False, True, None, None
+
+

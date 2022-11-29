@@ -5,7 +5,7 @@ class Animation():
     def __init__(self, target, start_position):
         self.target_x = target[0]
         self.target_y = target[1]
-        self.dx = (self.target_x -start_position[0])/20
+        self.dx = (self.target_x - start_position[0])/20
         self.dy = (self.target_y - start_position[1]) / 20
 
     def get_dx(self):
