@@ -88,3 +88,14 @@ class GameLogic:
         # Add the unused_cards to the computer area
         for card in cards:
             self.player.add_new_card(card)
+
+    def finish_player_turn(self):
+
+        if self.computer.is_taking:
+            self.computer_take_cards()
+            self.computer.is_taking = False
+            self.player.is_turn = True
+        elif self.player.is_turn:
+            self.player.is_turn = False
+
+        self.finish_turn()

@@ -22,10 +22,10 @@ class StrategyContext:
         if card_to_play is not None:
             card_to_play.face_up()
             # Add the card and mat to the main area
-            self.main_card_sprites_playing_area.add_new_card(card_to_play)
+            #self.main_card_sprites_playing_area.add_new_card(card_to_play)
             # Remove the card and mat from the computer area
             self.computer_card_sprites_area.remove_card(card_to_play)
-            return True
+            return card_to_play
         elif card_to_play is None:
             # # Take the unused_cards from the main area
             # cards = self.take_cards_from_main_area()
@@ -33,7 +33,7 @@ class StrategyContext:
             # for card in cards:
             #     card.face_down()
             #     self.computer_card_sprites_area.add_new_card(card)
-            return False
+            return None
 
 
 

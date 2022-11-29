@@ -9,7 +9,7 @@ class Playground:
         self.mat_list = arcade.SpriteList()
         # self.start_x_position = self.config.start_x + self.config.x_spacing
         self.start_x_position = self.config.current_x / 2
-        self.cards = [arcade.SpriteList()]
+        self.cards = []
 
     def get_cards(self) -> [arcade.SpriteList()]:
         return self.cards
