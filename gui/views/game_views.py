@@ -24,8 +24,7 @@ class GameView(arcade.View):
         self.view_manager = gui.view_manager.ViewManager()
 
         arcade.set_background_color(arcade.color.AMAZON)
-        # Show buttons if needed
-        self.show_btn = False
+
         #Do animation
         self.do_animation = False
         #Card to move around
@@ -158,7 +157,7 @@ class GameView(arcade.View):
         arcade.draw_text(self.computer_text, self.config.start_x, self.config.top_y - (self.config.card_height * 1.5),
                          arcade.color.BLACK, 24)
 
-        if self.show_btn:
+        if self.game_logic.get_show_btn():
             # Draw v_box with buttons
             self.manager.draw()
 
@@ -214,7 +213,7 @@ class GameView(arcade.View):
             # remove card from human player
             self.human_player.remove_card(self.held_card)
             self.human_player.is_turn = False
-            self.show_btn = True
+            self.game_logic.set_show_btn(True)
 
         # We are no longer holding unused_cards
         self.held_card = None
@@ -251,6 +250,6 @@ class GameView(arcade.View):
         else:
             self.game_logic.is_there_a_winner(self.view_manager)
             if not self.game_logic.taking_logic():
-                self.do_animation, self.show_btn, self.animation, self.animated_card = self.game_logic.on_update_logic()
+                self.do_animation, self.animation, self.animated_card = self.game_logic.on_update_logic()
             #print(type(self.animated_card))
 

@@ -19,6 +19,7 @@ class GameLogic:
         self.playground = main
         self.not_active_cards = not_active_cards
         self.strategy = None
+        self.show_btn = False
         if difficulty == EASY:
             self.strategy = SimpleStrategy(computer, main, not_active_cards, player)
         elif difficulty == MEDIUM:
@@ -27,6 +28,10 @@ class GameLogic:
             self.strategy = DifficultStrategy(computer, main, not_active_cards, player)
         self.strategy_context = StrategyContext(self.strategy, self.playground, self.computer)
 
+    def get_show_btn(self):
+        return self.show_btn
+    def set_show_btn(self, value):
+        self.show_btn = value
     def player_move(self, mat_index, held_card) -> bool:
 
         if len(self.playground.get_cards()[mat_index]) >= 2:
@@ -122,6 +127,7 @@ class GameLogic:
             view_manager.show_win_lose_view(WIN, self.config)
         elif len(self.not_active_cards.get_unused_cards()) == 0 and len(self.computer.get_cards()) == 0:
             view_manager.show_win_lose_view(LOSE, self.config)
+
     def on_update_logic(self):
 
         playground_cards = self.playground.get_cards()[-1]
@@ -135,14 +141,15 @@ class GameLogic:
                 if card == None or len(self.computer.get_cards()) == 0:
                     self.finish_turn()
                     self.player.is_turn = True
-                    return False, False, None, None
+                    self.show_btn = False
+                    return False, None, None
                 else:
                     animated_card = card
                     animation = Animation(self.playground.get_mats()[-1].position, card.position)
-                    return True, True, animation, animated_card
-                return False, True, None, None
+                    return True, animation, animated_card
+                return False, None, None
             else:
-                return False, True, None, None
+                return False, None, None
 
         elif len(playground_cards) == 1:
 
@@ -157,23 +164,23 @@ class GameLogic:
                     # self.computer_text = "Computer is taking the cards"
                     if len(self.computer.get_cards()) == 0:
                         self.finish_player_turn()
-                        return False, True, None, None
-                    return False, True, None, None
+                        return False, None, None
+                    return False, None, None
                 else:
 
                     animated_card = card
                     animation = Animation(playground_cards[0].position, card.position)
-                    return True, True, animation, animated_card
-                return False, True, None, None
+                    return True, animation, animated_card
+                return False, None, None
             else:
 
                 if len(self.computer.get_cards()) == 0:
                     self.finish_player_turn()
-                    return False, True, None, None
-                return False, True, None, None
+                    return False, None, None
+                return False, None, None
 
         elif len(self.playground.get_cards()[-1]) == 2:
             self.playground.add_new_sprite()
-            return False, True, None, None
+            return False, None, None
 
 
