@@ -8,8 +8,8 @@ class SimpleStrategy(Strategy):
             available_cards = self.computer_area.get_cards()
             # Remove the cards that are the same suit as the trump card
             available_cards = {card for card in available_cards if card.suit != self.not_active_cards.trump_card.suit}
-            #if len(available_cards) > 1:
-            card_to_play = min(available_cards, key=lambda card: card.value)
+            if available_cards is not None:
+                card_to_play = min(available_cards, key=lambda card: card.value)
             # else:
             #     card_to_play = available_cards.pop()
             if card_to_play is None:

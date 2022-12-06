@@ -1,3 +1,5 @@
+import arcade
+
 from Constants import EASY, MEDIUM, HARD
 from game_logic.strategies.difficult_strategy import DifficultStrategy
 from game_logic.strategies.medium_strategy import MediumStrategy
@@ -30,8 +32,10 @@ class GameLogic:
 
     def get_show_btn(self):
         return self.show_btn
+
     def set_show_btn(self, value):
         self.show_btn = value
+
     def player_move(self, mat_index, held_card) -> bool:
 
         if len(self.playground.get_cards()[mat_index]) >= 2:
@@ -67,7 +71,7 @@ class GameLogic:
         # Add the unused_cards to the computer area
         for card in cards:
             card.face_down()
-            self.computer.add_new_card(card)
+            self.computer.add_cards_to_animate(card)
 
     def finish_turn(self):
         # First we take unused unused_cards from the not active unused_cards and add them to the computer and player
@@ -93,9 +97,10 @@ class GameLogic:
     def take_all_cards_human(self):
         # Take the unused_cards from the main area
         cards = self.strategy_context.take_cards_from_main_area()
+        print("Taken cards:  ",len(cards))
         # Add the unused_cards to the computer area
         for card in cards:
-            self.player.add_new_card(card)
+            self.player.add_cards_to_animate(card)
 
     def finish_player_turn(self):
 
@@ -147,6 +152,7 @@ class GameLogic:
                     animated_card = card
                     animation = Animation(self.playground.get_mats()[-1].position, card.position)
                     return True, animation, animated_card
+
                 return False, None, None
             else:
                 return False, None, None
@@ -183,4 +189,44 @@ class GameLogic:
             self.playground.add_new_sprite()
             return False, None, None
 
+    def on_update_taken_cards(self, area, do_animation_taken, animation_taken, config):
 
+        if len(area.get_cards_to_animate()) > 0 and not do_animation_taken:
+            print("NEW")
+            i = 1
+            for card in area.get_cards_to_animate():
+                animation_taken.append(
+                    Animation([area.get_cards()[-1].center_x + i * config.x_spacing,
+                               area.get_cards()[-1].center_y], card.position))
+                i += 1
+
+            print(len(animation_taken))
+            do_animation_taken = True
+            # print(type(animation_taken))
+        elif do_animation_taken:
+            # print(type(animation_taken))
+            if len(area.get_cards_to_animate()) == 0 and len(animation_taken) == 0:
+                do_animation_taken = False
+                area.clear_cards_to_animate()
+
+            elif len(area.get_cards_to_animate()) == len(animation_taken):
+
+                cards_to_remove = arcade.SpriteList()
+                animations_to_remove = []
+
+                for animation, card in zip(animation_taken, area.get_cards_to_animate()):
+
+                    do_animation, animated_card = animation.do_animation(card, area)
+                    if animated_card is not None:
+                        area.remove_card_to_animate(animated_card)
+                        area.add_cards_to_animate(animated_card)
+                    if not do_animation:
+                        cards_to_remove.append(card)
+                        animations_to_remove.append(animation)
+
+                for card in cards_to_remove:
+                    animation_taken.remove(animations_to_remove[0])
+                    animations_to_remove.remove(animations_to_remove[0])
+                    area.remove_card_to_animate(card)
+
+        return animation_taken, do_animation_taken

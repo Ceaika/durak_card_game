@@ -14,6 +14,7 @@ from gui.screen_configuration import ScreenConfiguration
 import gui.view_manager
 from gui.Animations.animation import Animation
 
+
 class GameView(arcade.View):
     """ Main application class. """
 
@@ -25,12 +26,15 @@ class GameView(arcade.View):
 
         arcade.set_background_color(arcade.color.AMAZON)
 
-        #Do animation
+        # Do animation
         self.do_animation = False
-        #Card to move around
+
+        self.do_animation_taken = False
+        # Card to move around
         self.animated_card = None
-        #Init Animations class
+        # Init Animations class
         self.animation = None
+        self.animation_taken = []
         # List of unused_cards we are dragging with the mouse
         self.held_card = None
 
@@ -167,6 +171,9 @@ class GameView(arcade.View):
         if self.animated_card is not None:
             self.animated_card.draw()
 
+        self.human_player.get_cards_to_animate().draw()
+        self.computer_player.get_cards_to_animate().draw()
+
     def on_mouse_press(self, x, y, button, key_modifiers):
         """ Called when the user presses a mouse button. """
 
@@ -234,22 +241,64 @@ class GameView(arcade.View):
 
     def on_update(self, delta_time: 0.25):
         """ Movement and game logic """
-        #print(len(self.playground.get_mats()))
-        #print("list von cards", len(self.playground.get_cards()))
+        # print(len(self.playground.get_mats()))
+        # print("list von cards", len(self.playground.get_cards()))
         # self.card_list.update()
         # if isinstance(self.held_card, Card):
         #     if self.held_card.collides_with_list(self.playground.get_mats()):
         #         print("Collides with main mat")#+
 
-        if self.do_animation:
-           # print(str(self.animation.get_dx()) + " " + str(self.animation.get_dy()))
+        self.animation_taken, self.do_animation_taken = self.game_logic.on_update_taken_cards(self.human_player,
+                                                                                              self.do_animation_taken,
+                                                                                              self.animation_taken,
+                                                                                              self.config)
 
+        self.animation_taken, self.do_animation_taken = self.game_logic.on_update_taken_cards(self.computer_player,
+                                                                                              self.do_animation_taken,
+                                                                                              self.animation_taken,
+                                                                                              self.config)
+        # print(self.do_animation_taken)
+        # if len(self.human_player.get_cards_to_animate()) > 0 and not self.do_animation_taken:
+        #
+        #     i = 1
+        #     for card in self.human_player.get_cards_to_animate():
+        #         self.animation_taken.append(
+        #             Animation([self.human_player.get_cards()[-1].center_x + i * self.config.x_spacing,
+        #                        self.config.bottom_y], card.position))
+        #         i += 1
+        #
+        #     self.do_animation_taken = True
+        #     # print(type(self.animation_taken))
+        # elif self.do_animation_taken:
+        #     # print(type(self.animation_taken))
+        #     if len(self.human_player.get_cards_to_animate()) == 0 and len(self.animation_taken) == 0:
+        #         self.do_animation_taken = False
+        #         self.human_player.clear_cards_to_animate()
+        #
+        #     elif len(self.human_player.get_cards_to_animate()) == len(self.animation_taken):
+        #
+        #         cards_to_remove = arcade.SpriteList()
+        #         animations_to_remove = []
+        #
+        #         for animation, card in zip(self.animation_taken, self.human_player.get_cards_to_animate()):
+        #
+        #             do_animation, animated_card = animation.do_animation(card, self.human_player)
+        #             if animated_card is not None:
+        #                 self.human_player.remove_card_to_animate(animated_card)
+        #                 self.human_player.add_cards_to_animate(animated_card)
+        #             if not do_animation:
+        #                 cards_to_remove.append(card)
+        #                 animations_to_remove.append(animation)
+        #
+        #         for card in cards_to_remove:
+        #             self.animation_taken.remove(animations_to_remove[0])
+        #             animations_to_remove.remove(animations_to_remove[0])
+        #             self.human_player.remove_card_to_animate(card)
+
+        if self.do_animation:
             self.do_animation, self.animated_card = self.animation.do_animation(self.animated_card, self.playground)
-            #print(type(self.animated_card))
 
         else:
             self.game_logic.is_there_a_winner(self.view_manager, self.config)
             if not self.game_logic.taking_logic():
                 self.do_animation, self.animation, self.animated_card = self.game_logic.on_update_logic()
-            #print(type(self.animated_card))
-

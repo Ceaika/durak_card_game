@@ -10,10 +10,21 @@ class PlayerArea:
         self.beginning_x = beginning_x
         self.beginning_y = beginning_y
         self.cards = arcade.SpriteList()
+        self.cards_to_animate = arcade.SpriteList()
         self.is_attacking = True
         self.is_turn = True
         self.is_taking = False
 
+    def get_cards_to_animate(self):
+        return self.cards_to_animate
+
+    def remove_card_to_animate(self,card):
+        self.cards_to_animate.remove(card)
+    def add_cards_to_animate(self,card):
+        self.cards_to_animate.append(card)
+
+    def clear_cards_to_animate(self):
+        self.cards_to_animate.clear()
     def get_cards(self):
         return self.cards
 
