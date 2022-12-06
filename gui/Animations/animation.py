@@ -26,7 +26,7 @@ class Animation():
     def get_target_y(self):
         return self.target_y
 
-    def do_animation(self, animated_card, playground):
+    def do_animation(self, animated_card, area):
         do_animation = True
         x, y = animated_card.position
 
@@ -37,7 +37,7 @@ class Animation():
             self.set_dy(0)
 
         if self.get_dx() == 0 and self.get_dy() == 0:
-            playground.add_new_card(animated_card)
+            area.add_new_card(animated_card)
             do_animation = False
             animated_card = None
             return do_animation, animated_card

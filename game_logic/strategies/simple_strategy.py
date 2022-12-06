@@ -5,12 +5,15 @@ class SimpleStrategy(Strategy):
     def compute_best_attack_move(self):
         card_to_play = None
         if len(self.main_card_sprites_playing_area.mat_list) == 1:
-            available_cards = self.computer_area.cards
+            available_cards = self.computer_area.get_cards()
             # Remove the cards that are the same suit as the trump card
             available_cards = {card for card in available_cards if card.suit != self.not_active_cards.trump_card.suit}
+            #if len(available_cards) > 1:
             card_to_play = min(available_cards, key=lambda card: card.value)
+            # else:
+            #     card_to_play = available_cards.pop()
             if card_to_play is None:
-                card_to_play = min(self.computer_area.cards, key=lambda card: card.value)
+                card_to_play = min(self.computer_area.get_cards(), key=lambda card: card.value)
         else:
             # Get all the unused_cards from the main area
             cards = self.main_card_sprites_playing_area.get_all_cards()

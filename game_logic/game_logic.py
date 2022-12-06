@@ -116,17 +116,17 @@ class GameLogic:
                 return False
         elif self.player.is_taking:
             self.playground.add_new_sprite()
-            if self.make_computer_attack_move() == None:
+            if self.make_computer_attack_move() is None:
                 self.player.is_turn = False
                 self.player.is_taking = False
                 self.finish_turn()
                 return False
 
-    def is_there_a_winner(self, view_manager):
+    def is_there_a_winner(self, view_manager, config):
         if len(self.not_active_cards.get_unused_cards()) == 0 and len(self.player.get_cards()) == 0:
-            view_manager.show_win_lose_view(WIN, self.config)
+            view_manager.show_win_lose_view(WIN, config)
         elif len(self.not_active_cards.get_unused_cards()) == 0 and len(self.computer.get_cards()) == 0:
-            view_manager.show_win_lose_view(LOSE, self.config)
+            view_manager.show_win_lose_view(LOSE, config)
 
     def on_update_logic(self):
 
@@ -138,7 +138,7 @@ class GameLogic:
                 # self.computer_text = "Computer attacked"
                 card = self.make_computer_attack_move()
 
-                if card == None or len(self.computer.get_cards()) == 0:
+                if card is None or len(self.computer.get_cards()) == 0:
                     self.finish_turn()
                     self.player.is_turn = True
                     self.show_btn = False
@@ -157,7 +157,7 @@ class GameLogic:
 
                 card = self.make_computer_defence_move()
 
-                if card == None:
+                if card is None:
                     # self.game_logic.finish_turn()
                     self.computer.is_taking = True
                     self.player.is_turn = True

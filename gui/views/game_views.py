@@ -248,7 +248,7 @@ class GameView(arcade.View):
             #print(type(self.animated_card))
 
         else:
-            self.game_logic.is_there_a_winner(self.view_manager)
+            self.game_logic.is_there_a_winner(self.view_manager, self.config)
             if not self.game_logic.taking_logic():
                 self.do_animation, self.animation, self.animated_card = self.game_logic.on_update_logic()
             #print(type(self.animated_card))
