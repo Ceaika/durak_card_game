@@ -189,14 +189,14 @@ class GameLogic:
             self.playground.add_new_sprite()
             return False, None, None
 
-    def on_update_taken_cards(self, area, do_animation_taken, animation_taken, config):
+    def on_update_taken_cards(self, area, do_animation_taken, animation_taken, config, direction):
 
         if len(area.get_cards_to_animate()) > 0 and not do_animation_taken:
             print("NEW")
             i = 1
             for card in area.get_cards_to_animate():
                 animation_taken.append(
-                    Animation([area.get_cards()[-1].center_x + i * config.x_spacing,
+                    Animation([area.get_cards()[-1].center_x + direction*i * config.x_spacing,
                                area.get_cards()[-1].center_y], card.position))
                 i += 1
 

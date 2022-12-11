@@ -30,10 +30,10 @@ class Animation():
         do_animation = True
         x, y = animated_card.position
 
-        if abs(x - self.get_target_x()) < abs(2*self.get_dx()):
+        if abs(x - self.get_target_x()) < abs(self.get_dx()):
             self.set_dx(0)
 
-        elif abs(y - self.get_target_y()) < abs(2*self.get_dy()):
+        elif abs(y - self.get_target_y()) < abs(self.get_dy()):
             self.set_dy(0)
 
         if self.get_dx() == 0 and self.get_dy() == 0:

@@ -29,7 +29,8 @@ class GameView(arcade.View):
         # Do animation
         self.do_animation = False
 
-        self.do_animation_taken = False
+        self.do_animation_taken_bot = False
+        self.do_animation_taken_player = False
         # Card to move around
         self.animated_card = None
         # Init Animations class
@@ -248,15 +249,15 @@ class GameView(arcade.View):
         #     if self.held_card.collides_with_list(self.playground.get_mats()):
         #         print("Collides with main mat")#+
 
-        self.animation_taken, self.do_animation_taken = self.game_logic.on_update_taken_cards(self.human_player,
-                                                                                              self.do_animation_taken,
+        self.animation_taken, self.do_animation_taken_player = self.game_logic.on_update_taken_cards(self.human_player,
+                                                                                              self.do_animation_taken_player,
                                                                                               self.animation_taken,
-                                                                                              self.config)
+                                                                                              self.config, 1)
 
-        self.animation_taken, self.do_animation_taken = self.game_logic.on_update_taken_cards(self.computer_player,
-                                                                                              self.do_animation_taken,
+        self.animation_taken, self.do_animation_taken_bot = self.game_logic.on_update_taken_cards(self.computer_player,
+                                                                                              self.do_animation_taken_bot,
                                                                                               self.animation_taken,
-                                                                                              self.config)
+                                                                                              self.config, -1)
         # print(self.do_animation_taken)
         # if len(self.human_player.get_cards_to_animate()) > 0 and not self.do_animation_taken:
         #
