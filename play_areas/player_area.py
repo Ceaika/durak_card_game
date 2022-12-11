@@ -5,9 +5,12 @@ from gui.screen_configuration import ScreenConfiguration
 
 class PlayerArea:
 
-    def __init__(self, beginning_x, beginning_y, x_spacing):
-        self.x_spacing = x_spacing
-        self.beginning_x = beginning_x
+    def __init__(self, beginning_x, beginning_y, x_spacing, current_x):
+        self.current_x = current_x
+        self.x_spacing_cfg = x_spacing
+        self.x_spacing = self.x_spacing_cfg
+        self.beginning_x_cfg = beginning_x
+        self.beginning_x = self.beginning_x_cfg
         self.beginning_y = beginning_y
         self.cards = arcade.SpriteList()
         self.cards_to_animate = arcade.SpriteList()
@@ -28,10 +31,37 @@ class PlayerArea:
     def get_cards(self):
         return self.cards
 
+    def out_of_bound(self):
+
+        if (self.cards[-1].position[0] + self.x_spacing) < 0 or (self.cards[-1].position[0] + self.x_spacing) > self.current_x:
+            while(True):
+                if abs(len(self.cards)*self.x_spacing) > self.current_x:
+                    self.x_spacing -= 1
+                else:
+                    break
+
+            #self.x_spacing -= 0.2*self.x_spacing
+            self.new_pos_all()
+
+        else:
+            self.x_spacing = self.x_spacing_cfg
+
+
+    def new_pos_all(self):
+
+        self.beginning_x = self.beginning_x_cfg
+        for i in range(len(self.cards)):
+            self.cards[i].position = self.beginning_x + i*self.x_spacing , self.beginning_y
+
     def add_new_card(self, card):
+        if self.beginning_x == self.beginning_x_cfg:
+            self.beginning_x = self.x_spacing*len(self.cards) + self.beginning_x_cfg
+
         card.position = self.beginning_x, self.beginning_y
         self.beginning_x += self.x_spacing
         self.cards.append(card)
+
+        self.out_of_bound()
 
     def remove_card(self, card):
         if card is not None:

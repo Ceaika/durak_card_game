@@ -79,11 +79,11 @@ class GameLogic:
 
         for i in range(6):
             if len(self.not_active_cards.unused_cards) > 0:
-                if len(self.player.cards) < 6:
+                if (len(self.player.get_cards()) + len(self.player.get_cards_to_animate()) ) < 6:
                     card = self.not_active_cards.remove_last_card()
                     card.face_up()
                     self.player.add_new_card(card)
-                if len(self.computer.cards) < 6:
+                if (len(self.computer.get_cards()) + len(self.computer.get_cards_to_animate())) < 6:
                     card = self.not_active_cards.remove_last_card()
                     card.face_down()
                     self.computer.add_new_card(card)
@@ -135,6 +135,10 @@ class GameLogic:
 
     def on_update_logic(self):
 
+        do_animation = False
+        animated_card = None
+        animation = None
+
         playground_cards = self.playground.get_cards()[-1]
 
         if len(playground_cards) == 0:
@@ -147,15 +151,11 @@ class GameLogic:
                     self.finish_turn()
                     self.player.is_turn = True
                     self.show_btn = False
-                    return False, None, None
                 else:
+                    do_animation = True
                     animated_card = card
                     animation = Animation(self.playground.get_mats()[-1].position, card.position)
-                    return True, animation, animated_card
 
-                return False, None, None
-            else:
-                return False, None, None
 
         elif len(playground_cards) == 1:
 
@@ -164,39 +164,45 @@ class GameLogic:
                 card = self.make_computer_defence_move()
 
                 if card is None:
-                    # self.game_logic.finish_turn()
+                    #self.finish_turn()
                     self.computer.is_taking = True
                     self.player.is_turn = True
                     # self.computer_text = "Computer is taking the cards"
                     if len(self.computer.get_cards()) == 0:
                         self.finish_player_turn()
-                        return False, None, None
-                    return False, None, None
                 else:
-
+                    do_animation = True
                     animated_card = card
                     animation = Animation(playground_cards[0].position, card.position)
-                    return True, animation, animated_card
-                return False, None, None
-            else:
-
-                if len(self.computer.get_cards()) == 0:
-                    self.finish_player_turn()
-                    return False, None, None
-                return False, None, None
+            # else:
+            #
+            #     if len(self.computer.get_cards()) == 0:
+            #         self.finish_player_turn()
+            #         return False, None, None
+            #     return False, None, None
 
         elif len(self.playground.get_cards()[-1]) == 2:
             self.playground.add_new_sprite()
-            return False, None, None
+
+        return do_animation, animation, animated_card
 
     def on_update_taken_cards(self, area, do_animation_taken, animation_taken, config, direction):
 
         if len(area.get_cards_to_animate()) > 0 and not do_animation_taken:
             print("NEW")
+            print(config.x_spacing)
+
             i = 1
             for card in area.get_cards_to_animate():
+
+                x = 0
+                if len(area.get_cards()) != 0:
+                    x = area.get_cards()[-1].center_x
+                else:
+                    x = area.beginning_x
+
                 animation_taken.append(
-                    Animation([area.get_cards()[-1].center_x + direction*i * config.x_spacing,
+                    Animation([x + direction*i * config.x_spacing,
                                area.get_cards()[-1].center_y], card.position))
                 i += 1
 

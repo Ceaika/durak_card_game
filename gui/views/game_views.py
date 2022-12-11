@@ -52,9 +52,9 @@ class GameView(arcade.View):
         # Initialize the sprite lists
         self.playground = Playground(self.config)
         self.human_player = PlayerArea(self.config.start_x_bottom, self.config.bottom_y,
-                                       self.config.x_spacing)
+                                       self.config.x_spacing,self.config.current_x)
         self.computer_player = PlayerArea(self.config.start_x_top, self.config.top_y,
-                                          -self.config.x_spacing)
+                                          -self.config.x_spacing, self.config.current_x)
         self.not_active_cards = NotActiveCards(self.config)
 
         # Initialize the utils so we can use helper functions
