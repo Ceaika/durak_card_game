@@ -81,7 +81,7 @@ class GameView(arcade.View):
                 align_y=self.config.bottom_y - self.config.card_height * 2,
                 child=self.v_box)
         )
-        self.hint_text = "Your turn!\nAttack!"
+        self.hint_text = ""
         self.computer_text = ""
 
         self.setup()
@@ -123,6 +123,7 @@ class GameView(arcade.View):
         trump_card.face_up()
         trump_card.angle = 90
         trump_card.center_x = self.config.card_width * 1.2
+        self.hint_text = "Trump: " +  str(trump_card.suit)
 
     def finish_turn(self):
         if self.computer_player.is_taking:
@@ -217,6 +218,8 @@ class GameView(arcade.View):
         else:
             # Add the card and mat to the main unused_cards list
             self.playground.add_new_card(self.held_card)
+            # self.human_player.in_bound()
+            # self.computer_player.in_bound()
 
             # remove card from human player
             self.human_player.remove_card(self.held_card)
@@ -242,12 +245,6 @@ class GameView(arcade.View):
 
     def on_update(self, delta_time: 0.25):
         """ Movement and game logic """
-        # print(len(self.playground.get_mats()))
-        # print("list von cards", len(self.playground.get_cards()))
-        # self.card_list.update()
-        # if isinstance(self.held_card, Card):
-        #     if self.held_card.collides_with_list(self.playground.get_mats()):
-        #         print("Collides with main mat")#+
 
         self.animation_taken, self.do_animation_taken_player = self.game_logic.on_update_taken_cards(self.human_player,
                                                                                               self.do_animation_taken_player,
@@ -258,43 +255,6 @@ class GameView(arcade.View):
                                                                                               self.do_animation_taken_bot,
                                                                                               self.animation_taken,
                                                                                               self.config, -1)
-        # print(self.do_animation_taken)
-        # if len(self.human_player.get_cards_to_animate()) > 0 and not self.do_animation_taken:
-        #
-        #     i = 1
-        #     for card in self.human_player.get_cards_to_animate():
-        #         self.animation_taken.append(
-        #             Animation([self.human_player.get_cards()[-1].center_x + i * self.config.x_spacing,
-        #                        self.config.bottom_y], card.position))
-        #         i += 1
-        #
-        #     self.do_animation_taken = True
-        #     # print(type(self.animation_taken))
-        # elif self.do_animation_taken:
-        #     # print(type(self.animation_taken))
-        #     if len(self.human_player.get_cards_to_animate()) == 0 and len(self.animation_taken) == 0:
-        #         self.do_animation_taken = False
-        #         self.human_player.clear_cards_to_animate()
-        #
-        #     elif len(self.human_player.get_cards_to_animate()) == len(self.animation_taken):
-        #
-        #         cards_to_remove = arcade.SpriteList()
-        #         animations_to_remove = []
-        #
-        #         for animation, card in zip(self.animation_taken, self.human_player.get_cards_to_animate()):
-        #
-        #             do_animation, animated_card = animation.do_animation(card, self.human_player)
-        #             if animated_card is not None:
-        #                 self.human_player.remove_card_to_animate(animated_card)
-        #                 self.human_player.add_cards_to_animate(animated_card)
-        #             if not do_animation:
-        #                 cards_to_remove.append(card)
-        #                 animations_to_remove.append(animation)
-        #
-        #         for card in cards_to_remove:
-        #             self.animation_taken.remove(animations_to_remove[0])
-        #             animations_to_remove.remove(animations_to_remove[0])
-        #             self.human_player.remove_card_to_animate(card)
 
         if self.do_animation:
             self.do_animation, self.animated_card = self.animation.do_animation(self.animated_card, self.playground)

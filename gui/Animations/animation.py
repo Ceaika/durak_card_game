@@ -1,19 +1,19 @@
-
 class Animation():
 
     def __init__(self, target, start_position):
 
         self.target_x = target[0]
         self.target_y = target[1]
-        self.dx = (self.target_x - start_position[0] ) /20
-        self.dy = (self.target_y - start_position[1]) / 20
+        self.dx = (self.target_x - start_position[0]) / 15
+        self.dy = (self.target_y - start_position[1]) / 15
 
+        print("_TARGET_")
         print(self.target_x, self.target_y, self.dx, self.dy)
 
         if abs(self.dx) < 1 and self.dx != 0:
-            self.dx = (abs(self.dx)/self.dx)
+            self.dx = 0
         elif abs(self.dy) < 1 and self.dy != 0:
-            self.dy = (abs(self.dy)/self.dy)
+            self.dy = 0
 
     def get_dx(self):
         return self.dx
@@ -37,13 +37,12 @@ class Animation():
         do_animation = True
         x, y = animated_card.position
 
-        #print(self.target_x,self.target_y,x,y,self.dx,self.dy,"\n")
+        # print(x,y)
 
-
-        if abs(x - self.get_target_x()) < abs(4*self.get_dx()):
+        if abs(x - self.get_target_x()) < abs(4 * self.get_dx()):
             self.set_dx(0)
 
-        elif abs(y - self.get_target_y()) < abs(4*self.get_dy()):
+        elif abs(y - self.get_target_y()) < abs(4 * self.get_dy()):
             self.set_dy(0)
 
         if self.get_dx() == 0 and self.get_dy() == 0:

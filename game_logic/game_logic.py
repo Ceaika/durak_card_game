@@ -135,6 +135,7 @@ class GameLogic:
 
     def on_update_logic(self):
 
+
         do_animation = False
         animated_card = None
         animation = None
@@ -174,12 +175,6 @@ class GameLogic:
                     do_animation = True
                     animated_card = card
                     animation = Animation(playground_cards[0].position, card.position)
-            # else:
-            #
-            #     if len(self.computer.get_cards()) == 0:
-            #         self.finish_player_turn()
-            #         return False, None, None
-            #     return False, None, None
 
         elif len(self.playground.get_cards()[-1]) == 2:
             self.playground.add_new_sprite()
@@ -190,8 +185,6 @@ class GameLogic:
 
         if len(area.get_cards_to_animate()) > 0 and not do_animation_taken:
             print("NEW")
-            print(config.x_spacing)
-
             i = 1
             for card in area.get_cards_to_animate():
 
@@ -202,13 +195,13 @@ class GameLogic:
                     x = area.beginning_x
 
                 animation_taken.append(
-                    Animation([x + direction*i * config.x_spacing,
+                    Animation([x + direction* i * config.x_spacing,
                                area.get_cards()[-1].center_y], card.position))
                 i += 1
 
             print(len(animation_taken))
             do_animation_taken = True
-            # print(type(animation_taken))
+
         elif do_animation_taken:
             # print(type(animation_taken))
             if len(area.get_cards_to_animate()) == 0 and len(animation_taken) == 0:
@@ -219,7 +212,6 @@ class GameLogic:
 
                 cards_to_remove = arcade.SpriteList()
                 animations_to_remove = []
-
                 for animation, card in zip(animation_taken, area.get_cards_to_animate()):
 
                     do_animation, animated_card = animation.do_animation(card, area)
@@ -234,5 +226,6 @@ class GameLogic:
                     animation_taken.remove(animations_to_remove[0])
                     animations_to_remove.remove(animations_to_remove[0])
                     area.remove_card_to_animate(card)
+
 
         return animation_taken, do_animation_taken

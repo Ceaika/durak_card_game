@@ -49,4 +49,4 @@ class ScreenConfiguration:
     def __init_values(self):
         self.sprite_color = arcade.csscolor.GOLD
         self.card_values = ["6", "7", "8", "9", "10", "jack", "queen", "king", "ace"]
-        self.card_suites = ["clubs", "hearts", "spades", "diamonds"]
+        self.card_suites = ["Clubs", "Hearts", "Spades", "Diamonds"]
