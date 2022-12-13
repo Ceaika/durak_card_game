@@ -97,7 +97,7 @@ class GameLogic:
     def take_all_cards_human(self):
         # Take the unused_cards from the main area
         cards = self.strategy_context.take_cards_from_main_area()
-        print("Taken cards:  ",len(cards))
+        #print("Taken cards:  ",len(cards))
         # Add the unused_cards to the computer area
         for card in cards:
             self.player.add_cards_to_animate(card)
@@ -184,7 +184,9 @@ class GameLogic:
     def on_update_taken_cards(self, area, do_animation_taken, animation_taken, config, direction):
 
         if len(area.get_cards_to_animate()) > 0 and not do_animation_taken:
-            print("NEW")
+            # print(len(area.get_cards_to_animate()))
+            # print("NEW")
+            # print(config.x_spacing)
             i = 1
             for card in area.get_cards_to_animate():
 
@@ -195,11 +197,11 @@ class GameLogic:
                     x = area.beginning_x
 
                 animation_taken.append(
-                    Animation([x + direction* i * config.x_spacing,
+                    Animation([x + direction * i * config.x_spacing,
                                area.get_cards()[-1].center_y], card.position))
                 i += 1
 
-            print(len(animation_taken))
+            #print(len(animation_taken))
             do_animation_taken = True
 
         elif do_animation_taken:
@@ -221,7 +223,7 @@ class GameLogic:
                     if not do_animation:
                         cards_to_remove.append(card)
                         animations_to_remove.append(animation)
-
+                #print("animations and cards to remove:",len(cards_to_remove),len(animations_to_remove))
                 for card in cards_to_remove:
                     animation_taken.remove(animations_to_remove[0])
                     animations_to_remove.remove(animations_to_remove[0])

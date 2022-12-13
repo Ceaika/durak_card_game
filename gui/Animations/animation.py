@@ -5,8 +5,12 @@ class Animation():
         self.steps = 10
         self.target_x = target[0]
         self.target_y = target[1]
-        self.dx = self.optimal_delta(self.target_x - start_position[0])
-        self.dy = self.optimal_delta(self.target_y - start_position[1])
+        self.dx = 0
+        self.dy = 0
+
+        if not self.target_x == start_position[0] and not self.target_y == start_position[1]:
+            self.dx = self.optimal_delta(self.target_x - start_position[0])
+            self.dy = self.optimal_delta(self.target_y - start_position[1])
 
         # if abs(self.dx) < 1 and self.dx != 0:
         #     self.dx = 0
@@ -14,8 +18,8 @@ class Animation():
         #     self.dy = 0
 
 
-        print("Start_x: ", start_position[0], "Start_y: ", start_position[1])
-        print("Targer x:", self.target_x, "Targer_y:", self.target_y)
+        # print("Start_x: ", start_position[0], "Start_y: ", start_position[1])
+        # print("Targer x:", self.target_x, "Targer_y:", self.target_y)
         print("dx: ", self.dx, "dy: ", self.dy)
 
     def optimal_delta(self, diff):
@@ -54,8 +58,8 @@ class Animation():
         do_animation = True
         x, y = animated_card.position
 
-        # print(x,y)
-
+        # print(x,sep=",")
+        # print(animated_card.suit,animated_card.value)
         if abs(x - self.get_target_x()) < abs(4 * self.get_dx()):
             self.set_dx(0)
 

@@ -42,7 +42,6 @@ class PlayerArea:
                 else:
                     break
 
-            #self.x_spacing -= 0.2*self.x_spacing
             self.new_pos_all()
 
     def in_bound(self):
@@ -50,6 +49,14 @@ class PlayerArea:
             self.x_spacing = self.x_spacing_cfg
             self.new_pos_all()
     def new_pos_all(self):
+
+        # cards_lst = self.cards[1:]
+        # #print(len(self.cards))
+        # for card in cards_lst:
+        #     self.cards.remove(card)
+        #     if card not in self.cards_to_animate:
+        #         self.cards_to_animate.append(card)
+
 
         self.beginning_x = self.beginning_x_cfg
         for i in range(len(self.cards)):
@@ -62,6 +69,7 @@ class PlayerArea:
         card.position = self.beginning_x, self.beginning_y
         self.beginning_x += self.x_spacing
         self.cards.append(card)
+
 
         self.out_of_bound()
         self.in_bound()
