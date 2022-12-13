@@ -243,7 +243,7 @@ class GameView(arcade.View):
             pass
             # self.init_Animation()
 
-    def on_update(self, delta_time: 0.25):
+    def on_update(self, delta_time:float):
         """ Movement and game logic """
 
         self.animation_taken, self.do_animation_taken_player = self.game_logic.on_update_taken_cards(self.human_player,

@@ -2,18 +2,35 @@ class Animation():
 
     def __init__(self, target, start_position):
 
+        self.steps = 10
         self.target_x = target[0]
         self.target_y = target[1]
-        self.dx = (self.target_x - start_position[0]) / 15
-        self.dy = (self.target_y - start_position[1]) / 15
+        self.dx = self.optimal_delta(self.target_x - start_position[0])
+        self.dy = self.optimal_delta(self.target_y - start_position[1])
 
-        print("_TARGET_")
-        print(self.target_x, self.target_y, self.dx, self.dy)
+        # if abs(self.dx) < 1 and self.dx != 0:
+        #     self.dx = 0
+        # elif abs(self.dy) < 1 and self.dy != 0:
+        #     self.dy = 0
 
-        if abs(self.dx) < 1 and self.dx != 0:
-            self.dx = 0
-        elif abs(self.dy) < 1 and self.dy != 0:
-            self.dy = 0
+
+        print("Start_x: ", start_position[0], "Start_y: ", start_position[1])
+        print("Targer x:", self.target_x, "Targer_y:", self.target_y)
+        print("dx: ", self.dx, "dy: ", self.dy)
+
+    def optimal_delta(self, diff):
+        optimal = self.steps
+        delta = 0
+        while True:
+            delta = diff / optimal
+            if abs(delta) < 1 and delta != 0:
+                optimal -= 1
+            elif optimal <= 0:
+                delta = 0
+                break
+            else:
+                break
+        return delta
 
     def get_dx(self):
         return self.dx
@@ -42,7 +59,7 @@ class Animation():
         if abs(x - self.get_target_x()) < abs(4 * self.get_dx()):
             self.set_dx(0)
 
-        elif abs(y - self.get_target_y()) < abs(4 * self.get_dy()):
+        elif abs(y - self.get_target_y()) < abs(3 * self.get_dy()):
             self.set_dy(0)
 
         if self.get_dx() == 0 and self.get_dy() == 0:

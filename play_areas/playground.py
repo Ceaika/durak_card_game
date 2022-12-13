@@ -60,8 +60,8 @@ class Playground:
     def get_and_remove_all_cards(self):
         lst = []
         for card_pair in self.cards:
-            for card in card_pair:
-                lst.append(card)
+            lst.extend(card_pair)
+
 
         self.cards.clear()
         self.mat_list.clear()
