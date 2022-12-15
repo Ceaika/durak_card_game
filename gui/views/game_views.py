@@ -1,5 +1,6 @@
 import arcade
 import arcade.gui
+from arcade import SpriteList
 
 from game_logic.game_logic import GameLogic
 from gui.buttons.finish_move_buton import FinishMoveButton
@@ -221,16 +222,15 @@ class GameView(arcade.View):
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.ESCAPE:
             self.view_manager.show_menu_view()
-        if symbol == arcade.key.ENTER:
-            pass
-            # self.init_Animation()
 
     def on_update(self, delta_time: 1):
-        """ Movement and game logic """
-        # self.card_list.update()
-        # if isinstance(self.held_card, Card):
-        #     if self.held_card.collides_with_list(self.playground.get_mats()):
-        #         print("Collides with main mat")
+        # self.human_player.cards.on_update(delta_time)
+        # self.computer_player.cards.on_update(delta_time)
+        all_cards = SpriteList()
+        all_cards.extend(self.human_player.get_cards())
+        all_cards.extend(self.computer_player.get_cards())
+        all_cards.on_update(delta_time)
+
         if self.computer_player.is_taking:
             self.hint_text = "Add more cards or finish turn"
             if len(self.playground.get_cards()[-1]) == 1:

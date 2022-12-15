@@ -18,7 +18,8 @@ class PlayerArea:
         return self.cards
 
     def add_new_card(self, card):
-        card.position = self.beginning_x, self.beginning_y
+        #card.position = self.beginning_x, self.beginning_y
+        card.destination_point = self.beginning_x, self.beginning_y
         self.beginning_x += self.x_spacing
         self.cards.append(card)
 
@@ -26,12 +27,16 @@ class PlayerArea:
         if card is not None:
             self.beginning_x -= self.x_spacing
             card_index = self.find_card(card)
-            self.cards.remove(card)
             self.move_card(card_index)
+            self.cards.remove(card)
+            # self.move_card(card_index)
 
     def move_card(self, card_index):
-        for card in self.cards[card_index:]:
-            card.center_x -= self.x_spacing
+        move_position = self.beginning_x - self.x_spacing
+        # Iterate backwards through the list
+        for card in self.cards[card_index:][::-1]:
+            card.destination_point = move_position, self.beginning_y
+            move_position -= self.x_spacing
 
     def find_card(self, card):
         if card in self.cards:

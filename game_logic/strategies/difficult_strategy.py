@@ -124,22 +124,3 @@ class DifficultStrategy(Strategy):
                 card_to_play = min(trump_cards, key=lambda card: card.value)
 
         return card_to_play
-
-    # def endgame_make_move(self):
-    #     # Create a dummy human player and dummy computer player
-    #     dummy_human_player_cards = self.player.cards
-    #     dummy_computer_player_cards = self.computer_area.cards
-    #
-    #     dummy_main_area = self.main_card_sprites_playing_area.cards
-    #
-    # def get_all_player_moves(self, dummy_player_cards):
-    #     # Get all the possible moves for the player
-    #     all_player_moves = []
-    #     for card in dummy_player_cards:
-    #         for card2 in self.get_dummy_area_cards():
-    #             if card.suit == card2.suit:
-    #                 if card.value > card2.value:
-    #                     all_player_moves.append((card, card2))
-    #     return all_player_moves
-    #
-    # def get_dummy_area_cards(self):
