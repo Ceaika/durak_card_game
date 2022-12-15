@@ -1,4 +1,4 @@
-
+import os
 
 # If we fan out unused_cards stacked on each other, how far apart to fan them?
 #CARD_VERTICAL_OFFSET = CARD_HEIGHT * CARD_SCALE * 0.3
@@ -23,5 +23,9 @@ MEDIUM = 1
 HARD = 2
 
 # Win/Lose png relative path
-WIN = f'../../resources/win.png'
-LOSE = f'../../resources/lose.png'
+# get current working directory
+cwd = os.getcwd()
+# get the path to the images folder
+images_path = os.path.join(cwd, "resources")
+WIN = f"{images_path}/win.png"
+LOSE = f"{images_path}/lose.png"
