@@ -34,12 +34,6 @@ class ViewManager(object):
     def show_menu_view(self):
         arcade.get_window().show_view(StartView(self.config))
 
-    # def show_win_view(self):
-    #     arcade.get_window().show_view(WinView(self.config))
-    #
-    # def show_lose_view(self):
-    #     arcade.get_window().show_view(LoseView(self.config))
-
     def show_win_lose_view(self, status, config):
         arcade.get_window().show_view(WinLoseView(config, status))
 
