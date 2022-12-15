@@ -2,6 +2,8 @@
 
 Durak is a popular Russian card game, and this repository implements a singleplayer version of the game in Python, using the arcade framework. The player can choose between three different difficulty levels to play against a bot opponent.
 
+![Preview](https://github.com/ManuelBoesl/durak_card_game/blob/main/durak_example.gif)
+
 ## Requirements
 
 To run this game, you will need the following dependencies:
@@ -18,7 +20,7 @@ python3 main.py
 ```
 
 
-This will start the game and you can choose your difficulty level and play against the bot.
+This will start the game, and you can choose your difficulty level and play against the bot.
 
 ## Game rules
 
