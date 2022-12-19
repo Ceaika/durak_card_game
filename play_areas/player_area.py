@@ -27,9 +27,9 @@ class PlayerArea:
         if card is not None:
             self.beginning_x -= self.x_spacing
             card_index = self.find_card(card)
-            self.move_card(card_index)
+            #self.move_card(card_index)
             self.cards.remove(card)
-            # self.move_card(card_index)
+            self.move_card(card_index)
 
     def move_card(self, card_index):
         move_position = self.beginning_x - self.x_spacing
