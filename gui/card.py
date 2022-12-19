@@ -86,7 +86,7 @@ class Card(arcade.Sprite):
             self._destination_point = destination_point
 
 
-    def on_update(self, delta_time: float = 1 / 60):
+    def on_update(self, delta_time: float = 1 / 100):
         if not self._destination_point:
             return
 

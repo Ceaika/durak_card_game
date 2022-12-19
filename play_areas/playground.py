@@ -9,7 +9,7 @@ class Playground:
         self.mat_list = arcade.SpriteList()
         # self.start_x_position = self.config.start_x + self.config.x_spacing
         self.start_x_position = self.config.current_x / 2
-        self.cards = [arcade.SpriteList()]
+        self.cards = []
 
     def get_cards(self) -> [arcade.SpriteList()]:
         return self.cards
@@ -20,18 +20,13 @@ class Playground:
         self.start_x_position += self.config.x_spacing
         self.mat_list.append(mat)
         self.cards.append(arcade.SpriteList())
-        print("Added new sprite")
 
     def add_new_card(self, card):
         if len(self.cards[-1]) == 0:
-            # card.center_x = self.mat_list[-1].center_x
-            # card.center_y = self.mat_list[-1].center_y
             card.destination_point = self.mat_list[-1].center_x, self.mat_list[-1].center_y
             self.cards[-1].append(card)
 
         elif len(self.cards[-1]) == 1:
-            # card.center_x = self.mat_list[-1].center_x
-            # card.center_y = self.mat_list[-1].center_y - self.config.card_height / 4
             card.destination_point = self.mat_list[-1].center_x, self.mat_list[-1].center_y - self.config.card_height / 4
             self.cards[-1].append(card)
 

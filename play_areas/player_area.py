@@ -5,14 +5,41 @@ from gui.screen_configuration import ScreenConfiguration
 
 class PlayerArea:
 
-    def __init__(self, beginning_x, beginning_y, x_spacing):
-        self.x_spacing = x_spacing
-        self.beginning_x = beginning_x
+    def __init__(self, beginning_x, beginning_y, x_spacing,current_x):
+        self.current_x = current_x
+        self.x_spacing_cfg = x_spacing
+        self.x_spacing = self.x_spacing_cfg
+        self.beginning_x_cfg = beginning_x
+        self.beginning_x = self.beginning_x_cfg
         self.beginning_y = beginning_y
         self.cards = arcade.SpriteList()
         self.is_attacking = True
         self.is_turn = True
         self.is_taking = False
+
+    def out_of_bound(self):
+
+        if (self.cards[-1].position[0] + self.x_spacing) < 0 or (
+                self.cards[-1].position[0] + self.x_spacing) > self.current_x - self.x_spacing:
+            while (True):
+                if abs(len(self.cards) * self.x_spacing) > self.current_x:
+                    sum = self.current_x - self.x_spacing - self.beginning_x_cfg
+                    self.x_spacing = sum / len(self.cards)
+                else:
+                    break
+
+            self.new_pos_all()
+
+    def in_bound(self):
+        if self.beginning_x_cfg + len(self.cards) * self.x_spacing_cfg < self.current_x - self.x_spacing_cfg:
+            self.x_spacing = self.x_spacing_cfg
+            self.new_pos_all()
+
+    def new_pos_all(self):
+
+        self.beginning_x = self.beginning_x_cfg
+        for i in range(len(self.cards)):
+            self.cards[i].destination_point = self.beginning_x + i * self.x_spacing, self.beginning_y
 
     def get_cards(self):
         return self.cards
@@ -22,6 +49,8 @@ class PlayerArea:
         card.destination_point = self.beginning_x, self.beginning_y
         self.beginning_x += self.x_spacing
         self.cards.append(card)
+
+        #self.out_of_bound()
 
     def remove_card(self, card):
         if card is not None:
