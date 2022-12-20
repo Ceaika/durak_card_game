@@ -4,7 +4,7 @@ from game_logic.strategies.computer_strategy import Strategy
 class SimpleStrategy(Strategy):
     def compute_best_attack_move(self):
         card_to_play = None
-        if len(self.main_card_sprites_playing_area.mat_list) == 1:
+        if len(self.main_card_sprites_playing_area.get_mats()) == 1:
             #print("First move")
             available_cards = self.computer_area.get_cards()
             # Remove the cards that are the same suit as the trump card
