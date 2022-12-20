@@ -39,11 +39,12 @@ class NotActiveCards:
         self.trump_card = card
 
     def add_played_card(self, card):
-        random_angle = random.randint(0, 360)
+        # Check if the angle is 0, if not, set it to a random angle
+        angle = random.randint(0, 3)
         random_offset = random.randint(0, 5)
         center_y = self.config.current_y / 2 + random_offset
         center_x = self.config.start_x + self.config.x_spacing * 2 + random_offset
-        card.change_angle = random_angle
+        card.change_angle = angle
         card.destination_point = center_x, center_y
 
         card.face_down()
