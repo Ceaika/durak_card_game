@@ -1,11 +1,9 @@
 import arcade
 
-from gui.screen_configuration import ScreenConfiguration
-
 
 class PlayerArea:
 
-    def __init__(self, beginning_x, beginning_y, x_spacing,current_x):
+    def __init__(self, beginning_x, beginning_y, x_spacing, current_x):
         self.current_x = current_x
         self.x_spacing_cfg = x_spacing
         self.x_spacing = self.x_spacing_cfg
@@ -21,12 +19,9 @@ class PlayerArea:
 
         if (self.cards[-1].position[0] + self.x_spacing) < 0 or (
                 self.cards[-1].position[0] + self.x_spacing) > self.current_x - self.x_spacing:
-            while (True):
-                if abs(len(self.cards) * self.x_spacing) > self.current_x:
-                    sum = self.current_x - self.x_spacing - self.beginning_x_cfg
-                    self.x_spacing = sum / len(self.cards)
-                else:
-                    break
+            while abs(len(self.cards) * self.x_spacing) > self.current_x:
+                sum = self.current_x - self.x_spacing - self.beginning_x_cfg
+                self.x_spacing = sum / len(self.cards)
 
             self.new_pos_all()
 
@@ -45,18 +40,18 @@ class PlayerArea:
         return self.cards
 
     def add_new_card(self, card):
-        #card.position = self.beginning_x, self.beginning_y
+        # card.position = self.beginning_x, self.beginning_y
         card.destination_point = self.beginning_x, self.beginning_y
         self.beginning_x += self.x_spacing
         self.cards.append(card)
 
-        #self.out_of_bound()
+        # self.out_of_bound()
 
     def remove_card(self, card):
         if card is not None:
             self.beginning_x -= self.x_spacing
             card_index = self.find_card(card)
-            #self.move_card(card_index)
+            # self.move_card(card_index)
             self.cards.remove(card)
             self.move_card(card_index)
 
