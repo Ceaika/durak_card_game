@@ -74,6 +74,7 @@ class GameView(arcade.View):
         )
         self.hint_text = "Your turn!\nAttack!"
         self.computer_text = ""
+        self.trump_card_text = ""
 
         self.setup()
 
@@ -114,7 +115,7 @@ class GameView(arcade.View):
         trump_card.face_up()
         trump_card.angle = 90
         trump_card.center_x = self.config.card_width * 1.2
-
+        self.trump_card_text = "Trump:" + trump_card.suit
     def finish_turn(self):
         if self.computer_player.is_taking:
             self.game_logic.computer_take_cards()
@@ -152,6 +153,10 @@ class GameView(arcade.View):
         # draw the label
         arcade.draw_text(self.computer_text, self.config.start_x, self.config.top_y - (self.config.card_height * 1.5),
                          arcade.color.BLACK, 24)
+
+        arcade.draw_text(self.trump_card_text,self.config.current_x - 2*self.config.x_spacing,
+                                             self.config.bottom_y + self.config.card_height,
+                                             arcade.color.BLACK, 24)
 
         if self.show_btn:
             # Draw v_box with buttons
@@ -240,53 +245,3 @@ class GameView(arcade.View):
                                                                                             self.hint_text,
                                                                                             self.computer_text)
 
-        # # Check if the computer is taking cards
-        # if self.computer_player.is_taking:
-        #     self.hint_text = "Add more cards or finish turn"
-        #     if len(self.playground.get_cards()[-1]) == 1:
-        #         self.playground.add_new_sprite()
-        #
-        # # Check if the human player is taking cards
-        # elif self.human_player.is_taking:
-        #     self.playground.add_new_sprite()
-        #     if not self.game_logic.make_computer_attack_move():
-        #         self.human_player.is_turn = False
-        #         self.human_player.is_taking = False
-        #         self.game_logic.finish_turn()
-        #
-        # # If no one is taking cards
-        # else:
-        #     # Check if there are no cards on the playground
-        #     if len(self.playground.get_cards()[-1]) == 0:
-        #         # If it's the computer's turn, try to attack
-        #         if not self.human_player.is_turn:
-        #             self.computer_text = "Computer attack"
-        #             if not self.game_logic.make_computer_attack_move() or len(self.computer_player.get_cards()) == 0:
-        #                 self.game_logic.finish_turn()
-        #                 self.human_player.is_turn = True
-        #                 self.computer_text = "Computer finished his turn"
-        #                 self.show_btn = False
-        #         # If it's the human player's turn, show a message
-        #         else:
-        #             self.hint_text = "Your turn!\nAttack"
-        #
-        #     # Check if there is one card on the playground
-        #     elif len(self.playground.get_cards()[-1]) == 1:
-        #         # If it's the computer's turn, try to defend
-        #         if not self.human_player.is_turn:
-        #             self.computer_text = "Computer defended"
-        #             if not self.game_logic.make_computer_defence_move():
-        #                 self.computer_player.is_taking = True
-        #                 self.human_player.is_turn = True
-        #                 self.computer_text = "Computer is taking the cards"
-        #                 if len(self.computer_player.get_cards()) == 0:
-        #                     self.game_logic.finish_player_or_bot_turn()
-        #         # If it's the human player's turn, show a message
-        #         else:
-        #             self.hint_text = "Your turn!\nDefend or take cards"
-        #             if len(self.computer_player.get_cards()) == 0:
-        #                 self.game_logic.finish_player_or_bot_turn()
-        #
-        #     # Check if there are two cards on the playground
-        #     elif len(self.playground.get_cards()[-1]) == 2:
-        #         self.playground.add_new_sprite()

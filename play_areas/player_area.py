@@ -14,21 +14,23 @@ class PlayerArea:
         self.is_attacking = True
         self.is_turn = True
         self.is_taking = False
+        self.bare_min = round(abs(self.current_x/self.x_spacing))
 
     def out_of_bound(self):
+        while abs(len(self.cards) * self.x_spacing) > (self.current_x - self.x_spacing_cfg):
+            sum = self.current_x - self.x_spacing - self.beginning_x_cfg
+            self.x_spacing = sum / len(self.cards)
 
-        if (self.cards[-1].position[0] + self.x_spacing) < 0 or (
-                self.cards[-1].position[0] + self.x_spacing) > self.current_x - self.x_spacing:
-            while abs(len(self.cards) * self.x_spacing) > self.current_x:
-                sum = self.current_x - self.x_spacing - self.beginning_x_cfg
-                self.x_spacing = sum / len(self.cards)
+        self.new_pos_all()
 
-            self.new_pos_all()
-
-    def in_bound(self):
-        if self.beginning_x_cfg + len(self.cards) * self.x_spacing_cfg < self.current_x - self.x_spacing_cfg:
+    def bounds(self):
+        lenght = len(self.cards)
+        if lenght > self.bare_min:
+            self.out_of_bound()
+        elif lenght <= self.bare_min:
             self.x_spacing = self.x_spacing_cfg
-            self.new_pos_all()
+            if (self.cards[-1].position[0] != self.beginning_x_cfg * lenght * self.x_spacing):
+                self.new_pos_all()
 
     def new_pos_all(self):
 
@@ -36,6 +38,7 @@ class PlayerArea:
         for i in range(len(self.cards)):
             self.cards[i].destination_point = self.beginning_x + i * self.x_spacing, self.beginning_y
 
+        self.beginning_x += len(self.cards)*self.x_spacing
     def get_cards(self):
         return self.cards
 
@@ -45,7 +48,7 @@ class PlayerArea:
         self.beginning_x += self.x_spacing
         self.cards.append(card)
 
-        # self.out_of_bound()
+        self.bounds()
 
     def remove_card(self, card):
         if card is not None:
@@ -55,6 +58,8 @@ class PlayerArea:
             self.cards.remove(card)
             self.move_card(card_index)
 
+        if len(self.cards) != 0:
+            self.bounds()
     def move_card(self, card_index):
         move_position = self.beginning_x - self.x_spacing
         # Iterate backwards through the list
