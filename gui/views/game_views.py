@@ -49,8 +49,8 @@ class GameView(arcade.View):
         self.not_active_cards = NotActiveCards(self.config)
 
         # Initialize the utils so we can use helper functions
-        self.game_logic = GameLogic(self.human_player, self.computer_player, self.playground,
-                                    self.not_active_cards, difficulty)
+        self.game_logic = GameLogic(self.human_player, self.computer_player, self.playground, self.not_active_cards,
+                                    difficulty)
         # --- Required for all code that uses UI element,
         # a UIManager to handle the UI.
         self.manager = arcade.gui.UIManager()
@@ -144,7 +144,7 @@ class GameView(arcade.View):
         # draw played cards
         self.not_active_cards.get_played_cards().draw()
 
-        # draw computer cards
+        # draw computer_area cards
         self.computer_player.get_cards().draw()
 
         # draw the label
@@ -162,7 +162,7 @@ class GameView(arcade.View):
             # Draw v_box with buttons
             self.manager.draw()
 
-        # draw player cards
+        # draw player_area cards
         self.human_player.get_cards().draw()
 
     def on_mouse_press(self, x, y, button, key_modifiers):
@@ -196,7 +196,7 @@ class GameView(arcade.View):
 
         # See if we are in contact with the closest mat
         if arcade.check_for_collision(self.held_card, mat):
-            # Take index of the mat the player wants to put his card on
+            # Take index of the mat the player_area wants to put his card on
             mat_index = self.playground.get_mats().index(mat)
 
             # Check if the card can be placed on the mat
@@ -212,7 +212,7 @@ class GameView(arcade.View):
             # Add the card and mat to the main unused_cards list
             self.playground.add_new_card(self.held_card)
 
-            # remove card from human player
+            # remove card from human player_area
             self.human_player.remove_card(self.held_card)
             self.human_player.is_turn = False
             self.show_btn = True

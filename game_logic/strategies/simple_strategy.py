@@ -4,7 +4,7 @@ from game_logic.strategies.computer_strategy import Strategy
 class SimpleStrategy(Strategy):
     def compute_best_attack_move(self):
         card_to_play = None
-        if len(self.main_card_sprites_playing_area.get_mats()) == 1:
+        if len(self.plaground.get_mats()) == 1:
             #print("First move")
             available_cards = self.computer_area.get_cards()
             # Remove the cards that are the same suit as the trump card
@@ -17,7 +17,7 @@ class SimpleStrategy(Strategy):
                 card_to_play = min(self.computer_area.get_cards(), key=lambda card: card.value)
         else:
             # Get all the unused_cards from the main area
-            cards = self.main_card_sprites_playing_area.get_all_cards()
+            cards = self.plaground.get_all_cards()
             # empty set of playable unused_cards
             playable_cards = set()
             # Get the unused_cards with the same value
@@ -32,8 +32,8 @@ class SimpleStrategy(Strategy):
 
     def compute_best_defense_move(self):
         # Filter out the unused_cards that are not playable
-        bottom_card = self.main_card_sprites_playing_area.get_bottom_card()
-        # Filter the computer cards with the same suit as the bottom card
+        bottom_card = self.plaground.get_bottom_card()
+        # Filter the computer_area cards with the same suit as the bottom card
         cards_with_same_suit = self.computer_area.get_cards_with_same_suit_as_card(bottom_card)
         # Get the card with the lowest value that is higher than the bottom card from cards_with_same_suit
         # card_to_play = min(cards_with_same_suit, key=lambda card: card.value, default=None)

@@ -3,17 +3,17 @@ from play_areas.player_area import PlayerArea
 
 
 class Endgame:
-    def __init__(self, human: PlayerArea, computer: PlayerArea, not_active_cards: NotActiveCards):
+    def __init__(self, human: PlayerArea, computer_area: PlayerArea, not_active_cards: NotActiveCards):
         self.not_active_cards = not_active_cards
         self.human = human
-        self.computer = computer
+        self.computer_area = computer_area
         self.human_cards = None
         self.computer_cards = None
         self.main_area_cards = [[]]
 
     def update_cards(self):
         self.human_cards = self.human.cards
-        self.computer_cards = self.computer.cards
+        self.computer_cards = self.computer_area.cards
 
     def get_main_area_cards(self):
         for card_pair in self.main_area_cards:
@@ -49,9 +49,9 @@ class Endgame:
             pass
 
     def make_move(self):
-        # The computer will always make the first move, because this method is only called when it's his move
+        # The computer_area will always make the first move, because this method is only called when it's his move
         if len(self.main_area_cards) == 1:
-            # There are no cards in the main area, so the computer can choose whichever card he wants
+            # There are no cards in the main area, so the computer_area can choose whichever card he wants
             pass
         pass
 

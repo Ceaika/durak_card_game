@@ -2,9 +2,9 @@ from game_logic.strategies.computer_strategy import Strategy
 
 
 class StrategyContext:
-    def __init__(self, strategy: Strategy, main_card_sprites_playing_area, computer_card_sprites_area) -> None:
-        self.main_card_sprites_playing_area = main_card_sprites_playing_area
-        self.computer_card_sprites_area = computer_card_sprites_area
+    def __init__(self, strategy: Strategy, playground, computer_area) -> None:
+        self.playground = playground
+        self.computer_area = computer_area
         self.__strategy = strategy
         self.is_turn = False
         self.is_attack = False
@@ -22,17 +22,17 @@ class StrategyContext:
         if card_to_play is not None:
             card_to_play.face_up()
             # Add the card and mat to the main area
-            self.main_card_sprites_playing_area.add_new_card(card_to_play)
-            # Remove the card and mat from the computer area
-            self.computer_card_sprites_area.remove_card(card_to_play)
+            self.playground.add_new_card(card_to_play)
+            # Remove the card and mat from the computer_area area
+            self.computer_area.remove_card(card_to_play)
             return True
         elif card_to_play is None:
             # # Take the unused_cards from the main area
             # cards = self.take_cards_from_main_area()
-            # # Add the unused_cards to the computer area
+            # # Add the unused_cards to the computer_area area
             # for card in cards:
             #     card.face_down()
-            #     self.computer_card_sprites_area.add_new_card(card)
+            #     self.computer_area.add_new_card(card)
             return False
 
 
@@ -52,6 +52,6 @@ class StrategyContext:
         return self.strategy.validate_attack_move(card)
 
     def take_cards_from_main_area(self):
-        return self.main_card_sprites_playing_area.get_and_remove_all_cards()
+        return self.playground.get_and_remove_all_cards()
 
 

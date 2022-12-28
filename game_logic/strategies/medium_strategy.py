@@ -54,7 +54,7 @@ class MediumStrategy(Strategy):
         card_to_play = None
         self.remove_played_cards()
         bot_cards = self.calc_bot_hand()
-        if len(self.main_card_sprites_playing_area.mat_list) == 1:
+        if len(self.plaground.mat_list) == 1:
             highest_values = self.highest_values(bot_cards)
             help_dict = self.reduce_dict(highest_values)
             # Get the suit with the shortest list
@@ -74,7 +74,7 @@ class MediumStrategy(Strategy):
 
         else:
             # Get all the unused_cards from the main area
-            cards = self.main_card_sprites_playing_area.get_all_cards()
+            cards = self.plaground.get_all_cards()
             playable_cards = set()
             # Get the unused_cards with the same value
             for card in cards:
@@ -88,8 +88,8 @@ class MediumStrategy(Strategy):
 
     def compute_best_defense_move(self):
         # Filter out the unused_cards that are not playable
-        bottom_card = self.main_card_sprites_playing_area.get_bottom_card()
-        # Filter the computer cards with the same suit as the bottom card
+        bottom_card = self.plaground.get_bottom_card()
+        # Filter the computer_area cards with the same suit as the bottom card
         cards_with_same_suit = self.computer_area.get_cards_with_same_suit_as_card(bottom_card)
         # Get the card with the lowest value that is higher than the bottom card from cards_with_same_suit
         # card_to_play = min(cards_with_same_suit, key=lambda card: card.value, default=None)
