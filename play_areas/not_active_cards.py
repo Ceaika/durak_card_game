@@ -18,6 +18,7 @@ class NotActiveCards:
 
     def get_unused_cards(self):
         return self.unused_cards
+
     def add_new_card(self, card):
         self.unused_cards.append(card)
 
@@ -37,11 +38,14 @@ class NotActiveCards:
     def set_trump_card(self, card):
         self.trump_card = card
 
-    def add_played_card(self, card: Card):
-        random_angle = random.randint(0, 360)
+    def add_played_card(self, card):
+        # Check if the angle is 0, if not, set it to a random angle
+        angle = random.randint(0, 3)
         random_offset = random.randint(0, 5)
-        card.center_y = self.config.current_y / 2 + random_offset
-        card.center_x = self.config.start_x + self.config.x_spacing * 2 + random_offset
-        card.angle = random_angle
+        center_y = self.config.current_y / 2 + random_offset
+        center_x = self.config.start_x + self.config.x_spacing * 2 + random_offset
+        card.change_angle = angle
+        card.destination_point = center_x, center_y
+
         card.face_down()
         self.played_cards.append(card)

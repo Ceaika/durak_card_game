@@ -8,10 +8,10 @@ class MediumStrategy(Strategy):
     def __init__(self, computer_area: PlayerArea, main_card_sprites_playing_area: Playground,
                  not_active_cards: NotActiveCards, player_area: PlayerArea):
         super().__init__(computer_area, main_card_sprites_playing_area, not_active_cards, player_area)
-        self.all_possible_cards = {"clubs": [6, 7, 8, 9, 10, 11, 12, 13, 14],
-                                   "diamonds": [6, 7, 8, 9, 10, 11, 12, 13, 14],
-                                   "hearts": [6, 7, 8, 9, 10, 11, 12, 13, 14],
-                                   "spades": [6, 7, 8, 9, 10, 11, 12, 13, 14]}
+        self.all_possible_cards = {"Clubs": [6, 7, 8, 9, 10, 11, 12, 13, 14],
+                                   "Diamonds": [6, 7, 8, 9, 10, 11, 12, 13, 14],
+                                   "Hearts": [6, 7, 8, 9, 10, 11, 12, 13, 14],
+                                   "Spades": [6, 7, 8, 9, 10, 11, 12, 13, 14]}
 
     def remove_played_cards(self):
         played_cards = self.not_active_cards.played_cards

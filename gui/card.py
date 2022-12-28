@@ -18,6 +18,8 @@ class Card(arcade.Sprite):
         self.current_card_area = None
         self.current_card_index = None
 
+        self.destination_points = []
+
         # get current working directory
         cwd = os.getcwd()
 
@@ -77,9 +79,14 @@ class Card(arcade.Sprite):
 
     @destination_point.setter
     def destination_point(self, destination_point):
-        self._destination_point = destination_point
+        # If there is a destination point, save the new destination point to the list
+        if self._destination_point:
+            self.destination_points.append(destination_point)
+        else:
+            self._destination_point = destination_point
 
-    def on_update(self, delta_time: float = 1 / 60):
+
+    def on_update(self, delta_time: float = 1 / 100):
         if not self._destination_point:
             return
 
@@ -91,11 +98,11 @@ class Card(arcade.Sprite):
         dest_x, dest_y = self._destination_point
 
         #Calculate the speed in the x and y directions
-        self.x_diff = (dest_x - current_x) / 20
-        self.y_diff = (dest_y - current_y) / 20
-        # if self.x_diff == 0 and self.y_diff == 0:
-        #     self.x_diff = (dest_x - current_x) / 60
-        #     self.y_diff = (dest_y - current_y) / 60
+        # self.x_diff = (dest_x - current_x) / 20
+        # self.y_diff = (dest_y - current_y) / 20
+        if self.x_diff == 0 and self.y_diff == 0:
+            self.x_diff = (dest_x - current_x) / 60
+            self.y_diff = (dest_y - current_y) / 60
 
         # Set the sprite's speed
 
@@ -105,8 +112,24 @@ class Card(arcade.Sprite):
         # Update the sprite
         super().update()
 
-        # Set the destination point to None if we are close enough to it
-        if math.isclose(current_x, dest_x, abs_tol=0.2) and math.isclose(current_y, dest_y, abs_tol=0.2):
-            self._destination_point = None
+        # # Set the destination point to None if we are close enough to it
+        # if math.isclose(current_x, dest_x, abs_tol=0.2) and math.isclose(current_y, dest_y, abs_tol=0.2):
+        #     self._destination_point = None
+        #     self.x_diff = 0
+        #     self.y_diff = 0
+
+        # Set the center of the card to the destination point if we are close enough to it and the destination point to none
+        if math.isclose(current_x, dest_x, abs_tol=50) and math.isclose(current_y, dest_y, abs_tol=50):
+            self.center_x = dest_x
+            self.center_y = dest_y
             self.x_diff = 0
             self.y_diff = 0
+
+            # If there are more destination points, set the next one as the destination point
+            if len(self.destination_points) > 0:
+                self._destination_point = self.destination_points.pop(0)
+            else:
+                self._destination_point = None
+
+
+

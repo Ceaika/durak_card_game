@@ -11,7 +11,6 @@ from play_areas.playground import Playground
 from play_areas.not_active_cards import NotActiveCards
 from play_areas.player_area import PlayerArea
 from gui.screen_configuration import ScreenConfiguration
-from Constants import WIN, LOSE
 import gui.view_manager
 
 
@@ -44,9 +43,9 @@ class GameView(arcade.View):
         # Initialize the sprite lists
         self.playground = Playground(self.config)
         self.human_player = PlayerArea(self.config.start_x_bottom, self.config.bottom_y,
-                                       self.config.x_spacing)
+                                       self.config.x_spacing, self.config.current_x)
         self.computer_player = PlayerArea(self.config.start_x_top, self.config.top_y,
-                                          -self.config.x_spacing)
+                                          -self.config.x_spacing, self.config.current_x)
         self.not_active_cards = NotActiveCards(self.config)
 
         # Initialize the utils so we can use helper functions
@@ -75,6 +74,7 @@ class GameView(arcade.View):
         )
         self.hint_text = "Your turn!\nAttack!"
         self.computer_text = ""
+        self.trump_card_text = ""
 
         self.setup()
 
@@ -115,7 +115,7 @@ class GameView(arcade.View):
         trump_card.face_up()
         trump_card.angle = 90
         trump_card.center_x = self.config.card_width * 1.2
-
+        self.trump_card_text = "Trump:" + trump_card.suit
     def finish_turn(self):
         if self.computer_player.is_taking:
             self.game_logic.computer_take_cards()
@@ -154,6 +154,10 @@ class GameView(arcade.View):
         arcade.draw_text(self.computer_text, self.config.start_x, self.config.top_y - (self.config.card_height * 1.5),
                          arcade.color.BLACK, 24)
 
+        arcade.draw_text(self.trump_card_text,self.config.current_x - 2*self.config.x_spacing,
+                                             self.config.bottom_y + self.config.card_height,
+                                             arcade.color.BLACK, 24)
+
         if self.show_btn:
             # Draw v_box with buttons
             self.manager.draw()
@@ -171,6 +175,9 @@ class GameView(arcade.View):
         if len(cards) > 0:
             # Might be a stack of unused_cards, get the top one
             self.held_card = cards[-1]
+
+            # Stop the animation
+            self.held_card.destination_point = self.held_card.position
 
             # Get original position
             self.held_card_original_position = self.held_card.position
@@ -199,7 +206,8 @@ class GameView(arcade.View):
         if reset_position:
             # Where-ever we were dropped, it wasn't valid. Reset the card's position
             # to its original spot.
-            self.held_card.position = self.held_card_original_position
+            # self.held_card.position = self.held_card_original_position
+            self.held_card.destination_point = self.held_card_original_position
         else:
             # Add the card and mat to the main unused_cards list
             self.playground.add_new_card(self.held_card)
@@ -223,57 +231,17 @@ class GameView(arcade.View):
         if symbol == arcade.key.ESCAPE:
             self.view_manager.show_menu_view()
 
-    def on_update(self, delta_time: 1):
-        # self.human_player.cards.on_update(delta_time)
-        # self.computer_player.cards.on_update(delta_time)
-        all_cards = SpriteList()
-        all_cards.extend(self.human_player.get_cards())
-        all_cards.extend(self.computer_player.get_cards())
-        all_cards.on_update(delta_time)
+    def on_update(self, delta_time: 1 / 150):
+        # Update the cards
+        self.human_player.get_cards().on_update(delta_time)
+        self.computer_player.get_cards().on_update(delta_time)
+        self.playground.get_all_cards().on_update(delta_time)
+        self.not_active_cards.get_played_cards().on_update(delta_time)
 
-        if self.computer_player.is_taking:
-            self.hint_text = "Add more cards or finish turn"
-            if len(self.playground.get_cards()[-1]) == 1:
-                self.playground.add_new_sprite()
-        elif self.human_player.is_taking:
-            self.playground.add_new_sprite()
-            if not self.game_logic.make_computer_attack_move():
-                self.human_player.is_turn = False
-                self.human_player.is_taking = False
-                self.game_logic.finish_turn()
+        # Check if game is over
+        self.game_logic.game_over(self.view_manager, self.config)
 
-        else:
-            if len(self.playground.get_cards()[-1]) == 0:
-                if not self.human_player.is_turn:
-                    self.computer_text = "Computer attacked"
-                    if not self.game_logic.make_computer_attack_move() or len(self.computer_player.get_cards()) == 0:
-                        self.game_logic.finish_turn()
-                        self.human_player.is_turn = True
-                        self.computer_text = "Computer finished his turn"
-                        self.show_btn = False
-                else:
-                    self.hint_text = "Your turn!\nAttack"
+        self.show_btn, self.hint_text, self.computer_text = self.game_logic.on_update_logic(self.show_btn,
+                                                                                            self.hint_text,
+                                                                                            self.computer_text)
 
-
-            elif len(self.playground.get_cards()[-1]) == 1:
-                if not self.human_player.is_turn:
-                    self.computer_text = "Computer defended"
-                    if not self.game_logic.make_computer_defence_move():
-                        # self.game_logic.finish_turn()
-                        self.computer_player.is_taking = True
-                        self.human_player.is_turn = True
-                        self.computer_text = "Computer is taking the cards"
-                        if len(self.computer_player.get_cards()) == 0:
-                            self.finish_move_button.on_event()
-                else:
-                    self.hint_text = "Your turn!\nDefend or take cards"
-                    if len(self.computer_player.get_cards()) == 0:
-                        self.finish_move_button.on_event()
-
-            elif len(self.playground.get_cards()[-1]) == 2:
-                self.playground.add_new_sprite()
-
-        if len(self.not_active_cards.get_unused_cards()) == 0 and len(self.human_player.get_cards()) == 0:
-            self.view_manager.show_win_lose_view(WIN, self.config)
-        elif len(self.not_active_cards.get_unused_cards()) == 0 and len(self.computer_player.get_cards()) == 0:
-            self.view_manager.show_win_lose_view(LOSE, self.config)

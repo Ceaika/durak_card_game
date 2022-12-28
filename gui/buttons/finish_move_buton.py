@@ -13,15 +13,6 @@ class FinishMoveButton(arcade.gui.UIFlatButton):
     def on_click(self, event):
 
         if len(self.playground.get_cards()[-1]) == 0:
-            self.finish_turn()
+            self.game_logic.finish_player_or_bot_turn()
 
-    def finish_turn(self):
 
-        if self.computer.is_taking:
-            self.game_logic.computer_take_cards()
-            self.computer.is_taking = False
-            self.human.is_turn = True
-        elif self.human.is_turn:
-            self.human.is_turn = False
-
-        self.game_logic.finish_turn()

@@ -9,7 +9,7 @@ class Playground:
         self.mat_list = arcade.SpriteList()
         # self.start_x_position = self.config.start_x + self.config.x_spacing
         self.start_x_position = self.config.current_x / 2
-        self.cards = [arcade.SpriteList()]
+        self.cards = []
 
     def get_cards(self) -> [arcade.SpriteList()]:
         return self.cards
@@ -21,28 +21,14 @@ class Playground:
         self.mat_list.append(mat)
         self.cards.append(arcade.SpriteList())
 
-    def remove_card_and_mat(self, card_index):
-        self.cards.remove(self.cards[card_index])
-        self.mat_list.remove(self.mat_list[card_index])
-        self.move_card_and_mat(card_index)
-
     def add_new_card(self, card):
         if len(self.cards[-1]) == 0:
-            card.center_x = self.mat_list[-1].center_x
-            card.center_y = self.mat_list[-1].center_y
+            card.destination_point = self.mat_list[-1].center_x, self.mat_list[-1].center_y
             self.cards[-1].append(card)
 
         elif len(self.cards[-1]) == 1:
-            card.center_x = self.mat_list[-1].center_x
-            card.center_y = self.mat_list[-1].center_y - self.config.card_height / 4
+            card.destination_point = self.mat_list[-1].center_x, self.mat_list[-1].center_y - self.config.card_height / 4
             self.cards[-1].append(card)
-
-    def move_card_and_mat(self, card_index):
-
-        for card in self.cards[card_index:]:
-            card.center_x -= self.config.x_spacing
-        for mat in self.mat_list[card_index:]:
-            mat.center_x -= self.config.x_spacing
 
     def get_bottom_card(self):
         return self.cards[-1][0]
