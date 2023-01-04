@@ -17,12 +17,12 @@ class AdvancedStrategy(Strategy):
 
         pass
         # card_to_play = None
-        # if len(self.main_card_sprites_playing_area.mat_list) == 1:
+        # if len(self.plaground.mat_list) == 1:
         #     print("First move")
         #     card_to_play = min(self.computer_area.cards, key=lambda card: card.value)
         # else:
         #     # Get all the unused_cards from the main area
-        #     cards = self.main_card_sprites_playing_area.get_all_cards()
+        #     cards = self.plaground.get_all_cards()
         #     # empty set of playable unused_cards
         #     playable_cards = set()
         #     # Get the unused_cards with the same value

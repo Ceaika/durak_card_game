@@ -8,7 +8,7 @@ PLAYER_AREA = 0
 COMPUTER_AREA = 1
 MAIN_AREA = 2
 
-#Amout of init Cards for every player
+#Amout of init Cards for every player_area
 INIT_CARDS = 6
 
 # How fast to move, and how fast to run the animation

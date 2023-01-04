@@ -5,10 +5,10 @@ from play_areas.player_area import PlayerArea
 
 
 class DifficultStrategy(Strategy):
-    def __init__(self, computer_area: PlayerArea, main_card_sprites_playing_area: Playground,
+    def __init__(self, computer_area: PlayerArea, playground: Playground,
                  not_active_cards: NotActiveCards, player_area: PlayerArea):
-        super().__init__(computer_area, main_card_sprites_playing_area, not_active_cards, player_area)
-        self.not_played_cards = {"clubs": [range(6, 15)], "diamonds": [range(6, 15)], "hearts": [range(6, 15)]}
+        super().__init__(computer_area, playground, not_active_cards, player_area)
+        self.not_played_cards = {"Clubs": [range(6, 15)], "Diamonds": [range(6, 15)], "Hearts": [range(6, 15)], "Spades": [range(6, 15)]}
         self.player = player_area
 
     def remove_played_cards(self):
@@ -46,7 +46,7 @@ class DifficultStrategy(Strategy):
     def validate_bot_hand(self, bot_hand):
         # Create a set with all the values that are in the main area
         values = set()
-        for card in self.main_card_sprites_playing_area.get_all_cards():
+        for card in self.playground.get_all_cards():
             values.add(card.value)
 
         valid_bot_hand = {}
@@ -64,7 +64,9 @@ class DifficultStrategy(Strategy):
     def compute_best_attack_move(self):
         card_to_play = None
         lenght_of_suit_not_played = self.lenght_of_suit_not_played()
-        if len(self.main_card_sprites_playing_area.mat_list) == 1:
+        print("2")
+        if len(self.playground.mat_list) == 1:
+            print("3")
             bot_hand = self.calc_bot_hand()
             bot_hand_trump = None
             if self.not_active_cards.trump_card.suit in bot_hand:
@@ -108,8 +110,8 @@ class DifficultStrategy(Strategy):
 
     def compute_best_defense_move(self):
         # Filter out the unused_cards that are not playable
-        bottom_card = self.main_card_sprites_playing_area.get_bottom_card()
-        # Filter the computer cards with the same suit as the bottom card
+        bottom_card = self.playground.get_bottom_card()
+        # Filter the computer_area cards with the same suit as the bottom card
         cards_with_same_suit = self.computer_area.get_cards_with_same_suit_as_card(bottom_card)
         # Get the card with the lowest value that is higher than the bottom card from cards_with_same_suit
         # card_to_play = min(cards_with_same_suit, key=lambda card: card.value, default=None)

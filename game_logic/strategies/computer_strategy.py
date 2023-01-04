@@ -8,11 +8,11 @@ from play_areas.player_area import PlayerArea
 
 class Strategy(ABC):
 
-    def __init__(self, computer_area: PlayerArea, main_card_sprites_playing_area: Playground,
+    def __init__(self, computer_area: PlayerArea, playground: Playground,
                  not_active_cards: NotActiveCards, player_area: PlayerArea):
         super().__init__()
         self.computer_area = computer_area
-        self.main_card_sprites_playing_area = main_card_sprites_playing_area
+        self.playground = playground
         self.not_active_cards = not_active_cards
 
     @abstractmethod
@@ -32,11 +32,11 @@ class Strategy(ABC):
         return False
 
     def validate_attack_move(self, top_card):
-        if len(self.main_card_sprites_playing_area.cards[0]) == 0 and isinstance(top_card, Card):
+        if len(self.playground.cards[0]) == 0 and isinstance(top_card, Card):
             return True
         else:
             # Get all the unused_cards from the main area
-            cards = self.main_card_sprites_playing_area.get_all_cards()
+            cards = self.playground.get_all_cards()
             # create a set with all the values from the unused_cards
             values = {card.value for card in cards}
             if top_card.value in values:
