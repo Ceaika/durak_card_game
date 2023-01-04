@@ -8,7 +8,7 @@ class DifficultStrategy(Strategy):
     def __init__(self, computer_area: PlayerArea, playground: Playground,
                  not_active_cards: NotActiveCards, player_area: PlayerArea):
         super().__init__(computer_area, playground, not_active_cards, player_area)
-        self.not_played_cards = {"clubs": [range(6, 15)], "diamonds": [range(6, 15)], "hearts": [range(6, 15)]}
+        self.not_played_cards = {"Clubs": [range(6, 15)], "Diamonds": [range(6, 15)], "Hearts": [range(6, 15)], "Spades": [range(6, 15)]}
         self.player = player_area
 
     def remove_played_cards(self):
