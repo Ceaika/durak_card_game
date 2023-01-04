@@ -46,7 +46,7 @@ class DifficultStrategy(Strategy):
     def validate_bot_hand(self, bot_hand):
         # Create a set with all the values that are in the main area
         values = set()
-        for card in self.plaground.get_all_cards():
+        for card in self.playground.get_all_cards():
             values.add(card.value)
 
         valid_bot_hand = {}
@@ -64,7 +64,9 @@ class DifficultStrategy(Strategy):
     def compute_best_attack_move(self):
         card_to_play = None
         lenght_of_suit_not_played = self.lenght_of_suit_not_played()
-        if len(self.plaground.mat_list) == 1:
+        print("2")
+        if len(self.playground.mat_list) == 1:
+            print("3")
             bot_hand = self.calc_bot_hand()
             bot_hand_trump = None
             if self.not_active_cards.trump_card.suit in bot_hand:
@@ -108,7 +110,7 @@ class DifficultStrategy(Strategy):
 
     def compute_best_defense_move(self):
         # Filter out the unused_cards that are not playable
-        bottom_card = self.plaground.get_bottom_card()
+        bottom_card = self.playground.get_bottom_card()
         # Filter the computer_area cards with the same suit as the bottom card
         cards_with_same_suit = self.computer_area.get_cards_with_same_suit_as_card(bottom_card)
         # Get the card with the lowest value that is higher than the bottom card from cards_with_same_suit
