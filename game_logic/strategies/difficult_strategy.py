@@ -64,9 +64,7 @@ class DifficultStrategy(Strategy):
     def compute_best_attack_move(self):
         card_to_play = None
         lenght_of_suit_not_played = self.lenght_of_suit_not_played()
-        print("2")
         if len(self.playground.mat_list) == 1:
-            print("3")
             bot_hand = self.calc_bot_hand()
             bot_hand_trump = None
             if self.not_active_cards.trump_card.suit in bot_hand:
@@ -88,6 +86,8 @@ class DifficultStrategy(Strategy):
                 # Get the minimum value of bot_hand_trump
                 card_to_play = min(bot_hand_trump)
                 card_to_play = self.find_card(self.not_active_cards.trump_card.suit, card_to_play)
+
+            print("card to play: ", card_to_play)
 
         else:
             hand = self.calc_bot_hand()

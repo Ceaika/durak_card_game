@@ -59,10 +59,23 @@ class MediumStrategy(Strategy):
             help_dict = self.reduce_dict(highest_values)
             # Get the suit with the shortest list
             suit = min(help_dict, key=lambda suit: len(help_dict[suit]))
-            # If suit is a set, get the first element
+            # # If suit is a set, get the first element
+            # if isinstance(suit, set):
+            #     suit = suit.pop()
+
+            # If suit is a set, get the first element without rmove it from the set
             if isinstance(suit, set):
-                suit = suit.pop()
-            card_to_play = self.find_card(suit, highest_values[suit])
+                suit = next(iter(suit))
+
+            # card_to_play = self.find_card(suit, highest_values[suit])
+
+            # Check if the suit is in the keys of the highest_values dict
+            if suit in highest_values:
+                card_to_play = self.find_card(suit, highest_values[suit])
+            else:
+                # Get the card with the lowest value
+                card_to_play = min(self.computer_area.cards, key=lambda card: card.value)
+
             # What if bot has only trump cards?
             if card_to_play is None and len(bot_cards[self.not_active_cards.trump_card.suit]) > 0:
                 card_to_play = min(bot_cards[self.not_active_cards.trump_card.suit])
