@@ -18,6 +18,7 @@ class Card(arcade.Sprite):
         self.current_card_area = None
         self.current_card_index = None
 
+        # This list is needed so that the card can be moved to multiple points
         self.destination_points = []
 
         # get current working directory
@@ -85,7 +86,6 @@ class Card(arcade.Sprite):
         else:
             self._destination_point = destination_point
 
-
     def on_update(self, delta_time: float = 1 / 100):
         if not self._destination_point:
             return
@@ -97,9 +97,7 @@ class Card(arcade.Sprite):
         # Get the destination position
         dest_x, dest_y = self._destination_point
 
-        #Calculate the speed in the x and y directions
-        # self.x_diff = (dest_x - current_x) / 20
-        # self.y_diff = (dest_y - current_y) / 20
+        # Calculate the speed in the x and y directions
         if self.x_diff == 0 and self.y_diff == 0:
             self.x_diff = (dest_x - current_x) / 60
             self.y_diff = (dest_y - current_y) / 60
@@ -111,12 +109,6 @@ class Card(arcade.Sprite):
 
         # Update the sprite
         super().update()
-
-        # # Set the destination point to None if we are close enough to it
-        # if math.isclose(current_x, dest_x, abs_tol=0.2) and math.isclose(current_y, dest_y, abs_tol=0.2):
-        #     self._destination_point = None
-        #     self.x_diff = 0
-        #     self.y_diff = 0
 
         # Set the center of the card to the destination point if we are close enough to it and the destination point to none
         if math.isclose(current_x, dest_x, abs_tol=50) and math.isclose(current_y, dest_y, abs_tol=50):
@@ -130,6 +122,3 @@ class Card(arcade.Sprite):
                 self._destination_point = self.destination_points.pop(0)
             else:
                 self._destination_point = None
-
-
-

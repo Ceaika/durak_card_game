@@ -63,7 +63,7 @@ class MediumStrategy(Strategy):
             # if isinstance(suit, set):
             #     suit = suit.pop()
 
-            # If suit is a set, get the first element without rmove it from the set
+            # If suit is a set, get the first element without remove it from the set
             if isinstance(suit, set):
                 suit = next(iter(suit))
 

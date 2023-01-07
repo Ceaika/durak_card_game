@@ -73,10 +73,11 @@ class DifficultStrategy(Strategy):
                 # Remove trump suit from the bot hand
                 bot_hand.pop(self.not_active_cards.trump_card.suit)
 
+            # The lenghth_of_suit_not_played dict is sorted by value, so the first key is the suit with the lowest value
             for suit in lenght_of_suit_not_played:
                 if suit in bot_hand:
                     card_to_play = min(bot_hand[suit])
-                    # print the instance of the card
+                    # find the instance of the card
                     card_to_play = self.find_card(suit, card_to_play)
                     # Get the card out of the set
                     card_to_play = card_to_play
@@ -104,17 +105,17 @@ class DifficultStrategy(Strategy):
                     card_to_play = min(valid_bot_hand[suit], default=None)
                     card_to_play = self.find_card(suit, card_to_play)
                     break
+
+        if card_to_play is None:
+            return None
         # Check if card_to_play is a set
-        if isinstance(card_to_play, set):
-            if card_to_play is None or len(card_to_play) == 0:
+        elif isinstance(card_to_play, set):
+            if len(card_to_play) == 0:
                 return None
             else:
                 return card_to_play.pop()
         else:
-            if card_to_play is None:
-                return None
-            else:
-                return card_to_play
+            return card_to_play
 
     def compute_best_defense_move(self):
         # Filter out the unused_cards that are not playable
