@@ -87,7 +87,9 @@ class DifficultStrategy(Strategy):
                 card_to_play = min(bot_hand_trump)
                 card_to_play = self.find_card(self.not_active_cards.trump_card.suit, card_to_play)
 
-            print("card to play: ", card_to_play)
+            # If the card_to_play is still None, then the bot should play the lowest card
+            elif card_to_play is None:
+                card_to_play = min(self.computer_area.cards, key=lambda card: card.value)
 
         else:
             hand = self.calc_bot_hand()
@@ -102,11 +104,17 @@ class DifficultStrategy(Strategy):
                     card_to_play = min(valid_bot_hand[suit], default=None)
                     card_to_play = self.find_card(suit, card_to_play)
                     break
-
-        if card_to_play is None or len(card_to_play) == 0:
-            return None
+        # Check if card_to_play is a set
+        if isinstance(card_to_play, set):
+            if card_to_play is None or len(card_to_play) == 0:
+                return None
+            else:
+                return card_to_play.pop()
         else:
-            return card_to_play.pop()
+            if card_to_play is None:
+                return None
+            else:
+                return card_to_play
 
     def compute_best_defense_move(self):
         # Filter out the unused_cards that are not playable

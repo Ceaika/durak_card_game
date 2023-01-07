@@ -81,12 +81,14 @@ class GameLogic:
             if len(self.not_active_cards.unused_cards) > 0:
                 if len(self.player_area.cards) < 6:
                     card = self.not_active_cards.remove_last_card()
-                    card.face_up()
-                    self.player_area.add_new_card(card)
+                    if card is not None:
+                        card.face_up()
+                        self.player_area.add_new_card(card)
                 if len(self.computer_area.cards) < 6:
                     card = self.not_active_cards.remove_last_card()
-                    card.face_down()
-                    self.computer_area.add_new_card(card)
+                    if card is not None:
+                        card.face_down()
+                        self.computer_area.add_new_card(card)
 
         # We must also remove all cards from the main area
         lst = self.playground.get_and_remove_all_cards()

@@ -12,6 +12,6 @@ class TakeCardsButton(arcade.gui.UIFlatButton):
 
     def on_click(self, event):
         if self.human.is_turn and len(self.playground.get_cards()[-1]) == 1:
-            self.game_logic.take_all_cards_human()
             self.human.is_turn = False
             self.human.is_taking = True
+            self.game_logic.take_all_cards_human()
