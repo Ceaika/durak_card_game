@@ -2,7 +2,6 @@ import random
 
 import arcade
 
-from gui.card import Card
 from gui.screen_configuration import ScreenConfiguration
 
 

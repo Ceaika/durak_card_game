@@ -50,11 +50,6 @@ class Card(arcade.Sprite):
         # Destination point is where we are going
         self._destination_point = None
 
-        # # Max speed
-        # self.speed = 5
-        #
-        # # Max speed we can rotate
-        # self.rot_speed = 5
         self.x_diff = 0
         self.y_diff = 0
         super().__init__(self.face_down_image, scale, hit_box_algorithm="None")
@@ -110,7 +105,8 @@ class Card(arcade.Sprite):
         # Update the sprite
         super().update()
 
-        # Set the center of the card to the destination point if we are close enough to it and the destination point to none
+        # Set the center of the card to the destination point if we are close enough to it and the destination point
+        # to none
         if math.isclose(current_x, dest_x, abs_tol=50) and math.isclose(current_y, dest_y, abs_tol=50):
             self.center_x = dest_x
             self.center_y = dest_y

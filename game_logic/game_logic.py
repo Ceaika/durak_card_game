@@ -74,8 +74,8 @@ class GameLogic:
         self.finish_turn()
 
     def finish_turn(self):
-        # First we take unused unused_cards from the not active unused_cards and add them to the computer_area and player_area
-        # area
+        # First we take unused unused_cards from the not active unused_cards and add them to the computer_area and
+        # player_area area
 
         for i in range(6):
             if len(self.not_active_cards.unused_cards) > 0:
@@ -114,7 +114,7 @@ class GameLogic:
 
         # Check if the computer_area is taking cards
         if self.computer_area.is_taking:
-            self.hint_text = "Add more cards or finish turn"
+            hint_text = "Add more cards or finish turn"
             if len(self.playground.get_cards()[-1]) == 1:
                 self.playground.add_new_sprite()
 

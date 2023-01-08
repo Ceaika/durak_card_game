@@ -12,11 +12,18 @@ class DifficultStrategy(Strategy):
         self.player = player_area
 
     def remove_played_cards(self):
+        """
+        Remove the played cards from the not_played_cards dict
+        """
         for card in self.not_active_cards.played_cards:
             if card in self.not_played_cards[card.suit]:
                 self.not_played_cards[card.suit].remove(card.value)
 
     def calc_bot_hand(self):
+        """
+        Calculates the available cards in the bot hand
+        :return: the available cards in the bot hand
+        """
         # get the available card suits
         available_cards = {}
         for card in self.computer_area.cards:
@@ -28,6 +35,10 @@ class DifficultStrategy(Strategy):
         return available_cards
 
     def lenght_of_suit_not_played(self):
+        """
+        Calculates how many cards are not played in each suit and sorts them by value
+        :return: A dict with the suits and the number of cards that are not played
+        """
         # Get the lenght of each suit
         lenght_of_suit = {}
         for suit in self.not_played_cards:
@@ -39,11 +50,22 @@ class DifficultStrategy(Strategy):
         return lenght_of_suit
 
     def find_card(self, suit, value):
+        """
+        Finds the card in the computer_area by finding the intersection of the suit and value
+        :param suit: The suit of the card
+        :param value: The value of the card
+        :return: The card
+        """
         suit_lst = self.computer_area.get_cards_with_same_suit_str(suit)
         value_lst = self.computer_area.get_cards_with_same_value_int(value)
         return suit_lst.intersection(value_lst)
 
     def validate_bot_hand(self, bot_hand):
+        """
+        Validates the bot hand by removing the cards that are not playable
+        :param bot_hand: The bot hand
+        :return: The validated bot hand with only playable cards
+        """
         # Create a set with all the values that are in the main area
         values = set()
         for card in self.playground.get_all_cards():
@@ -62,6 +84,12 @@ class DifficultStrategy(Strategy):
         return valid_bot_hand
 
     def compute_best_attack_move(self):
+        """
+        Computes the best attack move for the bot by checking the available cards in the bot hand and the cards that
+        are not played yet. The bot will try to play the card with the lowest value in the suit that has the least cards
+        left to play.
+        :return: The card that the bot should play
+        """
         card_to_play = None
         lenght_of_suit_not_played = self.lenght_of_suit_not_played()
         if len(self.playground.mat_list) == 1:
@@ -118,12 +146,14 @@ class DifficultStrategy(Strategy):
             return card_to_play
 
     def compute_best_defense_move(self):
+        """
+        Computes the best defense move for the bot by trying to play the card with the lowest value possible
+        :return: The card that the bot should play
+        """
         # Filter out the unused_cards that are not playable
         bottom_card = self.playground.get_bottom_card()
         # Filter the computer_area cards with the same suit as the bottom card
         cards_with_same_suit = self.computer_area.get_cards_with_same_suit_as_card(bottom_card)
-        # Get the card with the lowest value that is higher than the bottom card from cards_with_same_suit
-        # card_to_play = min(cards_with_same_suit, key=lambda card: card.value, default=None)
         # Filter out the cards that have a value lower than the bottom card
         cards_with_same_suit = {card for card in cards_with_same_suit if card.value > bottom_card.value}
         # Get the card with the lowest value

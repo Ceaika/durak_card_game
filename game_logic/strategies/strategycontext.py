@@ -27,17 +27,7 @@ class StrategyContext:
             self.computer_area.remove_card(card_to_play)
             return True
         elif card_to_play is None:
-            # # Take the unused_cards from the main area
-            # cards = self.take_cards_from_main_area()
-            # # Add the unused_cards to the computer_area area
-            # for card in cards:
-            #     card.face_down()
-            #     self.computer_area.add_new_card(card)
             return False
-
-
-
-
 
     def pick_card(self, is_attack):
         if is_attack:
@@ -53,5 +43,3 @@ class StrategyContext:
 
     def take_cards_from_main_area(self):
         return self.playground.get_and_remove_all_cards()
-
-

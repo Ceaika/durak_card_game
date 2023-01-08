@@ -3,6 +3,10 @@ from game_logic.strategies.computer_strategy import Strategy
 
 class SimpleStrategy(Strategy):
     def compute_best_attack_move(self):
+        """
+        This method will compute a move for the computer player by trying to play a card with a lower value.
+        :return: The card to play
+        """
         card_to_play = None
         if len(self.playground.get_mats()) == 1:
             #print("First move")
@@ -31,12 +35,15 @@ class SimpleStrategy(Strategy):
         return card_to_play
 
     def compute_best_defense_move(self):
+        """
+        Computes the best defense move for the bot by trying to play the card with the lowest value possible
+        :return: The card that the bot should play
+        """
         # Filter out the unused_cards that are not playable
         bottom_card = self.playground.get_bottom_card()
         # Filter the computer_area cards with the same suit as the bottom card
         cards_with_same_suit = self.computer_area.get_cards_with_same_suit_as_card(bottom_card)
         # Get the card with the lowest value that is higher than the bottom card from cards_with_same_suit
-        # card_to_play = min(cards_with_same_suit, key=lambda card: card.value, default=None)
         # Filter out the cards that have a value lower than the bottom card
         cards_with_same_suit = {card for card in cards_with_same_suit if card.value > bottom_card.value}
         # Get the card with the lowest value
