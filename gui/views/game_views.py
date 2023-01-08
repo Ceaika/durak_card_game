@@ -116,6 +116,7 @@ class GameView(arcade.View):
         trump_card.angle = 90
         trump_card.center_x = self.config.card_width * 1.2
         self.trump_card_text = "Trump:" + trump_card.suit
+
     def finish_turn(self):
         if self.computer_player.is_taking:
             self.game_logic.computer_take_cards()
@@ -154,9 +155,9 @@ class GameView(arcade.View):
         arcade.draw_text(self.computer_text, self.config.start_x, self.config.top_y - (self.config.card_height * 1.5),
                          arcade.color.BLACK, 24)
 
-        arcade.draw_text(self.trump_card_text,self.config.current_x - 2*self.config.x_spacing,
-                                             self.config.bottom_y + self.config.card_height,
-                                             arcade.color.BLACK, 24)
+        arcade.draw_text(self.trump_card_text, self.config.current_x - 2 * self.config.x_spacing,
+                         self.config.bottom_y + self.config.card_height,
+                         arcade.color.BLACK, 24)
 
         if self.show_btn:
             # Draw v_box with buttons
@@ -168,13 +169,17 @@ class GameView(arcade.View):
     def on_mouse_press(self, x, y, button, key_modifiers):
         """ Called when the user presses a mouse button. """
 
-        # Get list of unused_cards we've clicked on
+        # Get list of cards we've clicked on
         cards: list[arcade.Sprite] = arcade.get_sprites_at_point((x, y), self.human_player.get_cards())
 
         # Have we clicked on a card?
         if len(cards) > 0:
             # Might be a stack of unused_cards, get the top one
             self.held_card = cards[-1]
+
+            # Check if the card has a destination point, if so, we set the position to the destination
+            if self.held_card.destination_point is not None:
+                self.held_card.position = self.held_card.destination_point
 
             # Stop the animation
             self.held_card.destination_point = self.held_card.position
@@ -244,4 +249,3 @@ class GameView(arcade.View):
         self.show_btn, self.hint_text, self.computer_text = self.game_logic.on_update_logic(self.show_btn,
                                                                                             self.hint_text,
                                                                                             self.computer_text)
-
