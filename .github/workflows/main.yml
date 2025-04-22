@@ -1,0 +1,19 @@
+name: Clone and Run Command
+
+on:
+  workflow_dispatch: # manually triggered
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run command
+        run: |
+          echo "Listing files:"
+          ls -la
+          # Replace the above commands with your own commands
+
